@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -29,7 +30,8 @@ public class CineIoExampleAppActivity extends Activity {
         setContentView(R.layout.activity_cine_io_consumer);
         final CineIoExampleAppActivity me = this;
         if (SECRET_KEY == "SECRET_KEY"){
-            throw new RuntimeException("SECRET_KEY must be set to a cine.io project's secret key. Register for one here: https://www.cine.io .");
+            CharSequence error = "SECRET_KEY must be set to a cine.io project's secret key. Register for one here: https://www.cine.io";
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
         }
         mClient = new CineIoClient(SECRET_KEY);
         mClient.getStreams(new StreamsResponseHandler(){
