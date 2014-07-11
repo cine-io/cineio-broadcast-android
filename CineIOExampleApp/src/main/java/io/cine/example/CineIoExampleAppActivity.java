@@ -28,6 +28,9 @@ public class CineIoExampleAppActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cine_io_consumer);
         final CineIoExampleAppActivity me = this;
+        if (SECRET_KEY == "SECRET_KEY"){
+            throw new RuntimeException("SECRET_KEY must be set to a cine.io project's secret key. Register for one here: https://www.cine.io .");
+        }
         mClient = new CineIoClient(SECRET_KEY);
         mClient.getStreams(new StreamsResponseHandler(){
             @Override
