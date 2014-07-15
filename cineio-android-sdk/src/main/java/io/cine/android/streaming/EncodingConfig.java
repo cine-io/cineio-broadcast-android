@@ -18,15 +18,12 @@ public class EncodingConfig {
     private static int DEFAULT_BIT_RATE = 1500000;
     private static int DEFAULT_FPS = 15;
 
-    private final Context mCtx;
-    private final Display mDefaultDisplay;
     private Muxer.FORMAT mFormat;
     private String mOutputString;
     private AudioEncoderConfig mAudioEncoderConfig;
-
-    public EncodingConfig(Context ctx, Display defaultDisplay) {
-        mCtx = ctx;
-        mDefaultDisplay = defaultDisplay;
+    private int mOrientation;
+    public EncodingConfig() {
+        mOrientation = Surface.ROTATION_0;
     }
 
     public int getWidth() {
@@ -58,10 +55,8 @@ public class EncodingConfig {
     }
 
     public boolean isLandscape() {
-        int rotation = mDefaultDisplay.getRotation();
-
         boolean isLandscape = false;
-        switch (rotation) {
+        switch (mOrientation) {
             case Surface.ROTATION_0:
             case Surface.ROTATION_180:
                 isLandscape = false;
@@ -147,5 +142,13 @@ public class EncodingConfig {
     // this works because getWidth and getHeight change depending on if it is landscape mode.
     public double getAspectRatio() {
         return (double) getWidth() / getHeight();
+    }
+
+    public int getOrientation() {
+        return mOrientation;
+    }
+
+    public void setOrientation(int mOrientation) {
+        this.mOrientation = mOrientation;
     }
 }

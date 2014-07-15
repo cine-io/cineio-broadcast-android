@@ -160,7 +160,7 @@ public class BroadcastActivity extends Activity
 
         TextView fileText = (TextView) findViewById(R.id.cameraOutputFile_text);
         fileText.setText(outputString);
-        mEncodingConfig = new EncodingConfig(this, this.getWindowManager().getDefaultDisplay());
+        mEncodingConfig = new EncodingConfig();
         mEncodingConfig.setOutput(outputString);
         mMuxer = new FFmpegMuxer();
 
@@ -386,7 +386,12 @@ public class BroadcastActivity extends Activity
         return 0;
     }
 
+    private void setEncoderOrientation() {
+        mEncodingConfig.setOrientation(this.getWindowManager().getDefaultDisplay().getRotation());
+    }
+
     private void handleSetCameraOrientation() {
+        setEncoderOrientation();
         Log.d(TAG, "handle setting camera orientation");
         int degrees = getDeviceRotationDegrees();
         int result;
