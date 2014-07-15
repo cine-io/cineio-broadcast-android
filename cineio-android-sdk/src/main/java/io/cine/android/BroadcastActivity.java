@@ -148,7 +148,7 @@ public class BroadcastActivity extends Activity
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_broadcast_capture);
-        setButtonHolderLayout();
+//        setButtonHolderLayout();
 
         Bundle extras = getIntent().getExtras();
         String outputString;
@@ -189,7 +189,7 @@ public class BroadcastActivity extends Activity
     protected void onResume() {
         Log.d(TAG, "onResume -- acquiring camera");
         super.onResume();
-        updateControls();
+//        updateControls();
         openCamera();
 
         // Set the preview aspect ratio.
@@ -326,21 +326,21 @@ public class BroadcastActivity extends Activity
                 mRenderer.changeRecordingState(mRecordingEnabled);
             }
         });
-        updateControls();
+//        updateControls();
     }
 
     /**
      * Updates the on-screen controls to reflect the current state of the app.
      */
-    private void updateControls() {
-        Button toggleRelease = (Button) findViewById(R.id.toggleRecording_button);
-        int id = mRecordingEnabled ?
-                R.string.toggleRecordingOff : R.string.toggleRecordingOn;
-        toggleRelease.setText(id);
-
-        //CheckBox cb = (CheckBox) findViewById(R.id.rebindHack_checkbox);
-        //cb.setChecked(TextureRender.sWorkAroundContextProblem);
-    }
+//    private void updateControls() {
+//        ImageButton toggleRelease = (ImageButton) findViewById(R.id.toggleRecording_button);
+//        int id = mRecordingEnabled ?
+//                R.string.toggleRecordingOff : R.string.toggleRecordingOn;
+//        toggleRelease.setText(id);
+//
+//        //CheckBox cb = (CheckBox) findViewById(R.id.rebindHack_checkbox);
+//        //cb.setChecked(TextureRender.sWorkAroundContextProblem);
+//    }
 
     /**
      * Connects the SurfaceTexture to the Camera preview output, and starts the preview.
@@ -355,21 +355,21 @@ public class BroadcastActivity extends Activity
         mCamera.startPreview();
     }
 
-    private void setButtonHolderLayout() {
-        LinearLayout buttonHolder = (LinearLayout) findViewById(R.id.buttonHolder);
-
-        // Checks the orientation of the screen
-
-        int degrees = getDeviceRotationDegrees();
-
-        if (degrees == 90) {
-            buttonHolder.setGravity(Gravity.CENTER | Gravity.RIGHT);
-        } else if (degrees == 270) {
-            buttonHolder.setGravity(Gravity.CENTER | Gravity.RIGHT);
-        } else {
-            buttonHolder.setGravity(Gravity.CENTER | Gravity.BOTTOM);
-        }
-    }
+//    private void setButtonHolderLayout() {
+//        LinearLayout buttonHolder = (LinearLayout) findViewById(R.id.camera_button_holder);
+//
+//        // Checks the orientation of the screen
+//
+//        int degrees = getDeviceRotationDegrees();
+//
+//        if (degrees == 90) {
+//            buttonHolder.setGravity(Gravity.CENTER | Gravity.RIGHT);
+//        } else if (degrees == 270) {
+//            buttonHolder.setGravity(Gravity.CENTER | Gravity.RIGHT);
+//        } else {
+//            buttonHolder.setGravity(Gravity.CENTER | Gravity.BOTTOM);
+//        }
+//    }
 
     private int getDeviceRotationDegrees() {
 
