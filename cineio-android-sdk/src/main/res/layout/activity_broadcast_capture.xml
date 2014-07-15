@@ -16,12 +16,9 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="0dp"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:paddingTop="0dp"
     tools:context="io.cine.android.BroadcastActivity" >
 
     <io.cine.android.streaming.AspectFrameLayout
@@ -38,46 +35,8 @@
             android:layout_height="match_parent"
             android:layout_gravity="center" />
     </io.cine.android.streaming.AspectFrameLayout>
-    <LinearLayout
-        android:id="@+id/buttonHolder"
-        android:layout_width="fill_parent"
-        android:orientation="vertical"
-        android:layout_height="fill_parent"
-        android:gravity="center|right"
-        android:layout_gravity="right|top">
-    <Button
-        android:id="@+id/toggleRecording_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/toggleRecordingOn"
-        android:onClick="clickToggleRecording" />
 
-    <!-- these overlap with the SurfaceView; by default, it's underneath the UI layer -->
+    <include layout="@layout/camera_info" />
 
-    <TextView
-        android:id="@+id/cameraParams_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toggleRecording_button"
-        android:text="cam params"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/cameraOutputFileLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/cameraParams_text"
-        android:layout_below="@id/cameraParams_text"
-        android:text="@string/cameraOutputFileLabel_text" />
-
-    <TextView
-        android:id="@+id/cameraOutputFile_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/cameraOutputFileLabel"
-        android:layout_alignBottom="@id/cameraOutputFileLabel"
-        android:layout_toRightOf="@id/cameraOutputFileLabel"
-        android:paddingLeft="0dp"
-        android:text="@string/cameraOutputFile_text" />
-    </LinearLayout>
+    <include layout="@layout/camera_button_holder" />
 </RelativeLayout>
