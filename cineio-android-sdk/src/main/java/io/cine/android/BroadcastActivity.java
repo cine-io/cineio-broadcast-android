@@ -184,7 +184,7 @@ public class BroadcastActivity extends Activity
         mAudioConfig = AudioEncoderConfig.createDefaultProfile();
         mEncodingConfig.setAudioEncoderConfig(mAudioConfig);
         mAudioEncoder = new MicrophoneEncoder(mMuxer);
-        Log.d(TAG, "onCreate complete: " + this);
+        // http://stackoverflow.com/questions/5975168/android-button-setpressed-after-onclick
         ImageButton toggleRecording = (ImageButton) findViewById(R.id.toggleRecording_button);
 
         toggleRecording.setOnTouchListener(new View.OnTouchListener() {
@@ -198,6 +198,7 @@ public class BroadcastActivity extends Activity
                 return true;
             }
         });
+        Log.d(TAG, "onCreate complete: " + this);
 
     }
 

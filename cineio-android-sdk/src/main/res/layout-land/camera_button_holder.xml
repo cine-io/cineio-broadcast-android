@@ -10,12 +10,15 @@
             android:id="@+id/toggleRecording_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:clickable="true"
             android:focusable="true"
             android:scaleType="center"
             android:background="@android:color/transparent"
-            android:src="@drawable/shutter_button"/>
+            android:src="@drawable/shutter_button"
+
+            android:paddingRight="12dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+        />
 
 </RelativeLayout>
