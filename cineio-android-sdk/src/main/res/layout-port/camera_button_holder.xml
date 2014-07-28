@@ -14,10 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/shutter_button"
         android:clickable="true"
         android:focusable="true"
         android:scaleType="center"
-        android:onClick="clickToggleRecording" />
+        android:background="@android:color/transparent"
+        android:src="@drawable/shutter_button" />
 
 </RelativeLayout>

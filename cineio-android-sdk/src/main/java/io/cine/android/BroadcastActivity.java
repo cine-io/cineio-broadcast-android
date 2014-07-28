@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.Window;
@@ -184,6 +185,20 @@ public class BroadcastActivity extends Activity
         mEncodingConfig.setAudioEncoderConfig(mAudioConfig);
         mAudioEncoder = new MicrophoneEncoder(mMuxer);
         Log.d(TAG, "onCreate complete: " + this);
+        ImageButton toggleRecording = (ImageButton) findViewById(R.id.toggleRecording_button);
+
+        toggleRecording.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // show interest in events resulting from ACTION_DOWN
+                if(event.getAction()==MotionEvent.ACTION_DOWN) return true;
+                // don't handle event unless its ACTION_UP so "doSomething()" only runs once.
+                if(event.getAction()!=MotionEvent.ACTION_UP) return false;
+                toggleRecordingHandler();
+                return true;
+            }
+        });
+
     }
 
     @Override
@@ -297,7 +312,7 @@ public class BroadcastActivity extends Activity
     /**
      * onClick handler for "record" button.
      */
-    public void clickToggleRecording(@SuppressWarnings("unused") View unused) {
+    public void toggleRecordingHandler() {
         mRecordingEnabled = !mRecordingEnabled;
         if (mRecordingEnabled) {
             startRecording();
@@ -335,12 +350,7 @@ public class BroadcastActivity extends Activity
      */
     private void updateControls() {
         ImageButton toggleRelease = (ImageButton) findViewById(R.id.toggleRecording_button);
-        int id = mRecordingEnabled ?
-                R.drawable.btn_shutter_pressed : R.drawable.btn_shutter_default;
-        toggleRelease.setBackgroundResource(id);
-
-        //CheckBox cb = (CheckBox) findViewById(R.id.rebindHack_checkbox);
-        //cb.setChecked(TextureRender.sWorkAroundContextProblem);
+        toggleRelease.setPressed(mRecordingEnabled);
     }
 
     /**
