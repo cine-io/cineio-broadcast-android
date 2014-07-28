@@ -65,7 +65,7 @@
     <orderEntry type="library" exported="" name="appcompat-v7-19.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-19.1.0" level="project" />
     <orderEntry type="library" exported="" name="guava-16.0" level="project" />
-    <orderEntry type="library" exported="" name="cineio-android-sdk-0.0.1" level="project" />
+    <orderEntry type="module" module-name="cineio-android-sdk" exported="" />
   </component>
 </module>
 
