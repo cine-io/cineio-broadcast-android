@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item android:drawable="@drawable/white_ring"/>
+
+    <item android:left="@dimen/red_circle_padding" android:right="@dimen/red_circle_padding" android:bottom="@dimen/red_circle_padding"
+        android:top="@dimen/red_circle_padding" android:drawable="@drawable/red_circle"/>
+
+</layer-list>
