@@ -152,7 +152,6 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 unused) {
         if (VERBOSE) Log.d(TAG, "onDrawFrame tex=" + mTextureId);
-        boolean showBox = false;
 
         // Latch the latest frame.  If there isn't anything new, we'll just re-use whatever
         // was there before.
@@ -225,21 +224,6 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
         mSurfaceTexture.getTransformMatrix(mSTMatrix);
         mFullScreen.drawFrame(mTextureId, mSTMatrix);
 
-        // Draw a flashing box if we're recording.  This only appears on screen.
-        showBox = (mRecordingStatus == RECORDING_ON);
-        if (showBox && (++mFrameCount & 0x04) == 0) {
-            drawBox();
-        }
     }
 
-    /**
-     * Draws a red box in the corner.
-     */
-    private void drawBox() {
-        GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
-        GLES20.glScissor(0, 0, 100, 100);
-        GLES20.glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
-    }
 }
