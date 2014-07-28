@@ -1,8 +1,6 @@
 package io.cine.android.streaming;
 
-import android.content.Context;
 import android.util.Log;
-import android.view.Display;
 import android.view.Surface;
 
 import io.cine.ffmpegbridge.FFmpegBridge;
