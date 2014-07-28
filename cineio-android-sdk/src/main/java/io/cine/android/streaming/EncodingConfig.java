@@ -25,7 +25,7 @@ public class EncodingConfig {
     private int mMachineVideoFps;
     public EncodingConfig() {
         mOrientation = Surface.ROTATION_0;
-        mMachineVideoFps = DEFAULT_HUMAN_FPS * 10000;
+        mMachineVideoFps = DEFAULT_HUMAN_FPS * 1000;
     }
 
     public int getWidth() {
