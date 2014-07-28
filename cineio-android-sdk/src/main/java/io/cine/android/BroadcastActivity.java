@@ -192,6 +192,8 @@ public class BroadcastActivity extends Activity
                 return true;
             }
         });
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d(TAG, "onCreate complete: " + this);
 
     }
@@ -232,6 +234,7 @@ public class BroadcastActivity extends Activity
             }
         });
         mGLView.onPause();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d(TAG, "onPause complete");
     }
 
