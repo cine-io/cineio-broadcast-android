@@ -16,14 +16,16 @@ public class EncodingConfig {
     private static final int LANDSCAPE_CAMERA_WIDTH = 1280;
     private static final int LANDSCAPE_CAMERA_HEIGHT = 720;
     private static int DEFAULT_BIT_RATE = 1500000;
-    private static int DEFAULT_FPS = 15;
+    private static int DEFAULT_HUMAN_FPS = 15;
 
     private Muxer.FORMAT mFormat;
     private String mOutputString;
     private AudioEncoderConfig mAudioEncoderConfig;
     private int mOrientation;
+    private int mMachineVideoFps;
     public EncodingConfig() {
         mOrientation = Surface.ROTATION_0;
+        mMachineVideoFps = DEFAULT_HUMAN_FPS * 10000;
     }
 
     public int getWidth() {
@@ -132,11 +134,7 @@ public class EncodingConfig {
     }
 
     public int getHumanFPS() {
-        return DEFAULT_FPS;
-    }
-
-    public int getMachineFPS() {
-        return DEFAULT_FPS * 1000;
+        return getMachineVideoFps() / 1000;
     }
 
     // this works because getWidth and getHeight change depending on if it is landscape mode.
@@ -150,5 +148,13 @@ public class EncodingConfig {
 
     public void setOrientation(int mOrientation) {
         this.mOrientation = mOrientation;
+    }
+
+    public int getMachineVideoFps() {
+        return mMachineVideoFps;
+    }
+
+    public void setMachineVideoFps(int machineVideoFps) {
+        this.mMachineVideoFps = machineVideoFps;
     }
 }

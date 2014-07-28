@@ -265,8 +265,8 @@ public class BroadcastActivity extends Activity
 
         Camera.Parameters parms = mCamera.getParameters();
 
-        parms.setPreviewFpsRange(mEncodingConfig.getMachineFPS(), mEncodingConfig.getMachineFPS());
-
+        int realMachineFps = CameraUtils.chooseFixedPreviewFps(parms, mEncodingConfig.getMachineVideoFps());
+        mEncodingConfig.setMachineVideoFps(realMachineFps);
         // Give the camera a hint that we're recording video.  This can have a big
         // impact on frame rate.
         parms.setRecordingHint(true);
