@@ -160,8 +160,6 @@ public class BroadcastActivity extends Activity
             outputString = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cineio-recording.mp4";
         }
 
-        TextView fileText = (TextView) findViewById(R.id.cameraOutputFile_text);
-        fileText.setText(outputString);
         mEncodingConfig = new EncodingConfig();
         mEncodingConfig.setOutput(outputString);
         mMuxer = new FFmpegMuxer();
@@ -431,25 +429,7 @@ public class BroadcastActivity extends Activity
         });
 
         mCamera.setDisplayOrientation(result);
-        changeVideoWidthText();
     }
-
-    private void changeVideoWidthText() {
-        Camera.Parameters parms = mCamera.getParameters();
-
-        int[] fpsRange = new int[2];
-        parms.getPreviewFpsRange(fpsRange);
-        String previewFacts = mEncodingConfig.getWidth() + "x" + mEncodingConfig.getHeight();
-        if (fpsRange[0] == fpsRange[1]) {
-            previewFacts += " @" + (fpsRange[0] / 1000.0) + "fps";
-        } else {
-            previewFacts += " @[" + (fpsRange[0] / 1000.0) +
-                    " - " + (fpsRange[1] / 1000.0) + "] fps";
-        }
-        TextView text = (TextView) findViewById(R.id.cameraParams_text);
-        text.setText(previewFacts);
-    }
-
 
     @Override
     public void onFrameAvailable(SurfaceTexture st) {
