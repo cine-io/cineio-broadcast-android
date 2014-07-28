@@ -157,7 +157,7 @@ public class BroadcastActivity extends Activity
         if (extras != null) {
             outputString = extras.getString("PUBLISH_URL");
         }else{
-            outputString = Environment.getExternalStorageDirectory().getAbsolutePath() + "/long-record-with-ffmpeg.mp4";
+            outputString = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cineio-recording.mp4";
         }
 
         TextView fileText = (TextView) findViewById(R.id.cameraOutputFile_text);
