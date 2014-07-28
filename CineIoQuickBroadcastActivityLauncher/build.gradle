@@ -2,14 +2,14 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    buildToolsVersion "19.1.0"
 
     defaultConfig {
-        applicationId 'io.cine.example'
+        applicationId "io.cine.quicklauncher"
         minSdkVersion 18
         targetSdkVersion 19
         versionCode 1
-        versionName '0.0.1'
+        versionName "1.0"
     }
     buildTypes {
         release {
@@ -17,20 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors {
-    }
 }
-//repositories {
-//    maven {
-//        url "https://oss.sonatype.org/content/repositories/snapshots/"
-//    }
-//}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:19.+'
     compile 'com.android.support:support-v4:+'
     compile project(':cineio-android-sdk')
-//    compile 'io.cine:cineio-android-sdk:0.0.1-SNAPSHOT'
-//    compile 'io.cine:cineio-android-sdk:0.0.1'
 }
