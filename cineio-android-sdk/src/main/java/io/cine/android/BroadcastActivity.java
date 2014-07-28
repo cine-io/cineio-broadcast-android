@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -189,7 +190,7 @@ public class BroadcastActivity extends Activity
     protected void onResume() {
         Log.d(TAG, "onResume -- acquiring camera");
         super.onResume();
-//        updateControls();
+        updateControls();
         openCamera();
 
         // Set the preview aspect ratio.
@@ -326,21 +327,21 @@ public class BroadcastActivity extends Activity
                 mRenderer.changeRecordingState(mRecordingEnabled);
             }
         });
-//        updateControls();
+        updateControls();
     }
 
     /**
      * Updates the on-screen controls to reflect the current state of the app.
      */
-//    private void updateControls() {
-//        ImageButton toggleRelease = (ImageButton) findViewById(R.id.toggleRecording_button);
-//        int id = mRecordingEnabled ?
-//                R.string.toggleRecordingOff : R.string.toggleRecordingOn;
-//        toggleRelease.setText(id);
-//
-//        //CheckBox cb = (CheckBox) findViewById(R.id.rebindHack_checkbox);
-//        //cb.setChecked(TextureRender.sWorkAroundContextProblem);
-//    }
+    private void updateControls() {
+        ImageButton toggleRelease = (ImageButton) findViewById(R.id.toggleRecording_button);
+        int id = mRecordingEnabled ?
+                R.drawable.btn_shutter_pressed : R.drawable.btn_shutter_default;
+        toggleRelease.setBackgroundResource(id);
+
+        //CheckBox cb = (CheckBox) findViewById(R.id.rebindHack_checkbox);
+        //cb.setChecked(TextureRender.sWorkAroundContextProblem);
+    }
 
     /**
      * Connects the SurfaceTexture to the Camera preview output, and starts the preview.
