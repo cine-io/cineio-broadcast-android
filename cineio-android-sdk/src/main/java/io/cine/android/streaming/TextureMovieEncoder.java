@@ -83,7 +83,6 @@ public class TextureMovieEncoder implements Runnable {
     private Object mReadyFence = new Object();      // guards ready/running
     private boolean mReady;
     private boolean mRunning;
-    private AndroidMuxer mMuxer;
 
     /**
      * Tells the video recorder to start recording.  (Call from non-encoder thread.)

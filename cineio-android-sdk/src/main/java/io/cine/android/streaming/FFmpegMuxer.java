@@ -59,6 +59,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
     @Override
     public void prepare(EncodingConfig config) {
         super.prepare(config);
+        getConfig().setMuxerState(EncodingConfig.MUXER_STATE.PREPARING);
         mReady = false;
 
         videoConfig = null;
@@ -76,6 +77,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
             mMuxerInputQueue = new ArrayList<ArrayDeque<ByteBuffer>>();
             startMuxingThread();
         } else {
+            getConfig().setMuxerState(EncodingConfig.MUXER_STATE.READY);
             mReady = true;
         }
     }
@@ -133,6 +135,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
         if (formatRequiresBuffering()) {
             Looper.myLooper().quit();
         }
+        getConfig().setMuxerState(EncodingConfig.MUXER_STATE.SHUTDOWN);
     }
 
     @Override
@@ -182,6 +185,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
                 mFFmpeg.setAudioCodecExtraData(audioConfig, audioConfig.length);
             }
             if (videoConfig != null && audioConfig != null) {
+                getConfig().setMuxerState(EncodingConfig.MUXER_STATE.CONNECTING);
                 mFFmpeg.writeHeader();
             }
             releaseOutputBufer(encoder, encodedData, bufferIndex, trackIndex);
@@ -208,6 +212,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
         if (!allTracksFinished() && allTracksAdded()) {
             boolean isVideo = trackIndex == mVideoTrackIndex;
             if (isVideo && ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_SYNC_FRAME) != 0)) {
+                getConfig().setMuxerState(EncodingConfig.MUXER_STATE.STREAMING);
                 Log.d(TAG, "WRITING VIDEO KEYFRAME");
                 packageH264Keyframe(encodedData, bufferInfo);
 
@@ -350,7 +355,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
             mReady = true;
             mReadyFence.notify();
         }
-
+        getConfig().setMuxerState(EncodingConfig.MUXER_STATE.READY);
         Looper.loop();
 
         synchronized (mReadyFence) {

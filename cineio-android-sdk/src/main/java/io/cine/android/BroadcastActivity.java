@@ -18,6 +18,8 @@
 package io.cine.android;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -124,7 +126,7 @@ import io.cine.android.streaming.TextureMovieEncoder;
  * is managed as a static property of the Activity.
  */
 public class BroadcastActivity extends Activity
-        implements SurfaceTexture.OnFrameAvailableListener {
+        implements SurfaceTexture.OnFrameAvailableListener, EncodingConfig.EncodingCallback {
     private static final String TAG = "BroadcastActivity";
     private static final boolean VERBOSE = false;
     // this is static so it survives activity restarts
@@ -157,7 +159,7 @@ public class BroadcastActivity extends Activity
             outputString = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cineio-recording.mp4";
         }
 
-        mEncodingConfig = new EncodingConfig();
+        mEncodingConfig = new EncodingConfig(this);
         mEncodingConfig.setOutput(outputString);
         mMuxer = new FFmpegMuxer();
 
@@ -350,10 +352,6 @@ public class BroadcastActivity extends Activity
     private void updateControls() {
         Button recordingButton = (Button) findViewById(R.id.toggleRecording_button);
         recordingButton.setPressed(mRecordingEnabled);
-
-        TextView fileText = (TextView) findViewById(R.id.streamingStatus);
-        String statusText = mRecordingEnabled ? "Streaming" : "Ready";
-        fileText.setText(statusText);
     }
 
     /**
@@ -451,6 +449,69 @@ public class BroadcastActivity extends Activity
         // so it doesn't really matter.
         if (VERBOSE) Log.d(TAG, "ST onFrameAvailable");
         mGLView.requestRender();
+    }
+
+    @Override
+    public void muxerStatusUpdate(EncodingConfig.MUXER_STATE muxerState) {
+        updateStatusText(muxerState);
+        handleStreamingUpdate(muxerState);
+    }
+
+    private void handleStreamingUpdate(final EncodingConfig.MUXER_STATE muxerState) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (muxerState){
+                    case CONNECTING:
+                        int currentOrientation = getResources().getConfiguration().orientation;
+                        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                        }
+                        else {
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                        }
+                        break;
+                    case SHUTDOWN:
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                        break;
+                }
+            }
+        });
+    }
+
+    private void updateStatusText(final EncodingConfig.MUXER_STATE muxerState){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+
+        TextView fileText = (TextView) findViewById(R.id.streamingStatus);
+        String statusText;
+        switch (muxerState){
+            case PREPARING:
+                statusText = "Preparing";
+                break;
+            case CONNECTING:
+                statusText = "Connecting";
+                break;
+            case READY:
+                statusText = "Ready";
+                break;
+            case STREAMING:
+                statusText = "Streaming";
+                break;
+            case SHUTDOWN:
+                statusText = "Ready";
+                break;
+            default:
+                statusText = "Unknown";
+                break;
+        }
+        fileText.setText(statusText);
+
+            }
+        });
+
     }
 
     /**

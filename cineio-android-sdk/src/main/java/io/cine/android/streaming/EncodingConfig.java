@@ -9,19 +9,28 @@ import io.cine.ffmpegbridge.FFmpegBridge;
  * Created by thomas on 7/1/14.
  */
 public class EncodingConfig {
+    public interface EncodingCallback {
+        public void muxerStatusUpdate(MUXER_STATE muxerState);
+    }
     private static final String TAG = "EncodingConfig";
 
     private static final int LANDSCAPE_CAMERA_WIDTH = 1280;
     private static final int LANDSCAPE_CAMERA_HEIGHT = 720;
     private static int DEFAULT_BIT_RATE = 1500000;
     private static int DEFAULT_HUMAN_FPS = 15;
+    private final EncodingCallback mEncodingCallback;
+    private MUXER_STATE mMuxerState;
+
+    public static enum MUXER_STATE {PREPARING, READY, CONNECTING, STREAMING, SHUTDOWN}
 
     private Muxer.FORMAT mFormat;
     private String mOutputString;
     private AudioEncoderConfig mAudioEncoderConfig;
     private int mOrientation;
     private int mMachineVideoFps;
-    public EncodingConfig() {
+
+    public EncodingConfig(EncodingCallback encodingCallback) {
+        mEncodingCallback = encodingCallback;
         mOrientation = Surface.ROTATION_0;
         mMachineVideoFps = DEFAULT_HUMAN_FPS * 1000;
     }
@@ -154,5 +163,13 @@ public class EncodingConfig {
 
     public void setMachineVideoFps(int machineVideoFps) {
         this.mMachineVideoFps = machineVideoFps;
+    }
+
+    public void setMuxerState(MUXER_STATE muxerState) {
+        if (mMuxerState == muxerState){
+            return;
+        }
+        mMuxerState = muxerState;
+        mEncodingCallback.muxerStatusUpdate(muxerState);
     }
 }
