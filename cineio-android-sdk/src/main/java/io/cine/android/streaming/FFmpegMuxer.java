@@ -123,6 +123,9 @@ public class FFmpegMuxer extends Muxer implements Runnable {
      * Must be called from Muxer thread
      */
     private void shutdown() {
+        if (!mReady || !mStarted){
+            return;
+        }
         Log.i(TAG, "Shutting down");
         mFFmpeg.finalize();
         mStarted = false;
