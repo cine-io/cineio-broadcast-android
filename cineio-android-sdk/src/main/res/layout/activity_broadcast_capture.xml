@@ -36,5 +36,7 @@
             android:layout_gravity="center" />
     </io.cine.android.streaming.AspectFrameLayout>
 
+    <include layout="@layout/status" />
+
     <include layout="@layout/camera_button_holder" />
 </RelativeLayout>

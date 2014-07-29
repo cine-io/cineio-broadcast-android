@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -349,6 +350,10 @@ public class BroadcastActivity extends Activity
     private void updateControls() {
         Button recordingButton = (Button) findViewById(R.id.toggleRecording_button);
         recordingButton.setPressed(mRecordingEnabled);
+
+        TextView fileText = (TextView) findViewById(R.id.streamingStatus);
+        String statusText = mRecordingEnabled ? "Streaming" : "Ready";
+        fileText.setText(statusText);
     }
 
     /**
