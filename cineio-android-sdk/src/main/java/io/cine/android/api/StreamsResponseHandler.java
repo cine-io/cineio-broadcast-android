@@ -1,8 +1,8 @@
 package io.cine.android.api;
 
-import java.util.ArrayList;
-
 import org.json.JSONException;
+
+import java.util.ArrayList;
 
 public class StreamsResponseHandler{
 

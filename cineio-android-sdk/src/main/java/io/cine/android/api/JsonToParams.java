@@ -1,11 +1,11 @@
 package io.cine.android.api;
 
-import java.util.Iterator;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.loopj.android.http.RequestParams;
+import java.util.Iterator;
 
 public class JsonToParams {
 
