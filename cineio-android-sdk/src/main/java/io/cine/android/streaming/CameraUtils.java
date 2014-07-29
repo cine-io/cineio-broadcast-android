@@ -51,6 +51,7 @@ public class CameraUtils {
 
         for (Camera.Size size : parms.getSupportedPreviewSizes()) {
             if (size.width == width && size.height == height) {
+                Log.d(TAG, "setting preview size: " + width + "x" + height);
                 parms.setPreviewSize(width, height);
                 return;
             }
