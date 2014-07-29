@@ -31,6 +31,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.+'
     compile 'com.android.support:support-v4:+'
     compile project(':cineio-android-sdk')
-//    compile 'io.cine:cineio-android-sdk:0.0.1-SNAPSHOT'
-//    compile 'io.cine:cineio-android-sdk:0.0.1'
+//    compile 'io.cine:cineio-android-sdk:0.0.2-SNAPSHOT'
+//    compile 'io.cine:cineio-android-sdk:0.0.2'
 }
