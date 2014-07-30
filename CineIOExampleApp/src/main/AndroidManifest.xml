@@ -9,8 +9,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <!-- Required for cine.io broadcast activity.  -->
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <!-- Required for cine.io broadcast activity. -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -32,7 +34,14 @@
             android:name="io.cine.android.BroadcastActivity"
             android:label="CineIOBroadcastActivity" >
         </activity>
-
+        <activity
+            android:name=".CineIoStreamViewActivity"
+            android:label="@string/title_activity_cine_io_stream_view" >
+        </activity>
+        <activity
+            android:name=".CineIoStreamRecordingsListActivity"
+            android:label="@string/title_activity_cine_io_stream_recordings_list" >
+        </activity>
     </application>
 
 </manifest>

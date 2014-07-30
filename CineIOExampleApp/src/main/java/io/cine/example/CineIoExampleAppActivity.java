@@ -1,108 +1,63 @@
 package io.cine.example;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import io.cine.android.CineIoClient;
 import io.cine.android.api.Stream;
-import io.cine.android.api.StreamRecording;
-import io.cine.android.api.StreamRecordingsResponseHandler;
 import io.cine.android.api.StreamsResponseHandler;
 
-public class CineIoExampleAppActivity extends Activity {
+public class CineIoExampleAppActivity extends Activity implements AdapterView.OnItemClickListener {
 
-    private final static String TAG = "CineIoConsumer";
+    private final static String TAG = "CineIoExampleAppActivity";
     private final static String SECRET_KEY = "SECRET_KEY";
 
     private CineIoClient mClient;
+    private ListView streamListView;
+    private ArrayList<Stream> mStreams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cine_io_consumer);
-        final CineIoExampleAppActivity me = this;
         if (SECRET_KEY == "SECRET_KEY"){
             CharSequence error = "SECRET_KEY must be set to a cine.io project's secret key. Register for one here: https://www.cine.io";
             Toast.makeText(this, error, Toast.LENGTH_LONG).show();
         }
+        streamListView = (ListView) findViewById(R.id.streamBroadcasts);
+
         mClient = new CineIoClient(SECRET_KEY);
         mClient.getStreams(new StreamsResponseHandler(){
             @Override
             public void onSuccess(ArrayList<Stream> streams) {
-                me.setStreams(streams);
+                setStreams(streams);
             }
         });
     }
 
     public void setStreams(ArrayList<Stream> streams){
+        mStreams = streams;
         final CineIoExampleAppActivity me = this;
-        LinearLayout layout = (LinearLayout) findViewById(R.id.streamBroadcasts);
-        LinearLayout.LayoutParams wrapParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        for(final Stream stream : streams){
-            String labelText;
-            String name = stream.getName();
-            if (name != null){
-                labelText = stream.getName() + ": " + stream.getId();
-            }else{
-                labelText = stream.getId();
-            }
-            TextView v = new TextView(this);
-            v.setText(labelText);
-            v.setLayoutParams(wrapParams);
-            layout.addView(v);
+        // This is the array adapter, it takes the context of the activity as a
+        // first parameter, the type of list view as a second parameter and your
+        // array as a third parameter.
+        ArrayAdapter<Stream> arrayAdapter = new ArrayAdapter<Stream>(
+                this,
+                android.R.layout.simple_list_item_1,
+                streams);
 
-            Button broadcastButton = new Button(this);
-            broadcastButton.setText("Start Broadcaster");
-            broadcastButton.setLayoutParams(wrapParams);
-            broadcastButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d(TAG, "Starting broadcast for " + stream.getId());
-                    mClient.broadcast(stream.getId(), me);
-                }
-            });
-            layout.addView(broadcastButton);
-
-            Button playButton = new Button(this);
-            playButton.setText("Start Player");
-            playButton.setLayoutParams(wrapParams);
-            playButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d(TAG, "Starting player for " + stream.getId());
-                    mClient.play(stream.getId(), me);
-                }
-            });
-            layout.addView(playButton);
-
-            Button seeRecordingsButton = new Button(this);
-            seeRecordingsButton.setText("Recordings");
-            seeRecordingsButton.setLayoutParams(wrapParams);
-            seeRecordingsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d(TAG, "Fetching recordings for " + stream.getId());
-                    mClient.getStreamRecordings(stream.getId(), new StreamRecordingsResponseHandler(){
-                        @Override
-                        public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
-                            Log.d(TAG, streamRecordings.get(0).getName());
-                        }
-                    });
-                }
-            });
-            layout.addView(seeRecordingsButton);
-        }
+        streamListView.setAdapter(arrayAdapter);
+        streamListView.setOnItemClickListener(this);
     }
 
     @Override
@@ -121,4 +76,12 @@ public class CineIoExampleAppActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Stream stream = mStreams.get(position);
+        Intent intent = new Intent(this, CineIoStreamViewActivity.class);
+        intent.putExtra("STREAM_DATA", stream.dataString());
+        intent.putExtra("SECRET_KEY", mClient.getSecretKey());
+        startActivity(intent);
+    }
 }

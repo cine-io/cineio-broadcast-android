@@ -92,6 +92,11 @@ public class CineIoClient {
             }
         });
     }
+    public void playRecording(StreamRecording recording, Context context) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(recording.getUrl()), "video/*");
+        context.startActivity(intent);
+    }
 
     public void getProject(final ProjectResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
