@@ -1,7 +1,5 @@
 package io.cine.android.api;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 
 /**

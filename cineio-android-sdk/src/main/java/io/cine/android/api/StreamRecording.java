@@ -30,6 +30,11 @@ public class StreamRecording {
         }
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     public String getDate() {
         try {
             return data.get("date").toString();
