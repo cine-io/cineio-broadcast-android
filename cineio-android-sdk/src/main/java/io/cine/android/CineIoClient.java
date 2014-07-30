@@ -20,6 +20,7 @@ import io.cine.android.api.Project;
 import io.cine.android.api.ProjectResponseHandler;
 import io.cine.android.api.Stream;
 import io.cine.android.api.StreamRecording;
+import io.cine.android.api.StreamRecordingResponseHandler;
 import io.cine.android.api.StreamRecordingsResponseHandler;
 import io.cine.android.api.StreamResponseHandler;
 import io.cine.android.api.StreamsResponseHandler;
@@ -174,6 +175,23 @@ public class CineIoClient {
                         streamRecordings.add(streamRecording);
                     }
                     handler.onSuccess(streamRecordings);
+                } catch (JSONException e) {
+                    handler.onFailure(e);
+                }
+            }
+        });
+    }
+
+    public void deleteStreamRecordings(String id, String recordingName, final StreamRecordingResponseHandler handler){
+        AsyncHttpClient client = new AsyncHttpClient();
+        String url = BASE_URL + "/stream/recording?secretKey="+secretKey+ "&id="+id+"&name="+recordingName;
+        client.delete(url, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(String response) {
+                try {
+                    StreamRecording streamRecording= new StreamRecording(new JSONObject(response));
+                    handler.onSuccess(streamRecording);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
