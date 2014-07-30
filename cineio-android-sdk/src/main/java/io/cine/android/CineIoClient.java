@@ -35,6 +35,10 @@ public class CineIoClient {
         this.secretKey = secretKey;
     }
 
+    public String getSecretKey() {
+        return secretKey;
+    }
+
     public void broadcast(String id, final Context context){
         final Intent intent = new Intent(context, BroadcastActivity.class);
 
