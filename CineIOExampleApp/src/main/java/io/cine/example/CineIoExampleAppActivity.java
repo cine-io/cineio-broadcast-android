@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 import io.cine.android.CineIoClient;
 import io.cine.android.api.Stream;
+import io.cine.android.api.StreamRecording;
+import io.cine.android.api.StreamRecordingsResponseHandler;
 import io.cine.android.api.StreamsResponseHandler;
 
 public class CineIoExampleAppActivity extends Activity {
@@ -83,6 +85,23 @@ public class CineIoExampleAppActivity extends Activity {
                 }
             });
             layout.addView(playButton);
+
+            Button seeRecordingsButton = new Button(this);
+            seeRecordingsButton.setText("Recordings");
+            seeRecordingsButton.setLayoutParams(wrapParams);
+            seeRecordingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, "Fetching recordings for "  stream.getId());
+                    mClient.getStreamRecordings(stream.getId(), new StreamRecordingsResponseHandler(){
+                        @Override
+                        public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
+                            Log.d(TAG, streamRecordings.get(0).getName());
+                        }
+                    });
+                }
+            });
+            layout.addView(seeRecordingsButton);
         }
     }
 
