@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/cine-io/cineio-android.svg?branch=master)](https://travis-ci.org/cine-io/cineio-android)
 
-The android module for [cine.io](cine.io).
+The [android library](http://mvnrepository.com/artifact/io.cine/cineio-android-sdk) for [cine.io](cine.io).
 
 ## Installation
 
