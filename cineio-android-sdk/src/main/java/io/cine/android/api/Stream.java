@@ -5,49 +5,57 @@ import org.json.JSONObject;
 
 public class Stream {
 
-  private JSONObject data;
+    private JSONObject data;
 
-  public Stream(JSONObject data){
-    this.data = data;
-  }
-
-  public String getId(){
-    try {
-      return data.get("id").toString();
-    } catch (JSONException e) {
-      return null;
+    public Stream(JSONObject data) {
+        this.data = data;
     }
-  }
 
-  public String getName(){
-    try {
-      return data.get("name").toString();
-    } catch (JSONException e) {
-      return null;
+    public String getId() {
+        try {
+            return data.getString("id");
+        } catch (JSONException e) {
+            return null;
+        }
     }
-  }
+
+    public String getName() {
+        try {
+            return data.getString("name");
+        } catch (JSONException e) {
+            return null;
+        }
+    }
 
     @Override
     public String toString() {
         String name = getName();
-        if (name != null){
+        if (name != null) {
             return name;
-        }else{
+        } else {
             return getId();
         }
     }
 
-    public JSONObject getData(){
-    return data;
-  }
+    public boolean getRecord() {
+        try {
+            return data.getBoolean("record");
+        } catch (JSONException e) {
+            return false;
+        }
+    }
 
-  public String dataString() {
-    return data.toString();
-  }
+    public JSONObject getData() {
+        return data;
+    }
+
+    public String dataString() {
+        return data.toString();
+    }
 
     public String getPublishUrl() {
         try {
-            JSONObject publishData = (JSONObject) data.get("publish");
+            JSONObject publishData = data.getJSONObject("publish");
             return publishData.get("url").toString() + "/" + publishData.get("stream").toString();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -57,7 +65,7 @@ public class Stream {
 
     public String getHLSUrl() {
         try {
-            JSONObject playData = (JSONObject) data.get("play");
+            JSONObject playData = data.getJSONObject("play");
             return playData.get("hls").toString();
         } catch (JSONException e) {
             e.printStackTrace();

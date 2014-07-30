@@ -212,9 +212,11 @@ client.createStream(new StreamResponseHandler(){
 // can optionally take params
 // params:
 //  name: 'an optional stream name'
+//  record: true|false (default false). record: true will save recordings of all streaming sessions
 JSONObject params = new JSONObject();
 try {
   params.put("name", "a new stream");
+  params.put("record", true);
 } catch (JSONException e) {}
 
 client.createStream(params, new StreamResponseHandler(){
@@ -230,10 +232,12 @@ To update a stream:
 ```java
 // params:
 //  name: 'a new stream name'
+//  record: true|false (updating a stream from true to false will delete old stream recordings)
 String streamId = "STREAM_ID";
 JSONObject params = new JSONObject();
 try {
   params.put("name", "new name");
+  params.put("record", true);
 } catch (JSONException e) {}
 
 client.updateStream(streamId, params, new StreamResponseHandler(){

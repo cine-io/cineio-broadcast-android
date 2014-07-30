@@ -13,7 +13,7 @@ public class Project {
 
 	public String getId(){
 		try {
-			return (String) this.data.get("id");
+			return this.data.getString("id");
 		} catch (JSONException e) {
 			return null;
 		}
@@ -21,7 +21,7 @@ public class Project {
 
 	public String getName(){
 		try {
-			return (String) this.data.get("name");
+			return this.data.getString("name");
 		} catch (JSONException e) {
 			return null;
 		}
