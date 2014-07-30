@@ -100,10 +100,45 @@ client.getStream(id, new StreamResponseHandler(){
   public void onSuccess(Stream stream) {
     String hlsUrl = stream.getHLSUrl();
     // start your video player here with the hlsUrl
-    }
+  }
 });
 ```
 
+### Play a stream Recording
+
+Playing a stream recording will launch the default Video Player a user has configured, or ask the user which application to launch for playing a recorded video.
+Most android phones come with a default video player.
+
+```java
+// With a recordingName
+String streamId = "STREAM_ID";
+String recordingName = "recordingName";
+client.playRecording(streamId, recordingName, this);
+// this is a Context, such as your instance of an Activity.
+```
+
+```java
+// With a stringRecording object (such as returned from getStreamRecordings)
+String streamId = "STREAM_ID";
+StreamRecording streamRecording;
+client.playRecording(streamId, streamRecording, this);
+// this is a Context, such as your instance of an Activity.
+```
+
+If you wish to build your own video player, here is some sample code to get the MP4 url.
+```java
+String streamId = "STREAM_ID";
+client.getStreamRecordings(streamId, new StreamRecordingsResponseHandler(){
+  public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
+    if (streamRecordings.size() == 0){
+      //TODO handle no recording
+      return;
+    }
+    String url = streamRecordings.get(0).getUrl(); //defaulting to the first recording
+    //TODO start your video player here with the mp4Url
+  }
+});
+```
 
 ### API calls
 
@@ -217,6 +252,33 @@ client.deleteStream(streamId, new StreamResponseHandler(){
   @Override
   public void onSuccess(Stream stream) {
     //TODO handle stream
+  }
+});
+```
+
+#### Stream Recordings
+
+To get all the recordings for a stream:
+
+```java
+String streamId = "STREAM_ID";
+client.getStreamRecordings(streamId, new StreamsRecordingsResponseHandler(){
+  @Override
+  public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
+    //TODO handle streamRecordings
+  }
+});
+```
+
+To delete a stream recording:
+
+```java
+String streamId = "STREAM_ID";
+String recordingName = "recording-name";
+client.deleteStreamRecording(streamId, recordingName, new StreamRecordingResponseHandler(){
+  @Override
+  public void onSuccess(StreamRecording streamRecording) {
+    //TODO handle deleted stream recording
   }
 });
 ```
