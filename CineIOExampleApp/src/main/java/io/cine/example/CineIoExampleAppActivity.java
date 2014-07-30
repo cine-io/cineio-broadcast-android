@@ -92,7 +92,7 @@ public class CineIoExampleAppActivity extends Activity {
             seeRecordingsButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "Fetching recordings for "  stream.getId());
+                    Log.d(TAG, "Fetching recordings for " + stream.getId());
                     mClient.getStreamRecordings(stream.getId(), new StreamRecordingsResponseHandler(){
                         @Override
                         public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
