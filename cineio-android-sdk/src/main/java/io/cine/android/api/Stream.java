@@ -27,7 +27,17 @@ public class Stream {
     }
   }
 
-  public JSONObject getData(){
+    @Override
+    public String toString() {
+        String name = getName();
+        if (name != null){
+            return name;
+        }else{
+            return getId();
+        }
+    }
+
+    public JSONObject getData(){
     return data;
   }
 
