@@ -19,6 +19,8 @@ import io.cine.android.api.JsonToParams;
 import io.cine.android.api.Project;
 import io.cine.android.api.ProjectResponseHandler;
 import io.cine.android.api.Stream;
+import io.cine.android.api.StreamRecording;
+import io.cine.android.api.StreamRecordingsResponseHandler;
 import io.cine.android.api.StreamResponseHandler;
 import io.cine.android.api.StreamsResponseHandler;
 
@@ -56,6 +58,34 @@ public class CineIoClient {
                 context.startActivity(intent);
             }
 
+        });
+    }
+
+    public void playRecording(final String id, final String recordingName, final Context context){
+        getStreamRecordings(id, new StreamRecordingsResponseHandler(){
+            @Override
+            public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
+                String recordingUrl = null;
+                for (int i = 0; i < streamRecordings.size(); i++){
+                    StreamRecording recording = streamRecordings.get(i);
+                    Log.d(TAG, "RECORDING");
+                    Log.d(TAG, recordingName);
+                    Log.d(TAG, recording.getName());
+                    Log.d(TAG, recording.getName().equals(recordingName) ? "EQUAL" : "NOT EQUAL");
+                    if (recording.getName().equals(recordingName)){
+                        recordingUrl = recording.getUrl();
+                        break;
+                    }
+                }
+                if (recordingUrl == null){
+                    Exception e = new Exception("recordingUrl not found for name: "+ recordingName + " and Stream id: "+ id);
+                    onFailure(e);
+                }else{
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(recordingUrl), "video/*");
+                    context.startActivity(intent);
+                }
+            }
         });
     }
 
@@ -111,6 +141,30 @@ public class CineIoClient {
                         streams.add(stream);
                     }
                     handler.onSuccess(streams);
+                } catch (JSONException e) {
+                    handler.onFailure(e);
+                }
+            }
+        });
+    }
+
+    public void getStreamRecordings(String id, final StreamRecordingsResponseHandler handler){
+        AsyncHttpClient client = new AsyncHttpClient();
+        String url = BASE_URL + "/stream/recordings";
+        RequestParams rq = JsonToParams.toRequestParams(secretKey);
+        rq.add("id", id);
+        client.get(url, rq, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(String response) {
+                try {
+                    ArrayList<StreamRecording> streamRecordings = new ArrayList<StreamRecording>();
+                    JSONArray obj = new JSONArray(response);
+                    for(int i = 0; i < obj.length(); i++){
+                        StreamRecording streamRecording = new StreamRecording(obj.getJSONObject(i));
+                        streamRecordings.add(streamRecording);
+                    }
+                    handler.onSuccess(streamRecordings);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
