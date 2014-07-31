@@ -28,7 +28,10 @@ before_install:
   - echo "sdk.dir=$ANDROID_HOME" > local.properties
   # list packages for debug purpose
   - android list sdk -a -e -u
-  - echo yes | android update sdk -t 1,2,3,tools,platform-tools,extra-android-support,extra-android-m2repository,android-19,build-tools-19.1.0 --force --no-ui
+  - echo yes | android update sdk --filter platform-tools --no-ui --force > /dev/null
+  - echo yes | android update sdk --filter android-19 --no-ui --force > /dev/null
+  - echo yes | android update sdk --filter extra-android-support --no-ui --force > /dev/null
+  - echo yes | android update sdk --filter extra-android-m2repository --no-ui --force > /dev/null
   # Sonatype bypass
   - echo "nexusUsername=dummy" >> cineio-android-sdk/gradle.properties
   - echo "nexusPassword=dummy" >> cineio-android-sdk/gradle.properties
