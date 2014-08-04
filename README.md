@@ -232,7 +232,7 @@ To update a stream:
 ```java
 // params:
 //  name: 'a new stream name'
-//  record: true|false (updating a stream from true to false will delete old stream recordings)
+//  record: true|false (updating a stream from true to false will not delete old stream recordings)
 String streamId = "STREAM_ID";
 JSONObject params = new JSONObject();
 try {
