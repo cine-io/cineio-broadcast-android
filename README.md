@@ -148,6 +148,17 @@ client.getStreamRecordings(streamId, new StreamRecordingsResponseHandler(){
 
 #### Projects
 
+To get data about your projects:
+
+```java
+client.getProjects(new ProjectsResponseHandler(){
+  @Override
+  public void onSuccess(ArrayList<Project> projects) {
+      //TODO handle projects
+  }
+});
+```
+
 To get data about your project:
 
 ```java

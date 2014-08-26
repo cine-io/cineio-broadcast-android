@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import io.cine.android.api.JsonToParams;
 import io.cine.android.api.Project;
 import io.cine.android.api.ProjectResponseHandler;
+import io.cine.android.api.ProjectsResponseHandler;
 import io.cine.android.api.Stream;
 import io.cine.android.api.StreamRecording;
 import io.cine.android.api.StreamRecordingResponseHandler;
@@ -32,7 +33,6 @@ public class CineIoClient {
     private CineIoConfig mConfig;
 
     public CineIoClient(CineIoConfig config){
-        Log.v(TAG, mConfig.toString());
         this.mConfig = config;
     }
 
@@ -110,6 +110,29 @@ public class CineIoClient {
                 try {
                     Project project = new Project(new JSONObject(response));
                     handler.onSuccess(project);
+                } catch (JSONException e) {
+                    handler.onFailure(e);
+                }
+            }
+        });
+    }
+
+    public void getProjects(final ProjectsResponseHandler handler){
+        AsyncHttpClient client = new AsyncHttpClient();
+        String url = BASE_URL + "/projects";
+        RequestParams rq = JsonToParams.toRequestParamsWithMasterKey(mConfig.getMasterKey());
+        client.get(url, rq, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(String response) {
+                try {
+                    ArrayList<Project> projects = new ArrayList<Project>();
+                    JSONArray obj = new JSONArray(response);
+                    for(int i = 0; i < obj.length(); i++){
+                        Project project = new Project(obj.getJSONObject(i));
+                        projects.add(project);
+                    }
+                    handler.onSuccess(projects);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }

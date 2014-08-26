@@ -29,4 +29,11 @@ public class JsonToParams {
 		}
 		return requestParams;
 	}
+
+    public static RequestParams toRequestParamsWithMasterKey(String masterKey){
+        RequestParams requestParams = new RequestParams();
+        requestParams.add("masterKey", masterKey);
+        return requestParams;
+    }
+
 }
