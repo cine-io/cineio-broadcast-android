@@ -17,4 +17,9 @@ public class ProjectsResponseHandler {
         e.printStackTrace();
     }
 
+    public void onFailure(Throwable throwable) {
+        // TODO Auto-generated method stub
+        throwable.printStackTrace();
+    }
+
 }

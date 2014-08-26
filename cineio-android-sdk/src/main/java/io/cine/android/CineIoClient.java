@@ -9,6 +9,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,12 +29,16 @@ import io.cine.android.api.StreamsResponseHandler;
 
 public class CineIoClient {
 
+    private final String VERSION = "0.0.6";
     private final static String TAG = "CineIoClient";
     private final static String BASE_URL = "https://www.cine.io/api/1/-";
+    private final AsyncHttpClient mClient;
     private CineIoConfig mConfig;
 
     public CineIoClient(CineIoConfig config){
         this.mConfig = config;
+        this.mClient = new AsyncHttpClient();
+        mClient.setUserAgent("cineio-android version-"+VERSION;);
     }
 
     public String getSecretKey() {
@@ -100,34 +105,37 @@ public class CineIoClient {
     }
 
     public void getProject(final ProjectResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/project";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
-        client.get(url, rq, new AsyncHttpResponseHandler() {
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    Project project = new Project(new JSONObject(response));
+                    Project project = new Project(new JSONObject(new String(response)));
                     handler.onSuccess(project);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
         });
     }
 
     public void getProjects(final ProjectsResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/projects";
         RequestParams rq = JsonToParams.toRequestParamsWithMasterKey(mConfig.getMasterKey());
-        client.get(url, rq, new AsyncHttpResponseHandler() {
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
                     ArrayList<Project> projects = new ArrayList<Project>();
-                    JSONArray obj = new JSONArray(response);
+                    JSONArray obj = new JSONArray(new String(response));
                     for(int i = 0; i < obj.length(); i++){
                         Project project = new Project(obj.getJSONObject(i));
                         projects.add(project);
@@ -137,38 +145,47 @@ public class CineIoClient {
                     handler.onFailure(e);
                 }
             }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void updateProject(JSONObject params, final ProjectResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/project";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey(), params);
-        client.put(url, rq, new AsyncHttpResponseHandler() {
+        mClient.put(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    Project project = new Project(new JSONObject(response));
+                    Project project = new Project(new JSONObject(new String(response)));
                     handler.onSuccess(project);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void getStreams(final StreamsResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/streams";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
-        client.get(url, rq, new AsyncHttpResponseHandler() {
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
                     ArrayList<Stream> streams = new ArrayList<Stream>();
-                    JSONArray obj = new JSONArray(response);
+                    JSONArray obj = new JSONArray(new String(response));
                     for(int i = 0; i < obj.length(); i++){
                         Stream stream= new Stream(obj.getJSONObject(i));
                         streams.add(stream);
@@ -178,21 +195,25 @@ public class CineIoClient {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void getStreamRecordings(String id, final StreamRecordingsResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream/recordings";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
         rq.add("id", id);
-        client.get(url, rq, new AsyncHttpResponseHandler() {
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
                     ArrayList<StreamRecording> streamRecordings = new ArrayList<StreamRecording>();
-                    JSONArray obj = new JSONArray(response);
+                    JSONArray obj = new JSONArray(new String(response));
                     for(int i = 0; i < obj.length(); i++){
                         StreamRecording streamRecording = new StreamRecording(obj.getJSONObject(i));
                         streamRecordings.add(streamRecording);
@@ -202,111 +223,140 @@ public class CineIoClient {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void deleteStreamRecording(String id, String recordingName, final StreamRecordingResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream/recording?secretKey="+getSecretKey()+ "&id="+id+"&name="+recordingName;
-        client.delete(url, new AsyncHttpResponseHandler() {
+        mClient.delete(url, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    StreamRecording streamRecording= new StreamRecording(new JSONObject(response));
+                    StreamRecording streamRecording= new StreamRecording(new JSONObject(new String(response)));
                     handler.onSuccess(streamRecording);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void getStream(String id, final StreamResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
         rq.add("id", id);
-        client.get(url, rq, new AsyncHttpResponseHandler() {
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    Stream stream= new Stream(new JSONObject(response));
+                    Stream stream= new Stream(new JSONObject(new String(response)));
                     handler.onSuccess(stream);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void updateStream(String id, JSONObject params, final StreamResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey(), params);
         rq.add("id", id);
-        client.put(url, rq, new AsyncHttpResponseHandler() {
+        mClient.put(url, rq, new AsyncHttpResponseHandler() {
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    Stream stream= new Stream(new JSONObject(response));
+                    Stream stream= new Stream(new JSONObject(new String(response)));
                     handler.onSuccess(stream);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void createStream(final StreamResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
-        client.post(url, rq, new AsyncHttpResponseHandler() {
+        mClient.post(url, rq, new AsyncHttpResponseHandler() {
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    Stream stream= new Stream(new JSONObject(response));
+                    Stream stream= new Stream(new JSONObject(new String(response)));
                     handler.onSuccess(stream);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void createStream(JSONObject params, final StreamResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey(), params);
-        client.post(url, rq, new AsyncHttpResponseHandler() {
+        mClient.post(url, rq, new AsyncHttpResponseHandler() {
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    Stream stream= new Stream(new JSONObject(response));
+                    Stream stream= new Stream(new JSONObject(new String(response)));
                     handler.onSuccess(stream);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
     public void deleteStream(String id, final StreamResponseHandler handler){
-        AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream?secretKey="+getSecretKey()+ "&id="+id;
-        client.delete(url, new AsyncHttpResponseHandler() {
+        mClient.delete(url, new AsyncHttpResponseHandler() {
 
             @Override
-            public void onSuccess(String response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    Stream stream= new Stream(new JSONObject(response));
+                    Stream stream= new Stream(new JSONObject(new String(response)));
                     handler.onSuccess(stream);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
         });
     }
 
