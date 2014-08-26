@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.cine.android.CineIoClient;
+import io.cine.android.CineIoConfig;
 import io.cine.android.api.Stream;
 
 public class CineIoStreamViewActivity extends Activity {
@@ -30,7 +31,9 @@ public class CineIoStreamViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cine_io_stream_view);
         Bundle extras = getIntent().getExtras();
-        mClient = new CineIoClient(extras.getString("SECRET_KEY"));
+        CineIoConfig config = new CineIoConfig();
+        config.setSecretKey(extras.getString("SECRET_KEY"));
+        mClient = new CineIoClient(config);
         try {
             stream = new Stream(new JSONObject(extras.getString("STREAM_DATA")));
         } catch (JSONException e) {

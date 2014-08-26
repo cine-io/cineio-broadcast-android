@@ -70,7 +70,11 @@ import io.cine.android.*;
 
 ```java
 String SECRET_KEY = "YOUR_SECRET_KEY";
-CineIoClient client = new CineIoClient(SECRET_KEY);
+// String MASTER_KEY = "YOUR_MASTER_KEY";
+CineIoConfig config = new CineIoConfig();
+config.setSecretKey(SECRET_KEY);
+// config.setMasterKey(MASTER_KEY);
+CineIoClient client = new CineIoClient(config);
 ```
 
 ### Broadcast a live stream

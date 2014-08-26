@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import io.cine.android.CineIoClient;
+import io.cine.android.CineIoConfig;
 import io.cine.android.api.Stream;
 import io.cine.android.api.StreamsResponseHandler;
 
@@ -35,8 +36,9 @@ public class CineIoExampleAppActivity extends Activity implements AdapterView.On
             Toast.makeText(this, error, Toast.LENGTH_LONG).show();
         }
         streamListView = (ListView) findViewById(R.id.streamBroadcasts);
-
-        mClient = new CineIoClient(SECRET_KEY);
+        CineIoConfig config = new CineIoConfig();
+        config.setSecretKey(SECRET_KEY);
+        mClient = new CineIoClient(config);
         mClient.getStreams(new StreamsResponseHandler(){
             @Override
             public void onSuccess(ArrayList<Stream> streams) {

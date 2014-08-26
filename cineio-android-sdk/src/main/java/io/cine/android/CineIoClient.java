@@ -29,15 +29,15 @@ public class CineIoClient {
 
     private final static String TAG = "CineIoClient";
     private final static String BASE_URL = "https://www.cine.io/api/1/-";
-    private String secretKey;
+    private CineIoConfig mConfig;
 
-    public CineIoClient(String secretKey){
-        Log.v(TAG, secretKey);
-        this.secretKey = secretKey;
+    public CineIoClient(CineIoConfig config){
+        Log.v(TAG, mConfig.toString());
+        this.mConfig = config;
     }
 
     public String getSecretKey() {
-        return secretKey;
+        return mConfig.getSecretKey();
     }
 
     public void broadcast(String id, final Context context){
@@ -102,7 +102,7 @@ public class CineIoClient {
     public void getProject(final ProjectResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/project";
-        RequestParams rq = JsonToParams.toRequestParams(secretKey);
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
         client.get(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
@@ -120,7 +120,7 @@ public class CineIoClient {
     public void updateProject(JSONObject params, final ProjectResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/project";
-        RequestParams rq = JsonToParams.toRequestParams(secretKey, params);
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey(), params);
         client.put(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
@@ -138,7 +138,7 @@ public class CineIoClient {
     public void getStreams(final StreamsResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/streams";
-        RequestParams rq = JsonToParams.toRequestParams(secretKey);
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
         client.get(url, rq, new AsyncHttpResponseHandler() {
 
             @Override
@@ -161,7 +161,7 @@ public class CineIoClient {
     public void getStreamRecordings(String id, final StreamRecordingsResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream/recordings";
-        RequestParams rq = JsonToParams.toRequestParams(secretKey);
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
         rq.add("id", id);
         client.get(url, rq, new AsyncHttpResponseHandler() {
 
@@ -182,9 +182,9 @@ public class CineIoClient {
         });
     }
 
-    public void deleteStreamRecordings(String id, String recordingName, final StreamRecordingResponseHandler handler){
+    public void deleteStreamRecording(String id, String recordingName, final StreamRecordingResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
-        String url = BASE_URL + "/stream/recording?secretKey="+secretKey+ "&id="+id+"&name="+recordingName;
+        String url = BASE_URL + "/stream/recording?secretKey="+getSecretKey()+ "&id="+id+"&name="+recordingName;
         client.delete(url, new AsyncHttpResponseHandler() {
 
             @Override
@@ -202,7 +202,7 @@ public class CineIoClient {
     public void getStream(String id, final StreamResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream";
-        RequestParams rq = JsonToParams.toRequestParams(secretKey);
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
         rq.add("id", id);
         client.get(url, rq, new AsyncHttpResponseHandler() {
 
@@ -221,7 +221,7 @@ public class CineIoClient {
     public void updateStream(String id, JSONObject params, final StreamResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream";
-        RequestParams rq = JsonToParams.toRequestParams(secretKey, params);
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey(), params);
         rq.add("id", id);
         client.put(url, rq, new AsyncHttpResponseHandler() {
             @Override
@@ -239,7 +239,7 @@ public class CineIoClient {
     public void createStream(final StreamResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream";
-        RequestParams rq = JsonToParams.toRequestParams(secretKey);
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
         client.post(url, rq, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(String response) {
@@ -256,7 +256,7 @@ public class CineIoClient {
     public void createStream(JSONObject params, final StreamResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
         String url = BASE_URL + "/stream";
-        RequestParams rq = JsonToParams.toRequestParams(secretKey, params);
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey(), params);
         client.post(url, rq, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(String response) {
@@ -272,7 +272,7 @@ public class CineIoClient {
 
     public void deleteStream(String id, final StreamResponseHandler handler){
         AsyncHttpClient client = new AsyncHttpClient();
-        String url = BASE_URL + "/stream?secretKey="+secretKey+ "&id="+id;
+        String url = BASE_URL + "/stream?secretKey="+getSecretKey()+ "&id="+id;
         client.delete(url, new AsyncHttpResponseHandler() {
 
             @Override
