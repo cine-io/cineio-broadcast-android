@@ -199,6 +199,22 @@ client.getStreams(new StreamsResponseHandler(){
 });
 ```
 
+To get all your streams by name:
+
+```java
+JSONObject params = new JSONObject();
+try {
+  params.put("name", "a stream name");
+} catch (JSONException e) {}
+
+client.getStreams(params, new StreamsResponseHandler(){
+  @Override
+  public void onSuccess(ArrayList<Stream> streams) {
+    //TODO handle streams
+  }
+});
+```
+
 To get a specific stream:
 
 ```java

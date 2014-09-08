@@ -203,6 +203,33 @@ public class CineIoClient {
         });
     }
 
+    public void getStreams(JSONObject params, final StreamsResponseHandler handler){
+        String url = BASE_URL + "/streams";
+        RequestParams rq = JsonToParams.toRequestParams(getSecretKey(), params);
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                try {
+                    ArrayList<Stream> streams = new ArrayList<Stream>();
+                    JSONArray obj = new JSONArray(new String(response));
+                    for(int i = 0; i < obj.length(); i++){
+                        Stream stream= new Stream(obj.getJSONObject(i));
+                        streams.add(stream);
+                    }
+                    handler.onSuccess(streams);
+                } catch (JSONException e) {
+                    handler.onFailure(e);
+                }
+            }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
+        });
+    }
+
     public void getStreamRecordings(String id, final StreamRecordingsResponseHandler handler){
         String url = BASE_URL + "/stream/recordings";
         RequestParams rq = JsonToParams.toRequestParams(getSecretKey());
