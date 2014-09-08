@@ -29,7 +29,7 @@ import io.cine.android.api.StreamsResponseHandler;
 
 public class CineIoClient {
 
-    private final String VERSION = "0.0.7";
+    private final String VERSION = "0.0.8-SNAPSHOT";
     private final static String TAG = "CineIoClient";
     private final static String BASE_URL = "https://www.cine.io/api/1/-";
     private final AsyncHttpClient mClient;
