@@ -2,7 +2,6 @@ package io.cine.example;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +19,6 @@ import io.cine.android.CineIoConfig;
 import io.cine.android.api.Stream;
 import io.cine.android.api.StreamRecording;
 import io.cine.android.api.StreamRecordingsResponseHandler;
-import io.cine.example.R;
 
 public class CineIoStreamRecordingsListActivity extends Activity implements AdapterView.OnItemClickListener {
 

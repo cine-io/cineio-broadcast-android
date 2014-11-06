@@ -1,7 +1,5 @@
 package io.cine.android.api;
 
-import java.util.ArrayList;
-
 /**
  * Created by thomas on 7/30/14.
  */
