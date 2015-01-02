@@ -1,8 +1,8 @@
 # cine.io android sdk
 
-[![Build Status](https://travis-ci.org/cine-io/cineio-android.svg?branch=master)](https://travis-ci.org/cine-io/cineio-android)
+[![Build Status](https://travis-ci.org/cine-io/cineio-broadcast-android.svg?branch=master)](https://travis-ci.org/cine-io/cineio-broadcast-android)
 
-The [android library](http://mvnrepository.com/artifact/io.cine/cineio-android-sdk) for [cine.io](https://www.cine.io).
+The [android library](http://mvnrepository.com/artifact/io.cine/cineio-broadcast-android-sdk) for [cine.io](https://www.cine.io).
 
 ## Installation
 
@@ -10,7 +10,7 @@ Add the following to your `build.gradle`.
 
 ```groovy
 dependencies {
-  compile 'io.cine:cineio-android-sdk:0.0.8'
+  compile 'io.cine:cineio-broadcast-android-sdk:0.0.8'
 }
 ```
 
@@ -28,7 +28,7 @@ repositories {
 }
 ```
 
-Download cineio-android-sdk to your application with `./gradlew build`.
+Download cineio-broadcast-android-sdk to your application with `./gradlew build`.
 
 Then we need to let your application know about the cine.io `BroadcastActivity`.
 
@@ -51,7 +51,7 @@ Add the following Activity your `AndroidManifest.xml` within the `<application>`
 </activity>
 ```
 
-For a complete example checkout our [example application AndroidManifest.xml](https://github.com/cine-io/cineio-android/blob/master/CineIOExampleApp/src/main/AndroidManifest.xml).
+For a complete example checkout our [example application AndroidManifest.xml](https://github.com/cine-io/cineio-broadcast-android/blob/master/CineIOExampleApp/src/main/AndroidManifest.xml).
 
 Now you're all set up!
 

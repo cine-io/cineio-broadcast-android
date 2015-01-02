@@ -1,1 +1,1 @@
-include ':cineio-android-sdk', 'CineIOExampleApp', 'CineIoQuickBroadcastActivityLauncher'
+include ':cineio-broadcast-android-sdk', 'CineIOExampleApp', 'CineIoQuickBroadcastActivityLauncher'

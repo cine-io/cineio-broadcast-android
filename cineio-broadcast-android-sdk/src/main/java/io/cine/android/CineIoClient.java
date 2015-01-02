@@ -38,7 +38,7 @@ public class CineIoClient {
     public CineIoClient(CineIoConfig config){
         this.mConfig = config;
         this.mClient = new AsyncHttpClient();
-        mClient.setUserAgent("cineio-android version-"+VERSION);
+        mClient.setUserAgent("cineio-broadcast-android version-"+VERSION);
     }
 
     public String getSecretKey() {
