@@ -143,9 +143,11 @@ public class BroadcastActivity extends Activity
     private AspectFrameLayout mFrameLayout;
     private EncodingConfig mEncodingConfig;
 
+    //OMG WILL IT WORK???
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("OOOOH","OOOO");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_broadcast_capture);
