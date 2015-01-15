@@ -87,6 +87,18 @@ client.broadcast(streamId, this);
 // `this` is a Context, such as your instance of an Activity.
 ```
 
+```java
+// To use a custom width and height
+import io.cine.android.streaming.EncodingConfig;
+
+String streamId = "STREAM_ID";
+EncodingConfig config = new EncodingConfig();
+config.setWidth(640);
+config.setHeight(480);
+client.broadcast(streamId, config, this);
+// `this` is a Context, such as your instance of an Activity.
+```
+
 ### Play
 
 Playing a live stream will launch the default Video Player a user has configured, or ask the user which application to launch for playing a live video.
