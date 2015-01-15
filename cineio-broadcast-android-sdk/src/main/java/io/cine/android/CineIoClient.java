@@ -26,6 +26,7 @@ import io.cine.android.api.StreamRecordingResponseHandler;
 import io.cine.android.api.StreamRecordingsResponseHandler;
 import io.cine.android.api.StreamResponseHandler;
 import io.cine.android.api.StreamsResponseHandler;
+import io.cine.android.streaming.EncodingConfig;
 
 public class CineIoClient {
 
@@ -45,6 +46,7 @@ public class CineIoClient {
         return mConfig.getSecretKey();
     }
 
+    // Use default config
     public void broadcast(String id, final Context context){
         final Intent intent = new Intent(context, BroadcastActivity.class);
 
@@ -52,6 +54,25 @@ public class CineIoClient {
             public void onSuccess(Stream stream) {
                 Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
+                context.startActivity(intent);
+            }
+
+        });
+    }
+
+    //pass in custom values
+    public void broadcast(String id, final EncodingConfig config,  final Context context){
+        final Intent intent = new Intent(context, BroadcastActivity.class);
+
+        getStream(id, new StreamResponseHandler(){
+            public void onSuccess(Stream stream) {
+                Log.d(TAG, "Starting publish intent: " + stream.getId());
+                intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
+                intent.putExtra("WIDTH", config.getLandscapeWidth());
+                intent.putExtra("HEIGHT", config.getLandscapeHeight());
+//                intent.putExtra("SELECTED_CAMERA", selectedCamera);
+//                intent.putExtra("LOCK_SCREEN", lockScreen);
+
                 context.startActivity(intent);
             }
 

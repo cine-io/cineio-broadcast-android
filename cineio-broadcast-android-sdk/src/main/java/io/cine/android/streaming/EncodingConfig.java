@@ -9,16 +9,19 @@ import io.cine.ffmpegbridge.FFmpegBridge;
  * Created by thomas on 7/1/14.
  */
 public class EncodingConfig {
+
     public interface EncodingCallback {
         public void muxerStatusUpdate(MUXER_STATE muxerState);
     }
     private static final String TAG = "EncodingConfig";
 
+    private int customWidth;
     private static final int LANDSCAPE_CAMERA_WIDTH = 1280;
+    private int customHeight;
     private static final int LANDSCAPE_CAMERA_HEIGHT = 720;
     private static int DEFAULT_BIT_RATE = 1500000;
     private static int DEFAULT_HUMAN_FPS = 15;
-    private final EncodingCallback mEncodingCallback;
+    private EncodingCallback mEncodingCallback;
     private MUXER_STATE mMuxerState;
 
     public static enum MUXER_STATE {PREPARING, READY, CONNECTING, STREAMING, SHUTDOWN}
@@ -33,30 +36,55 @@ public class EncodingConfig {
         mEncodingCallback = encodingCallback;
         mOrientation = Surface.ROTATION_0;
         mMachineVideoFps = DEFAULT_HUMAN_FPS * 1000;
+        setDefaultValues();
+    }
+
+    public EncodingConfig(){
+        setDefaultValues();
+    }
+    private void setDefaultValues(){
+        this.customHeight = -1;
+        this.customWidth = -1;
+    }
+
+    public void setWidth(int width){
+        this.customWidth = width;
+    }
+
+    public void setHeight(int height){
+        this.customHeight = height;
     }
 
     public int getWidth() {
         if (isLandscape()) {
-            return LANDSCAPE_CAMERA_WIDTH;
+            return getOrientationAgnosticWidth();
         } else {
-            return LANDSCAPE_CAMERA_HEIGHT;
+            return getOrientationAgnosticHeight();
         }
     }
 
     public int getHeight() {
         if (isLandscape()) {
-            return LANDSCAPE_CAMERA_HEIGHT;
+            return getOrientationAgnosticHeight();
         } else {
-            return LANDSCAPE_CAMERA_WIDTH;
+            return getOrientationAgnosticWidth();
         }
     }
 
     public int getLandscapeWidth() {
-        return LANDSCAPE_CAMERA_WIDTH;
+        return getOrientationAgnosticWidth();
     }
 
     public int getLandscapeHeight() {
-        return LANDSCAPE_CAMERA_HEIGHT;
+        return getOrientationAgnosticHeight();
+    }
+
+    private int getOrientationAgnosticWidth(){
+        return this.customWidth == -1 ? LANDSCAPE_CAMERA_WIDTH : this.customWidth;
+    }
+
+    private int getOrientationAgnosticHeight(){
+        return this.customHeight == -1 ? LANDSCAPE_CAMERA_HEIGHT : this.customHeight;
     }
 
     public int getBitrate() {

@@ -153,13 +153,25 @@ public class BroadcastActivity extends Activity
 
         Bundle extras = getIntent().getExtras();
         String outputString;
+        int width = -1;
+        int height = -1;
         if (extras != null) {
             outputString = extras.getString("PUBLISH_URL");
+            width = extras.getInt("WIDTH", -1);
+            height = extras.getInt("HEIGHT", -1);
         }else{
             outputString = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cineio-recording.mp4";
         }
 
         mEncodingConfig = new EncodingConfig(this);
+        if(width != -1){
+            Log.v(TAG, "SETTING WIDTH TO: " + width);
+            mEncodingConfig.setWidth(width);
+        }
+        if(height != -1){
+            Log.v(TAG, "SETTING HEIGHT TO: " + height);
+            mEncodingConfig.setHeight(height);
+        }
         mEncodingConfig.setOutput(outputString);
         mMuxer = new FFmpegMuxer();
 
