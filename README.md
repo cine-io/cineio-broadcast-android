@@ -88,13 +88,14 @@ client.broadcast(streamId, this);
 ```
 
 ```java
-// To use a custom width and height
+// To use a custom width, height, and orientation
 import io.cine.android.streaming.EncodingConfig;
 
 String streamId = "STREAM_ID";
 EncodingConfig config = new EncodingConfig();
 config.setWidth(640);
 config.setHeight(480);
+config.lockOrientation("landscape"); //values are "landscape" and "portrait". Not setting the value will allow the view to switch depending on device orientation
 client.broadcast(streamId, config, this);
 // `this` is a Context, such as your instance of an Activity.
 ```
