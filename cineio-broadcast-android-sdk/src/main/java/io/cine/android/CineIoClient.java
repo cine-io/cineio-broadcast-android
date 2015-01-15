@@ -73,6 +73,9 @@ public class CineIoClient {
                 if(config.getLockedOrientation() != null){
                     intent.putExtra("ORIENTATION", config.getLockedOrientation());
                 }
+                if(config.getRequestedCamera() != null){
+                    intent.putExtra("CAMERA", config.getRequestedCamera());
+                }
 //                intent.putExtra("SELECTED_CAMERA", selectedCamera);
 //                intent.putExtra("LOCK_SCREEN", lockScreen);
 

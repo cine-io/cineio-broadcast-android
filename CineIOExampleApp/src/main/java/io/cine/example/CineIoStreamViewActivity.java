@@ -67,6 +67,8 @@ public class CineIoStreamViewActivity extends Activity {
                 //config.setHeight(480);
                 //TO LOCK AN ORIENTATION
                 //config.lockOrientation("landscape");
+                //TO SELECT A CAMERA
+                //config.selectCamera("back");
                 mClient.broadcast(stream.getId(), config, me);
             }
         });

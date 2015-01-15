@@ -11,6 +11,7 @@ import io.cine.ffmpegbridge.FFmpegBridge;
 public class EncodingConfig {
 
     private String lockedOrientation;
+    private String camera;
 
     public interface EncodingCallback {
         public void muxerStatusUpdate(MUXER_STATE muxerState);
@@ -99,6 +100,18 @@ public class EncodingConfig {
 
     public String getLockedOrientation() {
         return lockedOrientation;
+    }
+
+    public void selectCamera(String camera) {
+        if(camera.equals("back") || camera.equals("front") || camera == null){
+            this.camera = camera;
+        } else {
+            throw new RuntimeException("Camera must be \"front\" or \"back\"");
+        }
+    }
+
+    public String getRequestedCamera() {
+        return camera;
     }
 
     public int getBitrate() {

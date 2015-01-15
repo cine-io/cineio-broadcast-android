@@ -142,6 +142,7 @@ public class BroadcastActivity extends Activity
     private Camera.CameraInfo mCameraInfo;
     private AspectFrameLayout mFrameLayout;
     private EncodingConfig mEncodingConfig;
+    private String requestedCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,19 +157,21 @@ public class BroadcastActivity extends Activity
         int width = -1;
         int height = -1;
         String orientation = null;
+
         if (extras != null) {
             outputString = extras.getString("PUBLISH_URL");
             width = extras.getInt("WIDTH", -1);
             height = extras.getInt("HEIGHT", -1);
             orientation = extras.getString("ORIENTATION");
+            this.requestedCamera = extras.getString("CAMERA");
         }else{
             outputString = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cineio-recording.mp4";
         }
 
-        if(orientation.equals("landscape")){
+        if(orientation != null && orientation.equals("landscape")){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
-        if(orientation.equals("portrait")){
+        if(orientation != null && orientation.equals("portrait")){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
@@ -283,9 +286,15 @@ public class BroadcastActivity extends Activity
 
         // Try to find a front-facing camera (e.g. for videoconferencing).
         int numCameras = Camera.getNumberOfCameras();
+        int cameraToFind;
+        if(requestedCamera != null && requestedCamera.equals("back")){
+            cameraToFind = Camera.CameraInfo.CAMERA_FACING_BACK;
+        }else{
+            cameraToFind = Camera.CameraInfo.CAMERA_FACING_FRONT;
+        }
         for (int i = 0; i < numCameras; i++) {
             Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            if (info.facing == cameraToFind) {
                 mCameraInfo = info;
                 mCamera = Camera.open(i);
                 break;
