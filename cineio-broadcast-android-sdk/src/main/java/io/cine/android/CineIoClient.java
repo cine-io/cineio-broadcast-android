@@ -2,7 +2,9 @@ package io.cine.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.net.Uri;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -15,6 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.cine.android.api.JsonToParams;
 import io.cine.android.api.Project;
@@ -35,10 +39,22 @@ public class CineIoClient {
     private final AsyncHttpClient mClient;
     private CineIoConfig mConfig;
 
+    /** Camera, resolution and screen orientation lock
+     * Default resolution is 1280x720;
+     * Default selected camera is the one that is currently facing (regardless of # of cameras)
+     * Default locked-screen state is true;
+     */
+    private  Integer screen_height = 720;
+    private Integer screen_width = 1280;
+    private Integer selectedCamera;
+    private final Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+    private Boolean lockScreen = true;
+
     public CineIoClient(CineIoConfig config){
         this.mConfig = config;
         this.mClient = new AsyncHttpClient();
         mClient.setUserAgent("cineio-broadcast-android version-"+VERSION);
+        selectedCamera = cameraInfo.facing;
     }
 
     public String getSecretKey() {
@@ -52,11 +68,57 @@ public class CineIoClient {
             public void onSuccess(Stream stream) {
                 Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
+                intent.putExtra("SCREEN HEIGHT", screen_height);
+                intent.putExtra("SCREEN WIDTH", screen_width);
+                intent.putExtra("SELECTED CAMERA", selectedCamera);
+                intent.putExtra("LOCK SCREEN", lockScreen);
                 context.startActivity(intent);
             }
 
         });
     }
+
+    public void setLockScreen(Boolean lockScreen){
+        this.lockScreen = lockScreen;
+    }
+
+    public boolean getLockScreen(){
+        return this.lockScreen;
+    }
+
+
+    public void setSelectedCamera(Integer camera){
+        if (cameraInfo.CAMERA_FACING_BACK == camera || cameraInfo.CAMERA_FACING_FRONT == camera){
+            selectedCamera = camera;
+        }else{
+            selectedCamera = cameraInfo.facing;
+            Log.i("NO CAMERA SELECTED", "WE SELECTED ONE FOR YOU");
+        }
+    }
+
+    public Integer getSelectedCamera(){
+        return selectedCamera;
+    }
+
+    /**
+     * Here I'd consider checking if the height/width combo matches Android best practices as outlined here:
+     * http://developer.android.com/guide/appendix/media-formats.html#recommendations
+     * If the rest of the code is good I can do that as well
+     * @param width
+     * @param height
+     */
+
+    public void setResolution(Integer width, Integer height){
+      screen_height = height;
+        screen_width = width;
+    }
+
+    public String getResolution(){
+        String resolutionAsString = screen_width+"x"+screen_height;
+        Log.i("RESOLUTION", resolutionAsString);
+        return resolutionAsString;
+    }
+
     public void play(String id, final Context context){
 
         getStream(id, new StreamResponseHandler(){
