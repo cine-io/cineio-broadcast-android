@@ -70,6 +70,9 @@ public class CineIoClient {
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
                 intent.putExtra("WIDTH", config.getLandscapeWidth());
                 intent.putExtra("HEIGHT", config.getLandscapeHeight());
+                if(config.getLockedOrientation() != null){
+                    intent.putExtra("ORIENTATION", config.getLockedOrientation());
+                }
 //                intent.putExtra("SELECTED_CAMERA", selectedCamera);
 //                intent.putExtra("LOCK_SCREEN", lockScreen);
 

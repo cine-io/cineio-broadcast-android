@@ -65,6 +65,8 @@ public class CineIoStreamViewActivity extends Activity {
                 //TO SET A CUSTOM WIDTH AND HEIGHT
                 //config.setWidth(640);
                 //config.setHeight(480);
+                //TO LOCK AN ORIENTATION
+                //config.lockOrientation("landscape");
                 mClient.broadcast(stream.getId(), config, me);
             }
         });

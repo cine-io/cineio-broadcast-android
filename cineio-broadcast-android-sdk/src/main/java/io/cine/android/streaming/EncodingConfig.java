@@ -10,6 +10,8 @@ import io.cine.ffmpegbridge.FFmpegBridge;
  */
 public class EncodingConfig {
 
+    private String lockedOrientation;
+
     public interface EncodingCallback {
         public void muxerStatusUpdate(MUXER_STATE muxerState);
     }
@@ -85,6 +87,18 @@ public class EncodingConfig {
 
     private int getOrientationAgnosticHeight(){
         return this.customHeight == -1 ? LANDSCAPE_CAMERA_HEIGHT : this.customHeight;
+    }
+
+    public void lockOrientation(String lockedOrientation) {
+        if(lockedOrientation.equals("landscape") || lockedOrientation.equals("portrait") || lockedOrientation == null){
+            this.lockedOrientation = lockedOrientation;
+        } else {
+            throw new RuntimeException("Orientation must be \"landscape\" or \"portrait\"");
+        }
+    }
+
+    public String getLockedOrientation() {
+        return lockedOrientation;
     }
 
     public int getBitrate() {

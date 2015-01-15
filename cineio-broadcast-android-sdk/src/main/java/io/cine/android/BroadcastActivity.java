@@ -155,12 +155,21 @@ public class BroadcastActivity extends Activity
         String outputString;
         int width = -1;
         int height = -1;
+        String orientation = null;
         if (extras != null) {
             outputString = extras.getString("PUBLISH_URL");
             width = extras.getInt("WIDTH", -1);
             height = extras.getInt("HEIGHT", -1);
+            orientation = extras.getString("ORIENTATION");
         }else{
             outputString = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cineio-recording.mp4";
+        }
+
+        if(orientation.equals("landscape")){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+        if(orientation.equals("portrait")){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
         mEncodingConfig = new EncodingConfig(this);
