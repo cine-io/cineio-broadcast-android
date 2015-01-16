@@ -26,7 +26,6 @@ import io.cine.android.api.StreamRecordingResponseHandler;
 import io.cine.android.api.StreamRecordingsResponseHandler;
 import io.cine.android.api.StreamResponseHandler;
 import io.cine.android.api.StreamsResponseHandler;
-import io.cine.android.streaming.EncodingConfig;
 
 public class CineIoClient {
 
@@ -61,24 +60,21 @@ public class CineIoClient {
     }
 
     //pass in custom values
-    public void broadcast(String id, final EncodingConfig config,  final Context context){
+    public void broadcast(String id, final BroadcastConfig config,  final Context context){
         final Intent intent = new Intent(context, BroadcastActivity.class);
 
         getStream(id, new StreamResponseHandler(){
             public void onSuccess(Stream stream) {
                 Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
-                intent.putExtra("WIDTH", config.getLandscapeWidth());
-                intent.putExtra("HEIGHT", config.getLandscapeHeight());
+                intent.putExtra("WIDTH", config.getWidth());
+                intent.putExtra("HEIGHT", config.getHeight());
                 if(config.getLockedOrientation() != null){
                     intent.putExtra("ORIENTATION", config.getLockedOrientation());
                 }
                 if(config.getRequestedCamera() != null){
                     intent.putExtra("CAMERA", config.getRequestedCamera());
                 }
-//                intent.putExtra("SELECTED_CAMERA", selectedCamera);
-//                intent.putExtra("LOCK_SCREEN", lockScreen);
-
                 context.startActivity(intent);
             }
 

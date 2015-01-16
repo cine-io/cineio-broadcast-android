@@ -90,30 +90,6 @@ public class EncodingConfig {
         return this.customHeight == -1 ? LANDSCAPE_CAMERA_HEIGHT : this.customHeight;
     }
 
-    public void lockOrientation(String lockedOrientation) {
-        if(lockedOrientation.equals("landscape") || lockedOrientation.equals("portrait") || lockedOrientation == null){
-            this.lockedOrientation = lockedOrientation;
-        } else {
-            throw new RuntimeException("Orientation must be \"landscape\" or \"portrait\"");
-        }
-    }
-
-    public String getLockedOrientation() {
-        return lockedOrientation;
-    }
-
-    public void selectCamera(String camera) {
-        if(camera.equals("back") || camera.equals("front") || camera == null){
-            this.camera = camera;
-        } else {
-            throw new RuntimeException("Camera must be \"front\" or \"back\"");
-        }
-    }
-
-    public String getRequestedCamera() {
-        return camera;
-    }
-
     public int getBitrate() {
         return DEFAULT_BIT_RATE;
     }
