@@ -87,6 +87,20 @@ client.broadcast(streamId, this);
 // `this` is a Context, such as your instance of an Activity.
 ```
 
+```java
+// To use a custom width, height, and orientation
+import io.cine.android.BroadcastConfig;
+
+String streamId = "STREAM_ID";
+BroadcastConfig config = new BroadcastConfig();
+config.setWidth(640);
+config.setHeight(480);
+config.lockOrientation("landscape"); //values are "landscape" and "portrait". Not setting the value will allow the view to switch depending on device orientation
+config.selectCamera("back"); //values are "back" and "front". Not setting the value will default to front facing
+client.broadcast(streamId, config, this);
+// `this` is a Context, such as your instance of an Activity.
+```
+
 ### Play
 
 Playing a live stream will launch the default Video Player a user has configured, or ask the user which application to launch for playing a live video.

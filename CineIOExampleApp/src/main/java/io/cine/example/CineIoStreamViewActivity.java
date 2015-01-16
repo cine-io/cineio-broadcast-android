@@ -13,6 +13,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.cine.android.BroadcastConfig;
 import io.cine.android.CineIoClient;
 import io.cine.android.CineIoConfig;
 import io.cine.android.api.Stream;
@@ -60,7 +61,15 @@ public class CineIoStreamViewActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "Starting broadcast for " + stream.getId());
-                mClient.broadcast(stream.getId(), me);
+                BroadcastConfig config = new BroadcastConfig();
+                //TO SET A CUSTOM WIDTH AND HEIGHT
+                //config.setWidth(640);
+                //config.setHeight(480);
+                //TO LOCK AN ORIENTATION
+                //config.lockOrientation("landscape");
+                //TO SELECT A CAMERA
+                //config.selectCamera("back");
+                mClient.broadcast(stream.getId(), config, me);
             }
         });
 
