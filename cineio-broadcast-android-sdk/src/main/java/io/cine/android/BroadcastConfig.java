@@ -6,14 +6,18 @@ import android.util.Log;
  * Created by thomas on 1/16/15.
  */
 public class BroadcastConfig {
-    private int width;
-    private int height;
+    private Integer width;
+    private Integer height;
     private String requestedCamera;
     private String lockedOrientation;
 
 
     public int getWidth() {
-        return width;
+        if (width == null){
+            return -1;
+        }else{
+            return width;
+        }
     }
 
     public void setWidth(int width) {
@@ -21,7 +25,11 @@ public class BroadcastConfig {
     }
 
     public int getHeight() {
-        return height;
+        if (height == null){
+            return -1;
+        }else{
+            return height;
+        }
     }
 
     public void setHeight(int height) {
