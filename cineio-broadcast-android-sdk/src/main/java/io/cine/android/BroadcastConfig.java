@@ -1,5 +1,7 @@
 package io.cine.android;
 
+import android.util.Log;
+
 /**
  * Created by thomas on 1/16/15.
  */
@@ -8,6 +10,7 @@ public class BroadcastConfig {
     private int height;
     private String requestedCamera;
     private String lockedOrientation;
+
 
     public int getWidth() {
         return width;
