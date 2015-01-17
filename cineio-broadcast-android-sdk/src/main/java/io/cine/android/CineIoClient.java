@@ -35,6 +35,8 @@ public class CineIoClient {
     private final AsyncHttpClient mClient;
     private CineIoConfig mConfig;
 
+
+
     public CineIoClient(CineIoConfig config){
         this.mConfig = config;
         this.mClient = new AsyncHttpClient();
