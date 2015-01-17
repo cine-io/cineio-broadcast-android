@@ -1,23 +1,21 @@
 package io.cine.android;
 
-import android.util.Log;
-
 /**
  * Created by thomas on 1/16/15.
  */
 public class BroadcastConfig {
-    private Integer width;
-    private Integer height;
+    private int width;
+    private int height;
     private String requestedCamera;
     private String lockedOrientation;
 
+    public BroadcastConfig(){
+        this.width = -1;
+        this.height = -1;
+    }
 
     public int getWidth() {
-        if (width == null){
-            return -1;
-        }else{
-            return width;
-        }
+        return width;
     }
 
     public void setWidth(int width) {
@@ -25,11 +23,7 @@ public class BroadcastConfig {
     }
 
     public int getHeight() {
-        if (height == null){
-            return -1;
-        }else{
-            return height;
-        }
+        return height;
     }
 
     public void setHeight(int height) {

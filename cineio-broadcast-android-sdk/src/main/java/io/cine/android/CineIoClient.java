@@ -69,8 +69,12 @@ public class CineIoClient {
             public void onSuccess(Stream stream) {
                 Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
-                intent.putExtra("WIDTH", config.getWidth());
-                intent.putExtra("HEIGHT", config.getHeight());
+                if(config.getWidth() != -1){
+                    intent.putExtra("WIDTH", config.getWidth());
+                }
+                if(config.getHeight() != -1){
+                    intent.putExtra("HEIGHT", config.getHeight());
+                }
                 if(config.getLockedOrientation() != null){
                     intent.putExtra("ORIENTATION", config.getLockedOrientation());
                 }
