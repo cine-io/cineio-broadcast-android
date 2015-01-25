@@ -10,7 +10,7 @@ Add the following to your `build.gradle`.
 
 ```groovy
 dependencies {
-  compile 'io.cine:cineio-broadcast-android-sdk:0.0.11'
+  compile 'io.cine:cineio-broadcast-android-sdk:0.0.12'
 }
 ```
 
