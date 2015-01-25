@@ -152,6 +152,50 @@ public class BroadcastActivity extends Activity
         setContentView(R.layout.activity_broadcast_capture);
 //        setButtonHolderLayout();
 
+        initializeEncodingConfig();
+        mMuxer = new FFmpegMuxer();
+
+        mAudioConfig = AudioEncoderConfig.createDefaultProfile();
+        mEncodingConfig.setAudioEncoderConfig(mAudioConfig);
+        mAudioEncoder = new MicrophoneEncoder(mMuxer);
+
+
+        // Define a handler that receives camera-control messages from other threads.  All calls
+        // to Camera must be made on the same thread.  Note we create this before the renderer
+        // thread, so we know the fully-constructed object will be visible.
+        mCameraHandler = new CameraHandler(this);
+
+        mRecordingEnabled = sVideoEncoder.isRecording();
+
+        // Configure the GLSurfaceView.  This will start the Renderer thread, with an
+        // appropriate EGL context.
+        mGLView = (GLSurfaceView) findViewById(R.id.cameraPreview_surfaceView);
+        mGLView.setEGLContextClientVersion(2);     // select GLES 2.0
+        mRenderer = new CameraSurfaceRenderer(mCameraHandler, sVideoEncoder, mMuxer);
+        mGLView.setRenderer(mRenderer);
+        mGLView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
+        // http://stackoverflow.com/questions/5975168/android-button-setpressed-after-onclick
+        Button toggleRecording = (Button) findViewById(R.id.toggleRecording_button);
+
+        toggleRecording.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // show interest in events resulting from ACTION_DOWN
+                if(event.getAction()==MotionEvent.ACTION_DOWN) return true;
+                // don't handle event unless its ACTION_UP so "doSomething()" only runs once.
+                if(event.getAction()!=MotionEvent.ACTION_UP) return false;
+                toggleRecordingHandler();
+                return true;
+            }
+        });
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        Log.d(TAG, "onCreate complete: " + this);
+
+    }
+
+    private void initializeEncodingConfig() {
         Bundle extras = getIntent().getExtras();
         String outputString;
         int width = -1;
@@ -176,6 +220,7 @@ public class BroadcastActivity extends Activity
         }
 
         mEncodingConfig = new EncodingConfig(this);
+        mEncodingConfig.forceOrientation(orientation);
         if(width != -1){
             Log.v(TAG, "SETTING WIDTH TO: " + width);
             mEncodingConfig.setWidth(width);
@@ -185,50 +230,13 @@ public class BroadcastActivity extends Activity
             mEncodingConfig.setHeight(height);
         }
         mEncodingConfig.setOutput(outputString);
-        mMuxer = new FFmpegMuxer();
-
-        // Define a handler that receives camera-control messages from other threads.  All calls
-        // to Camera must be made on the same thread.  Note we create this before the renderer
-        // thread, so we know the fully-constructed object will be visible.
-        mCameraHandler = new CameraHandler(this);
-
-        mRecordingEnabled = sVideoEncoder.isRecording();
-
-        // Configure the GLSurfaceView.  This will start the Renderer thread, with an
-        // appropriate EGL context.
-        mGLView = (GLSurfaceView) findViewById(R.id.cameraPreview_surfaceView);
-        mGLView.setEGLContextClientVersion(2);     // select GLES 2.0
-        mRenderer = new CameraSurfaceRenderer(mCameraHandler, sVideoEncoder, mMuxer);
-        mGLView.setRenderer(mRenderer);
-        mGLView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-
-        mAudioConfig = AudioEncoderConfig.createDefaultProfile();
-        mEncodingConfig.setAudioEncoderConfig(mAudioConfig);
-        mAudioEncoder = new MicrophoneEncoder(mMuxer);
-        // http://stackoverflow.com/questions/5975168/android-button-setpressed-after-onclick
-        Button toggleRecording = (Button) findViewById(R.id.toggleRecording_button);
-
-        toggleRecording.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // show interest in events resulting from ACTION_DOWN
-                if(event.getAction()==MotionEvent.ACTION_DOWN) return true;
-                // don't handle event unless its ACTION_UP so "doSomething()" only runs once.
-                if(event.getAction()!=MotionEvent.ACTION_UP) return false;
-                toggleRecordingHandler();
-                return true;
-            }
-        });
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        Log.d(TAG, "onCreate complete: " + this);
-
     }
 
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume -- acquiring camera");
         super.onResume();
+//        initializeEncodingConfig();
         updateControls();
         openCamera();
 
@@ -239,7 +247,7 @@ public class BroadcastActivity extends Activity
         mGLView.queueEvent(new Runnable() {
             @Override
             public void run() {
-                mRenderer.setCameraPreviewSize(mEncodingConfig.getWidth(), mEncodingConfig.getHeight());
+                mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
             }
         });
         Log.d(TAG, "onResume complete: " + this);
@@ -414,14 +422,26 @@ public class BroadcastActivity extends Activity
 //    }
 
     private int getDeviceRotationDegrees() {
+        // fake out the forced orientation
+        if (this.mEncodingConfig.hasForcedOrientation()){
+            if (this.mEncodingConfig.forcedLandscape()){
+                return 90;
+            } else {
+                return 0;
+            }
+        }
 
         switch (this.getWindowManager().getDefaultDisplay().getRotation()) {
+            // normal portrait
             case Surface.ROTATION_0:
                 return 0;
+            // expected landscape
             case Surface.ROTATION_90:
                 return 90;
+            // upside down portrait
             case Surface.ROTATION_180:
                 return 180;
+            // "upside down" landscape
             case Surface.ROTATION_270:
                 return 270;
         }
