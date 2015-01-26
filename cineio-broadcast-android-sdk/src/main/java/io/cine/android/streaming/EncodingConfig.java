@@ -10,8 +10,16 @@ import io.cine.ffmpegbridge.FFmpegBridge;
  */
 public class EncodingConfig {
 
-    private String lockedOrientation;
     private String camera;
+    private String forcedOrientation;
+
+    public void forceOrientation(String forcedOrientation) {
+        this.forcedOrientation = forcedOrientation;
+    }
+
+    public boolean hasForcedOrientation() {
+        return this.forcedOrientation != null;
+    }
 
     public interface EncodingCallback {
         public void muxerStatusUpdate(MUXER_STATE muxerState);
@@ -94,7 +102,13 @@ public class EncodingConfig {
         return DEFAULT_BIT_RATE;
     }
 
+    public boolean forcedLandscape(){
+        return forcedOrientation.equals("landscape");
+    }
     public boolean isLandscape() {
+        if (forcedOrientation != null){
+            return forcedLandscape();
+        }
         boolean isLandscape = false;
         switch (mOrientation) {
             case Surface.ROTATION_0:

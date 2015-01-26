@@ -4,11 +4,15 @@ android {
     compileSdkVersion 19
     buildToolsVersion '19.1.0'
     defaultConfig {
+<<<<<<< HEAD
        // applicationId 'io.cine.android'
+=======
+       // applicationId 'io.cine.broadcast'
+>>>>>>> upstream/master
         minSdkVersion 18
         targetSdkVersion 19
-        versionCode 11
-        versionName '0.0.11'
+        versionCode 12
+        versionName '0.0.12'
     }
     buildTypes {
         release {

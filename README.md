@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/cine-io/cineio-broadcast-android.svg?branch=master)](https://travis-ci.org/cine-io/cineio-broadcast-android)
 
-The [android library](http://mvnrepository.com/artifact/io.cine/cineio-broadcast-android-sdk) for [cine.io](https://www.cine.io).
+The [android library](http://mvnrepository.com/artifact/io.cine/cineio-broadcast-android-sdk) for [cine.io broadcast](https://www.cine.io/products/broadcast).
 
 ## Installation
 
@@ -10,7 +10,7 @@ Add the following to your `build.gradle`.
 
 ```groovy
 dependencies {
-  compile 'io.cine:cineio-broadcast-android-sdk:0.0.11'
+  compile 'io.cine:cineio-broadcast-android-sdk:0.0.12'
 }
 ```
 
