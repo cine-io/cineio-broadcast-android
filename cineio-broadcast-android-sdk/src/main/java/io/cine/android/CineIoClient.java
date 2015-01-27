@@ -67,7 +67,7 @@ public class CineIoClient {
 
         getStream(id, new StreamResponseHandler(){
             public void onSuccess(Stream stream) {
-                Log.d(TAG, "Starting publish intent: " + stream.getId());
+               // Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
                 if(config.getWidth() != -1){
                     intent.putExtra("WIDTH", config.getWidth());

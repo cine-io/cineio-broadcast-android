@@ -14,12 +14,7 @@
      limitations under the License.
 -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="io.cine.android.BroadcastActivity" >
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <io.cine.android.streaming.AspectFrameLayout
         android:id="@+id/cameraPreview_afl"
@@ -39,4 +34,4 @@
     <include layout="@layout/status" />
 
     <include layout="@layout/camera_button_holder" />
-</RelativeLayout>
+</merge>

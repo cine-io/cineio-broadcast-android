@@ -149,32 +149,15 @@ public class BroadcastActivity extends Activity
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_broadcast_capture);
+        Bundle extras = getIntent().getExtras();
+        int layout = extras.getInt("LAYOUT", R.layout.activity_broadcast_capture);
+        setContentView(layout);
+        initializeEncodingConfig(extras);
+        initializeMuxer();
+        initializeAudio();
+        initializeVideo();
+        initializeGLView();
 //        setButtonHolderLayout();
-
-        initializeEncodingConfig();
-        mMuxer = new FFmpegMuxer();
-
-        mAudioConfig = AudioEncoderConfig.createDefaultProfile();
-        mEncodingConfig.setAudioEncoderConfig(mAudioConfig);
-        mAudioEncoder = new MicrophoneEncoder(mMuxer);
-
-
-        // Define a handler that receives camera-control messages from other threads.  All calls
-        // to Camera must be made on the same thread.  Note we create this before the renderer
-        // thread, so we know the fully-constructed object will be visible.
-        mCameraHandler = new CameraHandler(this);
-
-        mRecordingEnabled = sVideoEncoder.isRecording();
-
-        // Configure the GLSurfaceView.  This will start the Renderer thread, with an
-        // appropriate EGL context.
-        mGLView = (GLSurfaceView) findViewById(R.id.cameraPreview_surfaceView);
-        mGLView.setEGLContextClientVersion(2);     // select GLES 2.0
-        mRenderer = new CameraSurfaceRenderer(mCameraHandler, sVideoEncoder, mMuxer);
-        mGLView.setRenderer(mRenderer);
-        mGLView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-
         // http://stackoverflow.com/questions/5975168/android-button-setpressed-after-onclick
         Button toggleRecording = (Button) findViewById(R.id.toggleRecording_button);
 
@@ -192,11 +175,40 @@ public class BroadcastActivity extends Activity
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d(TAG, "onCreate complete: " + this);
+    }
+
+    private void initializeGLView() {
+        // Configure the GLSurfaceView.  This will start the Renderer thread, with an
+        // appropriate EGL context.
+        mGLView = (GLSurfaceView) findViewById(R.id.cameraPreview_surfaceView);
+        mGLView.setEGLContextClientVersion(2);     // select GLES 2.0
+        mRenderer = new CameraSurfaceRenderer(mCameraHandler, sVideoEncoder, mMuxer);
+        mGLView.setRenderer(mRenderer);
+        mGLView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
     }
 
-    private void initializeEncodingConfig() {
-        Bundle extras = getIntent().getExtras();
+    private void initializeVideo() {
+        // Define a handler that receives camera-control messages from other threads.  All calls
+        // to Camera must be made on the same thread.  Note we create this before the renderer
+        // thread, so we know the fully-constructed object will be visible.
+        mCameraHandler = new CameraHandler(this);
+        mRecordingEnabled = sVideoEncoder.isRecording();
+
+    }
+
+    private void initializeMuxer(){
+        mMuxer = new FFmpegMuxer();
+    }
+
+    private void initializeAudio() {
+        mAudioConfig = AudioEncoderConfig.createDefaultProfile();
+        mEncodingConfig.setAudioEncoderConfig(mAudioConfig);
+        mAudioEncoder = new MicrophoneEncoder(mMuxer);
+    }
+
+
+    private void initializeEncodingConfig(Bundle extras) {
         String outputString;
         int width = -1;
         int height = -1;
