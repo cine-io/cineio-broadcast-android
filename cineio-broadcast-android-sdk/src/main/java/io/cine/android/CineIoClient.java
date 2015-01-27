@@ -81,6 +81,9 @@ public class CineIoClient {
                 if(config.getRequestedCamera() != null){
                     intent.putExtra("CAMERA", config.getRequestedCamera());
                 }
+                if (config.getBroadcastActivityLayout() != -1){
+                    intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
+                }
                 context.startActivity(intent);
             }
 
