@@ -8,10 +8,12 @@ public class BroadcastConfig {
     private int height;
     private String requestedCamera;
     private String lockedOrientation;
+    private int mLayout;
 
     public BroadcastConfig(){
         this.width = -1;
         this.height = -1;
+        this.mLayout = -1;
     }
 
     public int getWidth() {
@@ -53,4 +55,13 @@ public class BroadcastConfig {
             throw new RuntimeException("Camera must be \"front\" or \"back\"");
         }
     }
+
+    public void setBroadcastActivityLayout(int layout){
+        this.mLayout = layout;
+    }
+
+    public int getBroadcastActivityLayout(){
+        return mLayout;
+    }
 }
+

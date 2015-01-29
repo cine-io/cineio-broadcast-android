@@ -67,7 +67,7 @@ public class CineIoClient {
 
         getStream(id, new StreamResponseHandler(){
             public void onSuccess(Stream stream) {
-                Log.d(TAG, "Starting publish intent: " + stream.getId());
+               // Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
                 if(config.getWidth() != -1){
                     intent.putExtra("WIDTH", config.getWidth());
@@ -81,11 +81,44 @@ public class CineIoClient {
                 if(config.getRequestedCamera() != null){
                     intent.putExtra("CAMERA", config.getRequestedCamera());
                 }
+                if (config.getBroadcastActivityLayout() != -1){
+                    intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
+                }
                 context.startActivity(intent);
             }
 
         });
     }
+
+    //pass in custom values including custom BroadcastActivity
+    public void broadcast(String id, final BroadcastConfig config,  final Context context, final Class<? extends BroadcastActivity> broadcastActivity){
+        final Intent intent = new Intent(context, broadcastActivity);
+
+        getStream(id, new StreamResponseHandler(){
+            public void onSuccess(Stream stream) {
+                // Log.d(TAG, "Starting publish intent: " + stream.getId());
+                intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
+                if(config.getWidth() != -1){
+                    intent.putExtra("WIDTH", config.getWidth());
+                }
+                if(config.getHeight() != -1){
+                    intent.putExtra("HEIGHT", config.getHeight());
+                }
+                if(config.getLockedOrientation() != null){
+                    intent.putExtra("ORIENTATION", config.getLockedOrientation());
+                }
+                if(config.getRequestedCamera() != null){
+                    intent.putExtra("CAMERA", config.getRequestedCamera());
+                }
+                if (config.getBroadcastActivityLayout() != -1){
+                    intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
+                }
+                context.startActivity(intent);
+            }
+
+        });
+    }
+
     public void play(String id, final Context context){
 
         getStream(id, new StreamResponseHandler(){
