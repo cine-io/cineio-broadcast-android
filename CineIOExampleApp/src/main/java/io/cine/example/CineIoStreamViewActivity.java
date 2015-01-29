@@ -69,6 +69,8 @@ public class CineIoStreamViewActivity extends Activity {
                 //config.lockOrientation("landscape");
                 //TO SELECT A CAMERA
                 //config.selectCamera("back");
+                //TO CHANGE THE BROADCAST LAYOUT
+                //config.setBroadcastActivityLayout(R.layout.my_activity_broadcast_capture);
                 mClient.broadcast(stream.getId(), config, me);
             }
         });

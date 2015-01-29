@@ -97,6 +97,8 @@ config.setWidth(640);
 config.setHeight(480);
 config.lockOrientation("landscape"); //values are "landscape" and "portrait". Not setting the value will allow the view to switch depending on device orientation
 config.selectCamera("back"); //values are "back" and "front". Not setting the value will default to front facing
+config.setBroadcastActivityLayout(R.layout.my_activity_broadcast_capture); // change the layout used for the broadcast activity
+
 client.broadcast(streamId, config, this);
 // `this` is a Context, such as your instance of an Activity.
 ```
