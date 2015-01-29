@@ -4,7 +4,7 @@ android {
     compileSdkVersion 19
     buildToolsVersion '19.1.0'
     defaultConfig {
-       // applicationId 'io.cine.broadcast'
+        applicationId 'io.cine.broadcast'
         minSdkVersion 18
         targetSdkVersion 19
         versionCode 12
@@ -12,7 +12,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -29,4 +29,4 @@ dependencies {
 
 //apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
 //apply from: 'https://raw.githubusercontent.com/jpardogo/gradle-mvn-push/master/gradle-mvn-push.gradle'
-//apply from: 'https://raw.githubusercontent.com/cine-io/gradle-mvn-push/master/gradle-mvn-push.gradle'
+apply from: 'https://raw.githubusercontent.com/cine-io/gradle-mvn-push/master/gradle-mvn-push.gradle'
