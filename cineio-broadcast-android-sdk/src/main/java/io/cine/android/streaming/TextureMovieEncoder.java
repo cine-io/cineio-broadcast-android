@@ -20,11 +20,13 @@ package io.cine.android.streaming;
 
 import android.graphics.SurfaceTexture;
 import android.opengl.EGLContext;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
@@ -230,6 +232,16 @@ public class TextureMovieEncoder implements Runnable {
         prepareEncoder(config.mEglContext, config.mMuxer);
     }
 
+    public void saveFrame(File file){
+        if (mInputWindowSurface!= null) {
+            try {
+                mInputWindowSurface.saveFrame(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Handles notification of an available frame.
      * <p/>
@@ -244,7 +256,6 @@ public class TextureMovieEncoder implements Runnable {
         if (VERBOSE) Log.d(TAG, "handleFrameAvailable tr=" + transform);
         mVideoEncoder.drainEncoder(false);
         mFullScreen.drawFrame(mTextureId, transform);
-
         mInputWindowSurface.setPresentationTime(timestampNanos);
         mInputWindowSurface.swapBuffers();
     }

@@ -37,6 +37,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -185,7 +186,6 @@ public class BroadcastActivity extends Activity
         mRenderer = new CameraSurfaceRenderer(mCameraHandler, sVideoEncoder, mMuxer);
         mGLView.setRenderer(mRenderer);
         mGLView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-
     }
 
     private void initializeVideo() {
