@@ -196,4 +196,8 @@ public class EglSurfaceBase {
         }
         Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + filename + "'");
     }
+
+    public EGLSurface getmEGLSurface(){
+        return mEGLSurface;
+    }
 }

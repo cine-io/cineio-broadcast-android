@@ -178,6 +178,10 @@ public class BroadcastActivity extends Activity
         Log.d(TAG, "onCreate complete: " + this);
     }
 
+    protected TextureMovieEncoder getsVideoEncoder(){
+        return sVideoEncoder;
+    }
+
     private void initializeGLView() {
         // Configure the GLSurfaceView.  This will start the Renderer thread, with an
         // appropriate EGL context.
@@ -576,6 +580,13 @@ public class BroadcastActivity extends Activity
 
     }
 
+
+
+
+    protected CameraHandler getCameraHandler(){
+        return mCameraHandler;
+    }
+
     /**
      * Handles camera operation requests from other threads.  Necessary because the Camera
      * must only be accessed from one thread.
@@ -586,6 +597,7 @@ public class BroadcastActivity extends Activity
     public static class CameraHandler extends Handler {
         public static final int MSG_SET_SURFACE_TEXTURE = 0;
         public static final int MSG_SURFACE_CHANGED = 1;
+        public static final int MSG_CAPTURE_FRAME = 2;
 
         // Weak reference to the Activity; only access this from the UI thread.
         private WeakReference<BroadcastActivity> mWeakActivity;

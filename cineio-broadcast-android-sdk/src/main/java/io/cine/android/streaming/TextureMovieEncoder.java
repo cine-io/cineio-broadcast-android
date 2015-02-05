@@ -19,6 +19,7 @@
 package io.cine.android.streaming;
 
 import android.graphics.SurfaceTexture;
+import android.opengl.EGL14;
 import android.opengl.EGLContext;
 import android.os.Environment;
 import android.os.Handler;
@@ -70,6 +71,7 @@ public class TextureMovieEncoder implements Runnable {
     private static final int MSG_SET_TEXTURE_ID = 3;
     private static final int MSG_UPDATE_SHARED_CONTEXT = 4;
     private static final int MSG_QUIT = 5;
+    public static final int MSG_ENCODER_SAVEFRAME = 6;
 
     // ----- accessed exclusively by encoder thread -----
     private WindowSurface mInputWindowSurface;
@@ -85,6 +87,7 @@ public class TextureMovieEncoder implements Runnable {
     private Object mReadyFence = new Object();      // guards ready/running
     private boolean mReady;
     private boolean mRunning;
+
 
     /**
      * Tells the video recorder to start recording.  (Call from non-encoder thread.)
@@ -114,6 +117,7 @@ public class TextureMovieEncoder implements Runnable {
 
         mHandler.sendMessage(mHandler.obtainMessage(MSG_START_RECORDING, config));
     }
+
 
     /**
      * Tells the video recorder to stop recording.  (Call from non-encoder thread.)
@@ -179,10 +183,10 @@ public class TextureMovieEncoder implements Runnable {
             Log.w(TAG, "HEY: got SurfaceTexture with timestamp of zero");
             return;
         }
-
         mHandler.sendMessage(mHandler.obtainMessage(MSG_FRAME_AVAILABLE,
                 (int) (timestamp >> 32), (int) timestamp, transform));
     }
+
 
     /**
      * Tells the video recorder what texture name to use.  This is the external texture that
@@ -236,6 +240,7 @@ public class TextureMovieEncoder implements Runnable {
         if (mInputWindowSurface!= null) {
             try {
                 mInputWindowSurface.saveFrame(file);
+                Log.i("SAVED THE FILE", file.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -252,7 +257,7 @@ public class TextureMovieEncoder implements Runnable {
      * @param transform      The texture transform, from SurfaceTexture.
      * @param timestampNanos The frame's timestamp, from SurfaceTexture.
      */
-    private void handleFrameAvailable(float[] transform, long timestampNanos) {
+    public void handleFrameAvailable(float[] transform, long timestampNanos) {
         if (VERBOSE) Log.d(TAG, "handleFrameAvailable tr=" + transform);
         mVideoEncoder.drainEncoder(false);
         mFullScreen.drawFrame(mTextureId, transform);
@@ -335,6 +340,14 @@ public class TextureMovieEncoder implements Runnable {
         }
     }
 
+
+    public EncoderHandler getHandler(){
+        return mHandler;
+    }
+
+
+
+
     /**
      * Encoder configuration.
      * <p/>
@@ -363,7 +376,7 @@ public class TextureMovieEncoder implements Runnable {
     /**
      * Handles encoder state change requests.  The handler is created on the encoder thread.
      */
-    private static class EncoderHandler extends Handler {
+    public static class EncoderHandler extends Handler {
         private WeakReference<TextureMovieEncoder> mWeakEncoder;
 
         public EncoderHandler(TextureMovieEncoder encoder) {
@@ -401,6 +414,10 @@ public class TextureMovieEncoder implements Runnable {
                     break;
                 case MSG_QUIT:
                     Looper.myLooper().quit();
+                    break;
+                case MSG_ENCODER_SAVEFRAME:
+                    File saveFile = new File(Environment.getExternalStorageDirectory() + "/TestBitmaps/", "frame" + System.currentTimeMillis() + ".png");
+                    encoder.saveFrame(saveFile);
                     break;
                 default:
                     throw new RuntimeException("Unhandled msg what=" + what);
