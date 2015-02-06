@@ -437,7 +437,7 @@ public class BroadcastActivity extends Activity
 //        }
 //    }
 
-    private int getDeviceRotationDegrees() {
+    protected int getDeviceRotationDegrees() {
         // fake out the forced orientation
         if (this.mEncodingConfig.hasForcedOrientation()){
             if (this.mEncodingConfig.forcedLandscape()){
@@ -582,7 +582,6 @@ public class BroadcastActivity extends Activity
 
 
 
-
     protected CameraHandler getCameraHandler(){
         return mCameraHandler;
     }
@@ -597,7 +596,6 @@ public class BroadcastActivity extends Activity
     public static class CameraHandler extends Handler {
         public static final int MSG_SET_SURFACE_TEXTURE = 0;
         public static final int MSG_SURFACE_CHANGED = 1;
-        public static final int MSG_CAPTURE_FRAME = 2;
 
         // Weak reference to the Activity; only access this from the UI thread.
         private WeakReference<BroadcastActivity> mWeakActivity;

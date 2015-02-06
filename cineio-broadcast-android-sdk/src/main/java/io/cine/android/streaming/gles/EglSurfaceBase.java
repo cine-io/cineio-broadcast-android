@@ -18,10 +18,12 @@
 package io.cine.android.streaming.gles;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.opengl.EGL14;
 import android.opengl.EGLSurface;
 import android.opengl.GLES20;
 import android.util.Log;
+import android.view.Surface;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -156,7 +158,7 @@ public class EglSurfaceBase {
      * <p/>
      * Expects that this object's EGL surface is current.
      */
-    public void saveFrame(File file) throws IOException {
+    public void saveFrame(File file, int orientation) throws IOException {
         if (!mEglCore.isCurrent(mEGLSurface)) {
             throw new RuntimeException("Expected EGL context/surface is not current");
         }
@@ -186,11 +188,24 @@ public class EglSurfaceBase {
 
         BufferedOutputStream bos = null;
         try {
+            Long startTime = System.currentTimeMillis();
             bos = new BufferedOutputStream(new FileOutputStream(filename));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             bmp.copyPixelsFromBuffer(buf);
-            bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
+            Matrix m = new Matrix();
+            m.postScale(-1, 1);
+            //Right now the selection of case 0 or 90 is not needed!! All images should be rotated
+            switch(orientation){
+                case 0:
+                case 90:
+                      m.postRotate(180);
+                    break;
+            }
+            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
+            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
             bmp.recycle();
+            rotateBitmap.recycle();
+            Log.i("time elapsed", String.valueOf(System.currentTimeMillis()-startTime) + " milliseconds");
         } finally {
             if (bos != null) bos.close();
         }
