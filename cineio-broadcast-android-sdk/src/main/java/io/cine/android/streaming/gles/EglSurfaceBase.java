@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 /**
  * Common base class for EGL surfaces.
@@ -181,8 +182,44 @@ public class EglSurfaceBase {
         int height = getHeight();
         ByteBuffer buf = ByteBuffer.allocateDirect(width * height * 4);
         buf.order(ByteOrder.LITTLE_ENDIAN);
-        GLES20.glReadPixels(0, 0, width, height,
+
+        int[] fboId = new int[1];
+        int[] rendId = new int[1];
+        int[] texId = new int[1];
+
+       GLES20.glGenFramebuffers(1, fboId, 0);
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fboId[0]);
+
+        GLES20.glGenRenderbuffers(1, rendId, 0);
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, rendId[0]);
+        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER,GLES20.GL_RGBA4, width, height);
+
+//        GLES20.glGenTextures(1, texId, 0);
+//        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texId[0]);
+
+  //      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, texId[0], 0);
+       GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_RENDERBUFFER,rendId[0] );
+     //   GLES20.glViewport(0,0,width, height);
+   // GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA4, width, height,0, GLES20.GL_RGBA,GLES20.GL_UNSIGNED_BYTE, buf );
+
+        switch(GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER)){
+            case GLES20.GL_FRAMEBUFFER_COMPLETE:
+                Log.i(TAG, "Is Complete");
+                break;
+            case GLES20.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+                Log.i(TAG, "Incomplete Attachment");
+                break;
+            case GLES20.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+                Log.i(TAG, "Missing Attachment");
+                break;
+            default: Log.i(TAG, "Smething else is going on");
+
+        }
+GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+      GLES20.glReadPixels(0, 0, width, height,
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
+
+
         GlUtil.checkGlError("glReadPixels");
         buf.rewind();
 
@@ -191,20 +228,22 @@ public class EglSurfaceBase {
             Long startTime = System.currentTimeMillis();
             bos = new BufferedOutputStream(new FileOutputStream(filename));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            bmp.copyPixelsFromBuffer(buf);
-            Matrix m = new Matrix();
-            m.postScale(-1, 1);
-            //Right now the selection of case 0 or 90 is not needed!! All images should be rotated
-            switch(orientation){
-                case 0:
-                case 90:
-                      m.postRotate(180);
-                    break;
-            }
-            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
-            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
+
+         bmp.copyPixelsFromBuffer(buf);
+//            Matrix m = new Matrix();
+//            m.postScale(-1, 1);
+//            //Right now the selection of case 0 or 90 is not needed!! All images should be rotated
+//            switch(orientation){
+//                case 0:
+//                case 90:
+//                      m.postRotate(180);
+//                    break;
+//            }
+//            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
+            //rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
+            bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
             bmp.recycle();
-            rotateBitmap.recycle();
+          //  rotateBitmap.recycle();
             Log.i("time elapsed", String.valueOf(System.currentTimeMillis()-startTime) + " milliseconds");
         } finally {
             if (bos != null) bos.close();
