@@ -18,6 +18,7 @@
 package io.cine.android.streaming.gles;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.opengl.EGL14;
 import android.opengl.EGLSurface;
@@ -31,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 /**
  * Common base class for EGL surfaces.
@@ -181,8 +183,11 @@ public class EglSurfaceBase {
         int height = getHeight();
         ByteBuffer buf = ByteBuffer.allocateDirect(width * height * 4);
         buf.order(ByteOrder.LITTLE_ENDIAN);
-        GLES20.glReadPixels(0, 0, width, height,
+
+      GLES20.glReadPixels(0, 0, width, height,
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
+
+
         GlUtil.checkGlError("glReadPixels");
         buf.rewind();
 
@@ -191,20 +196,16 @@ public class EglSurfaceBase {
             Long startTime = System.currentTimeMillis();
             bos = new BufferedOutputStream(new FileOutputStream(filename));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            bmp.copyPixelsFromBuffer(buf);
-            Matrix m = new Matrix();
-            m.postScale(-1, 1);
-            //Right now the selection of case 0 or 90 is not needed!! All images should be rotated
-            switch(orientation){
-                case 0:
-                case 90:
-                      m.postRotate(180);
-                    break;
-            }
-            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
-            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
+
+         bmp.copyPixelsFromBuffer(buf);
+//            Matrix m = new Matrix();
+//            m.postScale(-1, 1);
+//            m.postRotate(180);
+//            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
+//            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
+            bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
             bmp.recycle();
-            rotateBitmap.recycle();
+          //rotateBitmap.recycle();
             Log.i("time elapsed", String.valueOf(System.currentTimeMillis()-startTime) + " milliseconds");
         } finally {
             if (bos != null) bos.close();

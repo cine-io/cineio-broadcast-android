@@ -19,9 +19,7 @@
 package io.cine.android.streaming;
 
 import android.graphics.SurfaceTexture;
-import android.opengl.EGL14;
 import android.opengl.EGLContext;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
