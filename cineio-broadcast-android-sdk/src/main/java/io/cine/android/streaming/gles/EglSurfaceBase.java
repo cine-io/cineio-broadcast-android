@@ -184,6 +184,7 @@ public class EglSurfaceBase {
         ByteBuffer buf = ByteBuffer.allocateDirect(width * height * 4);
         buf.order(ByteOrder.LITTLE_ENDIAN);
 
+
       GLES20.glReadPixels(0, 0, width, height,
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
 
@@ -200,6 +201,7 @@ public class EglSurfaceBase {
          bmp.copyPixelsFromBuffer(buf);
 //            Matrix m = new Matrix();
 //            m.postScale(-1, 1);
+
 //            m.postRotate(180);
 //            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
 //            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
