@@ -602,9 +602,15 @@ public class BroadcastActivity extends Activity
             case ScreenShot.SAVED_FRAME:
                 handleSavedFrame((String) inputMessage.obj);
                 break;
+            case ScreenShot.FAILED_FRAME:
+                handleFailedFrame((String) inputMessage.obj);
             default:
                 break;
         }
+    }
+
+    protected void handleFailedFrame(String messageString) {
+        Log.i("I FAILED TO SAVE", messageString);
     }
 
     protected void handleSavedFrame(String messageString) {

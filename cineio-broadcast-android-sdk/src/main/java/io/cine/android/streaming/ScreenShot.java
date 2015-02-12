@@ -19,6 +19,7 @@ public class ScreenShot {
 
     public static final int SAVING_FRAME = 0;
     public static final int SAVED_FRAME = 1;
+    public static final int FAILED_FRAME = 2;
 
     public ScreenShot(BroadcastActivity.CameraHandler mCameraHandler){
         this.scale = 1f;
@@ -92,6 +93,10 @@ public class ScreenShot {
         sendCameraHandlerMessage(SAVED_FRAME);
     }
 
+    public void failedFrameMessage(){
+        sendCameraHandlerMessage(FAILED_FRAME);
+    }
+
     private void sendCameraHandlerMessage(int status){
         Message message = new Message();
         message.what = mCameraHandler.MSG_CAPTURE_FRAME;
@@ -103,6 +108,10 @@ public class ScreenShot {
                 break;
             case SAVED_FRAME:
                 message.obj = getPhotoFile().toString();
+                mCameraHandler.sendMessage(message);
+                break;
+            case FAILED_FRAME:
+                message.obj = "Could not save frame";
                 mCameraHandler.sendMessage(message);
                 break;
         }

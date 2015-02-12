@@ -194,14 +194,17 @@ public class EglSurfaceBase {
             screenShot.savingMessage();
             bos = new BufferedOutputStream(new FileOutputStream(filename));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-         bmp.copyPixelsFromBuffer(buf);
+            bmp.copyPixelsFromBuffer(buf);
             Matrix m = new Matrix();
             m.preScale(-screenShot.getScale(), screenShot.getScale());
             m.postRotate(180);
-            bmp = Bitmap.createBitmap(bmp, 0, 0 , width, height, m, false);
+            bmp = Bitmap.createBitmap(bmp, 0, 0, width, height, m, false);
             bmp.compress(Bitmap.CompressFormat.PNG, 50, bos);
             bmp.recycle();
-            Log.i("time elapsed", String.valueOf(System.currentTimeMillis()-startTime) + " milliseconds");
+            Log.i("time elapsed", String.valueOf(System.currentTimeMillis() - startTime) + " milliseconds");
+        }catch (IOException e){
+
+            throw e;
         } finally {
             screenShot.savedMessage();
             if (bos != null){
