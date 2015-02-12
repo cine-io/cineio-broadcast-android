@@ -235,11 +235,10 @@ public class TextureMovieEncoder implements Runnable {
         prepareEncoder(config.mEglContext, config.mMuxer);
     }
 
-    public void saveFrame(File file){
+    public void saveFrame(ScreenShot screenShot){
         if (mInputWindowSurface!= null) {
             try {
-                mInputWindowSurface.saveFrame(file);
-                Log.i("SAVED THE FILE", file.getAbsolutePath());
+                mInputWindowSurface.saveFrame(screenShot);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -415,8 +414,8 @@ public class TextureMovieEncoder implements Runnable {
                     Looper.myLooper().quit();
                     break;
                 case MSG_ENCODER_SAVEFRAME:
-                    File saveFile = new File(Environment.getExternalStorageDirectory() + "/TestBitmaps/", "frame" + System.currentTimeMillis() + ".png");
-                    encoder.saveFrame(saveFile);
+
+                    encoder.saveFrame((ScreenShot) obj);
                     break;
                 default:
                     throw new RuntimeException("Unhandled msg what=" + what);

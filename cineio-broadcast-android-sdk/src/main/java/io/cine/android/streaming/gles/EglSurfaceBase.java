@@ -33,6 +33,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
+import io.cine.android.streaming.ScreenShot;
+
 /**
  * Common base class for EGL surfaces.
  * <p/>
@@ -159,7 +161,7 @@ public class EglSurfaceBase {
      * <p/>
      * Expects that this object's EGL surface is current.
      */
-    public void saveFrame(File file) throws IOException {
+    public void saveFrame(ScreenShot screenShot) throws IOException {
         if (!mEglCore.isCurrent(mEGLSurface)) {
             throw new RuntimeException("Expected EGL context/surface is not current");
         }
@@ -176,7 +178,7 @@ public class EglSurfaceBase {
         // our output will look upside down relative to what appears on screen if the
         // typical GL conventions are used.
 
-        String filename = file.toString();
+        String filename = screenShot.getPhotoFile().toString();
 
         int width = getWidth();
         int height = getHeight();
@@ -193,7 +195,7 @@ public class EglSurfaceBase {
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
          bmp.copyPixelsFromBuffer(buf);
             Matrix m = new Matrix();
-            m.preScale(-1f, 1f);
+            m.preScale(-screenShot.getScale(), screenShot.getScale());
             m.postRotate(180);
             bmp = Bitmap.createBitmap(bmp, 0, 0 , width, height, m, false);
             bmp.compress(Bitmap.CompressFormat.PNG, 50, bos);
