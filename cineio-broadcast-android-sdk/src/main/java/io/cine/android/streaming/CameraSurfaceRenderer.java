@@ -4,10 +4,7 @@ package io.cine.android.streaming;
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
 import android.opengl.GLSurfaceView;
-import android.os.Environment;
 import android.util.Log;
-
-import java.io.File;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

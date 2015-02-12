@@ -19,9 +19,7 @@
 package io.cine.android.streaming;
 
 import android.graphics.SurfaceTexture;
-import android.opengl.EGL14;
 import android.opengl.EGLContext;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -240,7 +238,7 @@ public class TextureMovieEncoder implements Runnable {
         Log.i("THIS IS THE ORIENTATION", String.valueOf(orientation));
         if (mInputWindowSurface != null) {
             try {
-                mInputWindowSurface.saveFrame(file, orientation);
+                mInputWindowSurface.saveFrame(file);
                 Log.i("SAVED THE FILE", file.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
