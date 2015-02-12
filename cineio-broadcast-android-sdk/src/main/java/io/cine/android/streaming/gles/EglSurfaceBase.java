@@ -18,10 +18,7 @@
 package io.cine.android.streaming.gles;
 
 import android.graphics.Bitmap;
-
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-
 import android.opengl.EGL14;
 import android.opengl.EGLSurface;
 import android.opengl.GLES20;
@@ -184,59 +181,16 @@ public class EglSurfaceBase {
         int height = getHeight();
         ByteBuffer buf = ByteBuffer.allocateDirect(width * height * 4);
         buf.order(ByteOrder.LITTLE_ENDIAN);
-
-
-        int[] fboId = new int[1];
-        int[] rendId = new int[1];
-        float[] projMatrix = new float[16];
-
-        GLES20.glGenFramebuffers(1, fboId, 0);
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fboId[0]);
-
-             GLES20.glGenRenderbuffers(1, rendId, 0);
-        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, rendId[0]);
-        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER,GLES20.GL_RGBA4, width, height);
-
-
-        switch(GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER)){
-            case GLES20.GL_FRAMEBUFFER_COMPLETE:
-                Log.i(TAG, "Is Complete");
-                break;
-            case GLES20.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                Log.i(TAG, "Incomplete Attachment");
-                break;
-            case GLES20.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                Log.i(TAG, "Missing Attachment");
-                break;
-            default: Log.i(TAG, "Something else is going on");
-
-        }
-
-
-        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_RENDERBUFFER,rendId[0] );
-       GLES20.glViewport(0,0,width, height);
-        android.opengl.Matrix.orthoM(projMatrix, 0, 0, -width, height, 0, -1, 1);
-
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fboId[0]);
-
-
       GLES20.glReadPixels(0, 0, width, height,
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
-
-
-
-
-
-
         GlUtil.checkGlError("glReadPixels");
         buf.rewind();
 
         BufferedOutputStream bos = null;
         try {
+            Long startTime = System.currentTimeMillis();
             bos = new BufferedOutputStream(new FileOutputStream(filename));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-
          bmp.copyPixelsFromBuffer(buf);
             Matrix m = new Matrix();
             m.postScale(-1, 1);
@@ -244,15 +198,9 @@ public class EglSurfaceBase {
             m.postRotate(180);
             Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
             rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
-            bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
             bmp.recycle();
-
+            rotateBitmap.recycle();
             Log.i("time elapsed", String.valueOf(System.currentTimeMillis()-startTime) + " milliseconds");
-
-            bmp.copyPixelsFromBuffer(buf);
-            bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
-            bmp.recycle();
-
         } finally {
             if (bos != null) bos.close();
         }
