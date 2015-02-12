@@ -234,19 +234,15 @@ public class TextureMovieEncoder implements Runnable {
         prepareEncoder(config.mEglContext, config.mMuxer);
     }
 
-    public void saveFrame(File file, int orientation){
-        Log.i("THIS IS THE ORIENTATION", String.valueOf(orientation));
-        if (mInputWindowSurface != null) {
+    public void saveFrame(File file){
+        if (mInputWindowSurface!= null) {
             try {
                 mInputWindowSurface.saveFrame(file);
                 Log.i("SAVED THE FILE", file.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else{
-            Log.d(TAG, "InputWindowSurface is null. This is most likely because you are not recording.");
-
-            }
+        }
     }
 
     /**
@@ -418,8 +414,8 @@ public class TextureMovieEncoder implements Runnable {
                     Looper.myLooper().quit();
                     break;
                 case MSG_ENCODER_SAVEFRAME:
-                    File saveFile = (File) obj;
-                    encoder.saveFrame(saveFile, inputMessage.arg1);
+                    File saveFile = new File(Environment.getExternalStorageDirectory() + "/TestBitmaps/", "frame" + System.currentTimeMillis() + ".png");
+                    encoder.saveFrame(saveFile);
                     break;
                 default:
                     throw new RuntimeException("Unhandled msg what=" + what);

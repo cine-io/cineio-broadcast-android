@@ -18,13 +18,14 @@
 package io.cine.android.streaming.gles;
 
 import android.graphics.Bitmap;
+
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+
 import android.opengl.EGL14;
 import android.opengl.EGLSurface;
 import android.opengl.GLES20;
 import android.util.Log;
-import android.view.Surface;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -232,21 +233,26 @@ public class EglSurfaceBase {
 
         BufferedOutputStream bos = null;
         try {
-            Long startTime = System.currentTimeMillis();
             bos = new BufferedOutputStream(new FileOutputStream(filename));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
-         bmp.copyPixelsFromBuffer(buf);
-//            Matrix m = new Matrix();
-//            m.postScale(-1, 1);
 
-//            m.postRotate(180);
-//            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
-//            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
+         bmp.copyPixelsFromBuffer(buf);
+            Matrix m = new Matrix();
+            m.postScale(-1, 1);
+
+            m.postRotate(180);
+            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
+            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
             bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
             bmp.recycle();
-          //rotateBitmap.recycle();
+
             Log.i("time elapsed", String.valueOf(System.currentTimeMillis()-startTime) + " milliseconds");
+
+            bmp.copyPixelsFromBuffer(buf);
+            bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
+            bmp.recycle();
+
         } finally {
             if (bos != null) bos.close();
         }
