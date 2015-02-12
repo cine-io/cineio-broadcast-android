@@ -50,6 +50,7 @@ import io.cine.android.streaming.EncodingConfig;
 import io.cine.android.streaming.FFmpegMuxer;
 import io.cine.android.streaming.MicrophoneEncoder;
 import io.cine.android.streaming.Muxer;
+import io.cine.android.streaming.ScreenShot;
 import io.cine.android.streaming.TextureMovieEncoder;
 
 /**
@@ -580,7 +581,39 @@ public class BroadcastActivity extends Activity
 
     }
 
+    protected void saveFrame(ScreenShot screenShot){
+        Message message = new Message();
+        TextureMovieEncoder textureMovieEncoder = getsVideoEncoder();
+        message.what = TextureMovieEncoder.MSG_ENCODER_SAVEFRAME;
+        message.obj = screenShot;
+        TextureMovieEncoder.EncoderHandler mEncoderHandler = textureMovieEncoder.getHandler();
+        if (mEncoderHandler != null) {
+            mEncoderHandler.sendMessage(message);
+        }else{
+            Log.d("TextureMovieEncoder EncoderHandler is null", "in plain English you are probably not recording right now");
+        }
+    }
 
+    private void handleSaveFrameMessage(Message inputMessage) {
+        switch(inputMessage.arg1){
+            case ScreenShot.SAVING_FRAME:
+                handleSavingFrame((String) inputMessage.obj);
+                break;
+            case ScreenShot.SAVED_FRAME:
+                handleSavedFrame((String) inputMessage.obj);
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected void handleSavedFrame(String messageString) {
+        Log.i("I SAVED A FRAME", messageString);
+    }
+
+    protected void handleSavingFrame(String messageString) {
+        Log.i("I'M SAVING A FRAME", messageString);
+    }
 
 
     protected CameraHandler getCameraHandler(){
@@ -632,10 +665,14 @@ public class BroadcastActivity extends Activity
                 case MSG_SET_SURFACE_TEXTURE:
                     activity.handleSetSurfaceTexture((SurfaceTexture) inputMessage.obj);
                     break;
+                case MSG_CAPTURE_FRAME:
+                    activity.handleSaveFrameMessage(inputMessage);
+                    break;
                 default:
                     throw new RuntimeException("unknown msg " + what);
             }
         }
     }
+
 }
 

@@ -191,6 +191,7 @@ public class EglSurfaceBase {
         BufferedOutputStream bos = null;
         try {
             Long startTime = System.currentTimeMillis();
+            screenShot.savingMessage();
             bos = new BufferedOutputStream(new FileOutputStream(filename));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
          bmp.copyPixelsFromBuffer(buf);
@@ -202,6 +203,7 @@ public class EglSurfaceBase {
             bmp.recycle();
             Log.i("time elapsed", String.valueOf(System.currentTimeMillis()-startTime) + " milliseconds");
         } finally {
+            screenShot.savedMessage();
             if (bos != null){
                 bos.close();
                 bos.flush();
