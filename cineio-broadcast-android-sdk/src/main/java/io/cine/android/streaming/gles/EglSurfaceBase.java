@@ -203,7 +203,7 @@ public class EglSurfaceBase {
             bmp.recycle();
             Log.i("time elapsed", String.valueOf(System.currentTimeMillis() - startTime) + " milliseconds");
         }catch (IOException e){
-
+            screenShot.failedFrameMessage();
             throw e;
         } finally {
             screenShot.savedMessage();

@@ -20,7 +20,6 @@ package io.cine.android.streaming;
 
 import android.graphics.SurfaceTexture;
 import android.opengl.EGLContext;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -414,7 +413,6 @@ public class TextureMovieEncoder implements Runnable {
                     Looper.myLooper().quit();
                     break;
                 case MSG_ENCODER_SAVEFRAME:
-
                     encoder.saveFrame((ScreenShot) obj);
                     break;
                 default:
