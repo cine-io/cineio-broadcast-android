@@ -18,6 +18,7 @@
 package io.cine.android.streaming.gles;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.opengl.EGL14;
 import android.opengl.EGLSurface;
@@ -185,7 +186,6 @@ public class EglSurfaceBase {
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
         GlUtil.checkGlError("glReadPixels");
         buf.rewind();
-
         BufferedOutputStream bos = null;
         try {
             Long startTime = System.currentTimeMillis();
@@ -193,15 +193,17 @@ public class EglSurfaceBase {
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
          bmp.copyPixelsFromBuffer(buf);
             Matrix m = new Matrix();
-            m.postScale(-1, 1);
+            m.preScale(-1f, 1f);
             m.postRotate(180);
-            Bitmap rotateBitmap = Bitmap.createBitmap(bmp, 0, 0 , bmp.getWidth(), bmp.getHeight(), m, false);
-            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 90, bos);
+            bmp = Bitmap.createBitmap(bmp, 0, 0 , width, height, m, false);
+            bmp.compress(Bitmap.CompressFormat.PNG, 50, bos);
             bmp.recycle();
-            rotateBitmap.recycle();
             Log.i("time elapsed", String.valueOf(System.currentTimeMillis()-startTime) + " milliseconds");
         } finally {
-            if (bos != null) bos.close();
+            if (bos != null){
+                bos.close();
+                bos.flush();
+            }
         }
         Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + filename + "'");
     }
