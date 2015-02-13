@@ -234,6 +234,11 @@ public class TextureMovieEncoder implements Runnable {
         prepareEncoder(config.mEglContext, config.mMuxer);
     }
 
+    /**
+     * This checks for the existence of an inputsurface
+     * and if it exists, simply calls the inputWindowSurface saveframe method.
+     * @param screenShot
+     */
     public void saveFrame(ScreenShot screenShot){
         if (mInputWindowSurface!= null) {
             try {
@@ -337,7 +342,7 @@ public class TextureMovieEncoder implements Runnable {
         }
     }
 
-
+//We need to access the encoderHandler, for instance to capture frames
     public EncoderHandler getHandler(){
         return mHandler;
     }

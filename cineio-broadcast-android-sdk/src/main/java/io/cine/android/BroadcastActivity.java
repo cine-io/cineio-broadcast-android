@@ -581,6 +581,15 @@ public class BroadcastActivity extends Activity
 
     }
 
+    /**
+     *
+     *Sends a message to the encoder.
+     * The encoder is directly connected to the EGLSurface, it accepts messages and it guarantees the
+     * EGLContext's state so it's convenient to run the command via the encoder.
+     * All the user has to do is define a screenshot and call this method. The app takes care of the rest.
+     * Only customization he may want is to handle the frame messages (see below) to react to the status
+     * of the frame save.
+     */
     protected void saveFrame(ScreenShot screenShot){
         Message message = new Message();
         TextureMovieEncoder textureMovieEncoder = getsVideoEncoder();
@@ -594,6 +603,14 @@ public class BroadcastActivity extends Activity
         }
     }
 
+    /**
+     * takes the saveframe status message (Which is returned via the encoder
+     * when capture begins, ends or fails).
+     * Then it dispatches to 3 methods based on whether the status is beginning, saved or failed.
+     * Useful to set it up this way because the 3 handle methods are overridable - you can use them
+     * to send a message to your cameraHandler, to update the UI for instance.
+     * @param inputMessage
+     */
     private void handleSaveFrameMessage(Message inputMessage) {
         switch(inputMessage.arg1){
             case ScreenShot.SAVING_FRAME:
@@ -613,6 +630,11 @@ public class BroadcastActivity extends Activity
         Log.i("I FAILED TO SAVE", messageString);
     }
 
+    /**
+     * When the frame has been saved the message object will contain
+     * the file path of the bitmap
+     * @param messageString
+     */
     protected void handleSavedFrame(String messageString) {
         Log.i("I SAVED A FRAME", messageString);
     }

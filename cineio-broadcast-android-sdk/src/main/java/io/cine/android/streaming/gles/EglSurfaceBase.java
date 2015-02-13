@@ -17,21 +17,14 @@
 
 package io.cine.android.streaming.gles;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.opengl.EGL14;
 import android.opengl.EGLSurface;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 
 import io.cine.android.streaming.ScreenShot;
 
@@ -160,18 +153,26 @@ public class EglSurfaceBase {
      * Saves the EGL surface to a file.
      * <p/>
      * Expects that this object's EGL surface is current.
+     *
+     * This is an amended version of Grafika's SaveFrame method.
+     *
+     * We define the ByteBuffer here (rather than in the screenshot object)
+     * because the bytebuffer creation really relies on the EGL surface
+     * being current and this class is where this is guaranteed.
+     *
+     * Then the entire process of saving the bitmap, including scaling, etc.
+     * happens through the screenshot's saveBitmapFromButter method.
+     *
+     * To ensure that saving doesn't clog the frame buffering for the camera preview
+     * we call it from a runnable in the method. It keeps the app running smoothly
+     * and it's cheap on resources
+     *
      */
     public void saveFrame(ScreenShot screenShot) throws IOException {
         if (!mEglCore.isCurrent(mEGLSurface)) {
             throw new RuntimeException("Expected EGL context/surface is not current");
         }
 
-      /**
-       * Shifted most of the Bitmap Saving method to the Screenshot object.
-       * I did keep the buffer initialization here. It's important to understand
-       * that the buffer and pixel read has to be generated from an EGL context
-       * so we don't want the user to believe that the buffer can be set independently of that
-        */
 
         int width = getWidth();
         int height = getHeight();
@@ -181,7 +182,34 @@ public class EglSurfaceBase {
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
         GlUtil.checkGlError("glReadPixels");
         buf.rewind();
-        screenShot.saveBitmapFromBuffer(buf, width, height);
+        Runnable saveBitmap = new SaveBitmapRunnable(screenShot, buf, width, height);
+        saveBitmap.run();
+
+    }
+
+    private static class SaveBitmapRunnable implements Runnable{
+        private final ByteBuffer buf;
+        private final int width;
+        private final int height;
+        private final ScreenShot screenShot;
+
+        SaveBitmapRunnable(final ScreenShot screenShot, final ByteBuffer buf, final int width, final int height){
+            this.width = width;
+            this.height = height;
+            this.buf = buf;
+            this.screenShot = screenShot;
+
+        }
+
+        @Override
+        public void run() {
+            try {
+                screenShot.saveBitmapFromBuffer(buf, width, height);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
    
