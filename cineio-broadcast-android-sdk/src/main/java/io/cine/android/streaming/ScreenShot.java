@@ -110,25 +110,30 @@ public class ScreenShot {
 
     //Notifies camera handler that we are in the process of saving a frame
     public void savingMessage() {
-        sendCameraHandlerMessage(SAVING_FRAME);
+        Message message = new Message();
+        message.obj = "Saving";
+        sendCameraHandlerMessage(SAVING_FRAME, message);
     }
 
     //Notifies camera handler that we have saved a frame
     public void savedMessage() {
-        sendCameraHandlerMessage(SAVED_FRAME);
+        Message message = new Message();
+        message.obj = getPhotoFile().toString();
+        sendCameraHandlerMessage(SAVED_FRAME, message);
     }
 
     //Notifies camera handler that the frame save has failed
-    public void failedFrameMessage(){
-        sendCameraHandlerMessage(FAILED_FRAME);
+    public void failedFrameMessage(String failureMessage){
+        Message message = new Message();
+        message.obj = failureMessage;
+        sendCameraHandlerMessage(FAILED_FRAME, message);
     }
 
     /**Handles the save frame messaging back to the camera.
      * Super useful to handle UI changes based on save status.
      * @param status
      */
-    private void sendCameraHandlerMessage(int status){
-        Message message = new Message();
+    private void sendCameraHandlerMessage(int status, Message message){
         message.what = mCameraHandler.MSG_CAPTURE_FRAME;
         message.arg1 = status;
         switch(status){
@@ -137,11 +142,9 @@ public class ScreenShot {
                 mCameraHandler.sendMessage(message);
                 break;
             case SAVED_FRAME:
-                message.obj = getPhotoFile().toString();
                 mCameraHandler.sendMessage(message);
                 break;
             case FAILED_FRAME:
-                message.obj = "Could not save frame";
                 mCameraHandler.sendMessage(message);
                 break;
         }
@@ -195,7 +198,7 @@ public class ScreenShot {
             bmp.recycle();
             Log.i("time elapsed", String.valueOf(System.currentTimeMillis() - startTime) + " milliseconds");
         }catch (IOException e){
-            failedFrameMessage();
+            failedFrameMessage(e.getMessage());
             throw e;
         } finally {
             savedMessage();
