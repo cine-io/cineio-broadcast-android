@@ -166,53 +166,22 @@ public class EglSurfaceBase {
             throw new RuntimeException("Expected EGL context/surface is not current");
         }
 
-        // glReadPixels fills in a "direct" ByteBuffer with what is essentially big-endian RGBA
-        // data (i.e. a byte of red, followed by a byte of green...).  While the Bitmap
-        // constructor that takes an int[] wants little-endian ARGB (blue/red swapped), the
-        // Bitmap "copy pixels" method wants the same format GL provides.
-        //
-        // Ideally we'd have some way to re-use the ByteBuffer, especially if we're calling
-        // here often.
-        //
-        // Making this even more interesting is the upside-down nature of GL, which means
-        // our output will look upside down relative to what appears on screen if the
-        // typical GL conventions are used.
-
-        String filename = screenShot.getPhotoFile().toString();
+      /**
+       * Shifted most of the Bitmap Saving method to the Screenshot object.
+       * I did keep the buffer initialization here. It's important to understand
+       * that the buffer and pixel read has to be generated from an EGL context
+       * so we don't want the user to believe that the buffer can be set independently of that
+        */
 
         int width = getWidth();
         int height = getHeight();
         ByteBuffer buf = ByteBuffer.allocateDirect(width * height * 4);
         buf.order(ByteOrder.LITTLE_ENDIAN);
-      GLES20.glReadPixels(0, 0, width, height,
+        GLES20.glReadPixels(0, 0, width, height,
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
         GlUtil.checkGlError("glReadPixels");
         buf.rewind();
-        BufferedOutputStream bos = null;
-        try {
-            Long startTime = System.currentTimeMillis();
-            screenShot.savingMessage();
-            bos = new BufferedOutputStream(new FileOutputStream(filename));
-            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            bmp.copyPixelsFromBuffer(buf);
-            Matrix m = new Matrix();
-            m.preScale(-screenShot.getScale(), screenShot.getScale());
-            m.postRotate(180);
-            bmp = Bitmap.createBitmap(bmp, 0, 0, width, height, m, false);
-            bmp.compress(Bitmap.CompressFormat.PNG, 50, bos);
-            bmp.recycle();
-            Log.i("time elapsed", String.valueOf(System.currentTimeMillis() - startTime) + " milliseconds");
-        }catch (IOException e){
-            screenShot.failedFrameMessage();
-            throw e;
-        } finally {
-            screenShot.savedMessage();
-            if (bos != null){
-                bos.close();
-                bos.flush();
-            }
-        }
-        Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + filename + "'");
+        screenShot.saveBitmapFromBuffer(buf, width, height);
     }
 
    

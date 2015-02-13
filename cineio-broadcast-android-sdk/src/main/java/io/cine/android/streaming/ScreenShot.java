@@ -1,16 +1,28 @@
 package io.cine.android.streaming;
 
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.opengl.GLES20;
 import android.os.Environment;
 import android.os.Message;
+import android.util.Log;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import io.cine.android.BroadcastActivity;
+import io.cine.android.streaming.gles.GlUtil;
 
 /**
  * Created by lgorse on 2/11/15.
  */
 public class ScreenShot {
+    protected static final String TAG = GlUtil.TAG;
 
     private float scale;
     private String filePath;
@@ -115,6 +127,59 @@ public class ScreenShot {
                 mCameraHandler.sendMessage(message);
                 break;
         }
+    }
+
+    // glReadPixels fills in a "direct" ByteBuffer with what is essentially big-endian RGBA
+    // data (i.e. a byte of red, followed by a byte of green...).  While the Bitmap
+    // constructor that takes an int[] wants little-endian ARGB (blue/red swapped), the
+    // Bitmap "copy pixels" method wants the same format GL provides.
+    //
+    // Ideally we'd have some way to re-use the ByteBuffer, especially if we're calling
+    // here often.
+    //
+    // Making this even more interesting is the upside-down nature of GL, which means
+    // our output will look upside down relative to what appears on screen if the
+    // typical GL conventions are used.
+
+    /**
+     *
+     * @param buf must be rewound prior to being passed to this method.
+     *            Essentially buff must be declared, and GLReadPixels called, then the buffer rewound
+     *            Then it is ready to be passed ot this method.
+     *            It's important to do these preparation steps in an EGL context, so we keep this separate r
+     *            from this method
+     * @param width
+     * @param height
+     * @throws IOException
+     */
+
+    public void saveBitmapFromBuffer(ByteBuffer buf, int width, int height) throws IOException {
+        BufferedOutputStream bos = null;
+        try {
+            Long startTime = System.currentTimeMillis();
+            savingMessage();
+            bos = new BufferedOutputStream(new FileOutputStream(getPhotoFile().toString()));
+            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            bmp.copyPixelsFromBuffer(buf);
+            Matrix m = new Matrix();
+            m.preScale(-getScale(), getScale());
+            m.postRotate(180);
+            bmp = Bitmap.createBitmap(bmp, 0, 0, width, height, m, false);
+            bmp.compress(Bitmap.CompressFormat.PNG, 50, bos);
+            bmp.recycle();
+            Log.i("time elapsed", String.valueOf(System.currentTimeMillis() - startTime) + " milliseconds");
+        }catch (IOException e){
+            failedFrameMessage();
+            throw e;
+        } finally {
+            savedMessage();
+            if (bos != null){
+                bos.close();
+                bos.flush();
+            }
+        }
+        Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + getPhotoFile().toString() + "'");
+
     }
 
 
