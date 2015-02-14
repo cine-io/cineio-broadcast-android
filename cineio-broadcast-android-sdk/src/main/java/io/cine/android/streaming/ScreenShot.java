@@ -35,6 +35,7 @@ public class ScreenShot {
     private String filePath;
     private String prefix;
     private BroadcastActivity.CameraHandler mCameraHandler;
+    private File screenShotFile;
 
     public static final int SAVING_FRAME = 0;
     public static final int SAVED_FRAME = 1;
@@ -74,9 +75,12 @@ public class ScreenShot {
     }
 
     //Generates the full File. Useful to get the full filepath of the Bitmap
-    public File getPhotoFile(){
-        File saveFile = new File(filePath, prefix + System.currentTimeMillis() + ".png");
-        return saveFile;
+    public void setScreenShotFile(){
+        this.screenShotFile = new File(filePath, prefix + System.currentTimeMillis() + ".png");
+    }
+
+    public File getScreenShotFile(){
+        return this.screenShotFile;
     }
 
     public void setScale(float scale){
@@ -118,7 +122,7 @@ public class ScreenShot {
     //Notifies camera handler that we have saved a frame
     public void savedMessage() {
         Message message = new Message();
-        message.obj = getPhotoFile().toString();
+        message.obj = getScreenShotFile().toString();
         sendCameraHandlerMessage(SAVED_FRAME, message);
     }
 
@@ -187,7 +191,8 @@ public class ScreenShot {
         try {
             Long startTime = System.currentTimeMillis();
             savingMessage();
-            bos = new BufferedOutputStream(new FileOutputStream(getPhotoFile().toString()));
+            setScreenShotFile();
+            bos = new BufferedOutputStream(new FileOutputStream(getScreenShotFile().toString()));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             bmp.copyPixelsFromBuffer(buf);
             Matrix m = new Matrix();
@@ -207,7 +212,7 @@ public class ScreenShot {
                 bos.flush();
             }
         }
-        Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + getPhotoFile().toString() + "'");
+        Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + getScreenShotFile().toString() + "'");
 
     }
 
