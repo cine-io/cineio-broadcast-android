@@ -33,6 +33,7 @@ public class ScreenShot {
 
     private float scale;
     private String filePath;
+    private String fileFolder;
     private String prefix;
     private BroadcastActivity.CameraHandler mCameraHandler;
     private File screenShotFile;
@@ -45,7 +46,7 @@ public class ScreenShot {
     public ScreenShot(BroadcastActivity.CameraHandler mCameraHandler){
         this.scale = 1f;
         this.prefix = "";
-        this.filePath =  Environment.getExternalStorageDirectory() + "/cineio/" ;
+        this.fileFolder =  Environment.getExternalStorageDirectory() + "/cineio/" ;
         this.mCameraHandler = mCameraHandler;
         initiateDirectory();
     }
@@ -53,7 +54,7 @@ public class ScreenShot {
     //Screenshot with all variables defined
     public ScreenShot(BroadcastActivity.CameraHandler mCameraHandler, float scale, String filePath, String prefix){
         this.scale = scale;
-        this.filePath = Environment.getExternalStorageDirectory() + "/" + filePath + "/";
+        this.fileFolder = Environment.getExternalStorageDirectory() + "/" + filePath + "/";
         this.prefix = prefix;
         this.mCameraHandler = mCameraHandler;
         initiateDirectory();
@@ -62,21 +63,22 @@ public class ScreenShot {
     //Screenshot without the prefix (perhaps not required by the user)
     public ScreenShot(BroadcastActivity.CameraHandler mCameraHandler, float scale, String filePath){
         this.scale = scale;
-        this.filePath = Environment.getExternalStorageDirectory() + "/" + filePath + "/";
+        this.fileFolder = Environment.getExternalStorageDirectory() + "/" + filePath + "/";
         this.prefix = "";
         this.mCameraHandler = mCameraHandler;
         initiateDirectory();
     }
 
-    //Ensures that the filePath is generated if it doesn't exist
+    //Ensures that the file Folder destination is generated if it doesn't exist
     private void initiateDirectory() {
-        File directory = new File(filePath);
+        File directory = new File(fileFolder);
         directory.mkdirs();
     }
 
     //Generates the full File. Useful to get the full filepath of the Bitmap
     public void setScreenShotFile(){
-        this.screenShotFile = new File(filePath, prefix + System.currentTimeMillis() + ".png");
+        this.screenShotFile = new File(fileFolder, prefix + System.currentTimeMillis() + ".png");
+        setFilePath(this.screenShotFile.toString());
     }
 
     public File getScreenShotFile(){
@@ -91,7 +93,7 @@ public class ScreenShot {
         return this.scale;
     }
 
-    public void setFilePath(String filePath){
+    private void setFilePath(String filePath){
         this.filePath = filePath;
     }
 
@@ -106,6 +108,8 @@ public class ScreenShot {
     public String getPrefix(){
         return this.prefix;
     }
+
+    public String getFileFolder(){return this.fileFolder;}
 
     //Turns out we need to get the camerahandler in order to send messages to it
     public BroadcastActivity.CameraHandler getmCameraHandler(){
@@ -122,7 +126,7 @@ public class ScreenShot {
     //Notifies camera handler that we have saved a frame
     public void savedMessage() {
         Message message = new Message();
-        message.obj = getScreenShotFile().toString();
+        message.obj = this;
         sendCameraHandlerMessage(SAVED_FRAME, message);
     }
 
@@ -142,7 +146,6 @@ public class ScreenShot {
         message.arg1 = status;
         switch(status){
             case SAVING_FRAME:
-                message.obj = "Saving";
                 mCameraHandler.sendMessage(message);
                 break;
             case SAVED_FRAME:
@@ -192,7 +195,7 @@ public class ScreenShot {
             Long startTime = System.currentTimeMillis();
             savingMessage();
             setScreenShotFile();
-            bos = new BufferedOutputStream(new FileOutputStream(getScreenShotFile().toString()));
+            bos = new BufferedOutputStream(new FileOutputStream(getFilePath()));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             bmp.copyPixelsFromBuffer(buf);
             Matrix m = new Matrix();
@@ -212,7 +215,7 @@ public class ScreenShot {
                 bos.flush();
             }
         }
-        Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + getScreenShotFile().toString() + "'");
+        Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + getFilePath() + "'");
 
     }
 

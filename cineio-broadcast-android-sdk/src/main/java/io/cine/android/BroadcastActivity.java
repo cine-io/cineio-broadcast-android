@@ -617,7 +617,7 @@ public class BroadcastActivity extends Activity
                 handleSavingFrame((String) inputMessage.obj);
                 break;
             case ScreenShot.SAVED_FRAME:
-                handleSavedFrame((String) inputMessage.obj);
+                handleSavedFrame((ScreenShot) inputMessage.obj);
                 break;
             case ScreenShot.FAILED_FRAME:
                 handleFailedFrame((String) inputMessage.obj);
@@ -626,21 +626,21 @@ public class BroadcastActivity extends Activity
         }
     }
 
-    protected void handleFailedFrame(String messageString) {
-        Log.i("I FAILED TO SAVE", messageString);
+    protected void handleFailedFrame(String errorString) {
+        Log.i("I FAILED TO SAVE", errorString);
     }
 
     /**
      * When the frame has been saved the message object will contain
      * the file path of the bitmap
-     * @param messageString
+     * @param screenShot
      */
-    protected void handleSavedFrame(String messageString) {
-        Log.i("I SAVED A FRAME", messageString);
+    protected void handleSavedFrame(ScreenShot screenShot) {
+        Log.i("I SAVED A FRAME", screenShot.getFilePath());
     }
 
-    protected void handleSavingFrame(String messageString) {
-        Log.i("I'M SAVING A FRAME", messageString);
+    protected void handleSavingFrame(String savingString) {
+        Log.i("I'M SAVING A FRAME", savingString);
     }
 
 
