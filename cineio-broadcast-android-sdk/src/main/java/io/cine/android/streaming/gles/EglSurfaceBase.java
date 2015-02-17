@@ -17,18 +17,16 @@
 
 package io.cine.android.streaming.gles;
 
-import android.graphics.Bitmap;
 import android.opengl.EGL14;
 import android.opengl.EGLSurface;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import io.cine.android.streaming.ScreenShot;
 
 /**
  * Common base class for EGL surfaces.
@@ -155,25 +153,26 @@ public class EglSurfaceBase {
      * Saves the EGL surface to a file.
      * <p/>
      * Expects that this object's EGL surface is current.
+     *
+     * This is an amended version of Grafika's SaveFrame method.
+     *
+     * We define the ByteBuffer here (rather than in the screenshot object)
+     * because the bytebuffer creation really relies on the EGL surface
+     * being current and this class is where this is guaranteed.
+     *
+     * Then the entire process of saving the bitmap, including scaling, etc.
+     * happens through the screenshot's saveBitmapFromButter method.
+     *
+     * To ensure that saving doesn't clog the frame buffering for the camera preview
+     * we call it from a runnable in the method. It keeps the app running smoothly
+     * and it's cheap on resources
+     *
      */
-    public void saveFrame(File file) throws IOException {
+    public void saveFrame(ScreenShot screenShot) throws IOException {
         if (!mEglCore.isCurrent(mEGLSurface)) {
             throw new RuntimeException("Expected EGL context/surface is not current");
         }
 
-        // glReadPixels fills in a "direct" ByteBuffer with what is essentially big-endian RGBA
-        // data (i.e. a byte of red, followed by a byte of green...).  While the Bitmap
-        // constructor that takes an int[] wants little-endian ARGB (blue/red swapped), the
-        // Bitmap "copy pixels" method wants the same format GL provides.
-        //
-        // Ideally we'd have some way to re-use the ByteBuffer, especially if we're calling
-        // here often.
-        //
-        // Making this even more interesting is the upside-down nature of GL, which means
-        // our output will look upside down relative to what appears on screen if the
-        // typical GL conventions are used.
-
-        String filename = file.toString();
 
         int width = getWidth();
         int height = getHeight();
@@ -183,17 +182,35 @@ public class EglSurfaceBase {
                 GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
         GlUtil.checkGlError("glReadPixels");
         buf.rewind();
+        Runnable saveBitmap = new SaveBitmapRunnable(screenShot, buf, width, height);
+        saveBitmap.run();
 
-        BufferedOutputStream bos = null;
-        try {
-            bos = new BufferedOutputStream(new FileOutputStream(filename));
-            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            bmp.copyPixelsFromBuffer(buf);
-            bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
-            bmp.recycle();
-        } finally {
-            if (bos != null) bos.close();
-        }
-        Log.d(TAG, "Saved " + width + "x" + height + " frame as '" + filename + "'");
     }
+
+    private static class SaveBitmapRunnable implements Runnable{
+        private final ByteBuffer buf;
+        private final int width;
+        private final int height;
+        private final ScreenShot screenShot;
+
+        SaveBitmapRunnable(final ScreenShot screenShot, final ByteBuffer buf, final int width, final int height){
+            this.width = width;
+            this.height = height;
+            this.buf = buf;
+            this.screenShot = screenShot;
+
+        }
+
+        @Override
+        public void run() {
+            try {
+                screenShot.saveBitmapFromBuffer(buf, width, height);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+   
 }

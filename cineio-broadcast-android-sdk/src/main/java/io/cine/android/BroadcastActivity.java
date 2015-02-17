@@ -37,6 +37,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -49,6 +50,7 @@ import io.cine.android.streaming.EncodingConfig;
 import io.cine.android.streaming.FFmpegMuxer;
 import io.cine.android.streaming.MicrophoneEncoder;
 import io.cine.android.streaming.Muxer;
+import io.cine.android.streaming.ScreenShot;
 import io.cine.android.streaming.TextureMovieEncoder;
 
 /**
@@ -177,6 +179,10 @@ public class BroadcastActivity extends Activity
         Log.d(TAG, "onCreate complete: " + this);
     }
 
+    protected TextureMovieEncoder getsVideoEncoder(){
+        return sVideoEncoder;
+    }
+
     private void initializeGLView() {
         // Configure the GLSurfaceView.  This will start the Renderer thread, with an
         // appropriate EGL context.
@@ -185,7 +191,6 @@ public class BroadcastActivity extends Activity
         mRenderer = new CameraSurfaceRenderer(mCameraHandler, sVideoEncoder, mMuxer);
         mGLView.setRenderer(mRenderer);
         mGLView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-
     }
 
     private void initializeVideo() {
@@ -577,6 +582,73 @@ public class BroadcastActivity extends Activity
     }
 
     /**
+     *
+     *Sends a message to the encoder.
+     * The encoder is directly connected to the EGLSurface, it accepts messages and it guarantees the
+     * EGLContext's state so it's convenient to run the command via the encoder.
+     * All the user has to do is define a screenshot and call this method. The app takes care of the rest.
+     * Only customization he may want is to handle the frame messages (see below) to react to the status
+     * of the frame save.
+     */
+    protected void saveFrame(ScreenShot screenShot){
+        Message message = new Message();
+        TextureMovieEncoder textureMovieEncoder = getsVideoEncoder();
+        message.what = TextureMovieEncoder.MSG_ENCODER_SAVEFRAME;
+        message.obj = screenShot;
+        TextureMovieEncoder.EncoderHandler mEncoderHandler = textureMovieEncoder.getHandler();
+        if (mEncoderHandler != null) {
+            mEncoderHandler.sendMessage(message);
+        }else{
+            Log.d("TextureMovieEncoder EncoderHandler is null", "in plain English you are probably not recording right now");
+        }
+    }
+
+    /**
+     * takes the saveframe status message (Which is returned via the encoder
+     * when capture begins, ends or fails).
+     * Then it dispatches to 3 methods based on whether the status is beginning, saved or failed.
+     * Useful to set it up this way because the 3 handle methods are overridable - you can use them
+     * to send a message to your cameraHandler, to update the UI for instance.
+     * @param inputMessage
+     */
+    private void handleSaveFrameMessage(Message inputMessage) {
+        switch(inputMessage.arg1){
+            case ScreenShot.SAVING_FRAME:
+                handleSavingFrame((String) inputMessage.obj);
+                break;
+            case ScreenShot.SAVED_FRAME:
+                handleSavedFrame((ScreenShot) inputMessage.obj);
+                break;
+            case ScreenShot.FAILED_FRAME:
+                handleFailedFrame((String) inputMessage.obj);
+            default:
+                break;
+        }
+    }
+
+    protected void handleFailedFrame(String errorString) {
+        Log.i("I FAILED TO SAVE", errorString);
+    }
+
+    /**
+     * When the frame has been saved the message object will contain
+     * the file path of the bitmap
+     * @param screenShot
+     */
+    protected void handleSavedFrame(ScreenShot screenShot) {
+        Log.i("I SAVED A FRAME", screenShot.getFilePath());
+    }
+
+    protected void handleSavingFrame(String savingString) {
+        Log.i("I'M SAVING A FRAME", savingString);
+    }
+
+
+    protected CameraHandler getCameraHandler(){
+        return mCameraHandler;
+    }
+
+    /**
      * Handles camera operation requests from other threads.  Necessary because the Camera
      * must only be accessed from one thread.
      * <p/>
@@ -586,6 +658,7 @@ public class BroadcastActivity extends Activity
     public static class CameraHandler extends Handler {
         public static final int MSG_SET_SURFACE_TEXTURE = 0;
         public static final int MSG_SURFACE_CHANGED = 1;
+        public static final int MSG_CAPTURE_FRAME = 2;
 
         // Weak reference to the Activity; only access this from the UI thread.
         private WeakReference<BroadcastActivity> mWeakActivity;
@@ -620,10 +693,14 @@ public class BroadcastActivity extends Activity
                 case MSG_SET_SURFACE_TEXTURE:
                     activity.handleSetSurfaceTexture((SurfaceTexture) inputMessage.obj);
                     break;
+                case MSG_CAPTURE_FRAME:
+                    activity.handleSaveFrameMessage(inputMessage);
+                    break;
                 default:
                     throw new RuntimeException("unknown msg " + what);
             }
         }
     }
+
 }
 

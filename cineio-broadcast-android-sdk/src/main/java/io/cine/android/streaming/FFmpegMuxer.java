@@ -145,6 +145,8 @@ public class FFmpegMuxer extends Muxer implements Runnable {
                 ByteBuffer muxerInput;
                 if (formatRequiresBuffering()) {
                     // Copy encodedData into another ByteBuffer, recycling if possible
+                    Log.i("THIS IS THE ENCODED DATA", encodedData.toString());
+                    Log.i("THIS IS THE TRACK INDEX", String.valueOf(trackIndex));
                     synchronized (mMuxerInputQueue) {
                         muxerInput = mMuxerInputQueue.get(trackIndex).isEmpty() ?
                                 ByteBuffer.allocateDirect(encodedData.capacity()) : mMuxerInputQueue.get(trackIndex).remove();

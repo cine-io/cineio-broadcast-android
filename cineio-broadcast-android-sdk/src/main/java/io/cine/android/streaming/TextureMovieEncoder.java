@@ -25,6 +25,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
@@ -68,6 +69,7 @@ public class TextureMovieEncoder implements Runnable {
     private static final int MSG_SET_TEXTURE_ID = 3;
     private static final int MSG_UPDATE_SHARED_CONTEXT = 4;
     private static final int MSG_QUIT = 5;
+    public static final int MSG_ENCODER_SAVEFRAME = 6;
 
     // ----- accessed exclusively by encoder thread -----
     private WindowSurface mInputWindowSurface;
@@ -83,6 +85,7 @@ public class TextureMovieEncoder implements Runnable {
     private Object mReadyFence = new Object();      // guards ready/running
     private boolean mReady;
     private boolean mRunning;
+
 
     /**
      * Tells the video recorder to start recording.  (Call from non-encoder thread.)
@@ -112,6 +115,7 @@ public class TextureMovieEncoder implements Runnable {
 
         mHandler.sendMessage(mHandler.obtainMessage(MSG_START_RECORDING, config));
     }
+
 
     /**
      * Tells the video recorder to stop recording.  (Call from non-encoder thread.)
@@ -177,10 +181,10 @@ public class TextureMovieEncoder implements Runnable {
             Log.w(TAG, "HEY: got SurfaceTexture with timestamp of zero");
             return;
         }
-
         mHandler.sendMessage(mHandler.obtainMessage(MSG_FRAME_AVAILABLE,
                 (int) (timestamp >> 32), (int) timestamp, transform));
     }
+
 
     /**
      * Tells the video recorder what texture name to use.  This is the external texture that
@@ -231,6 +235,21 @@ public class TextureMovieEncoder implements Runnable {
     }
 
     /**
+     * This checks for the existence of an inputsurface
+     * and if it exists, simply calls the inputWindowSurface saveframe method.
+     * @param screenShot
+     */
+    public void saveFrame(ScreenShot screenShot){
+        if (mInputWindowSurface!= null) {
+            try {
+                mInputWindowSurface.saveFrame(screenShot);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Handles notification of an available frame.
      * <p/>
      * The texture is rendered onto the encoder's input surface, along with a moving
@@ -240,11 +259,10 @@ public class TextureMovieEncoder implements Runnable {
      * @param transform      The texture transform, from SurfaceTexture.
      * @param timestampNanos The frame's timestamp, from SurfaceTexture.
      */
-    private void handleFrameAvailable(float[] transform, long timestampNanos) {
+    public void handleFrameAvailable(float[] transform, long timestampNanos) {
         if (VERBOSE) Log.d(TAG, "handleFrameAvailable tr=" + transform);
         mVideoEncoder.drainEncoder(false);
         mFullScreen.drawFrame(mTextureId, transform);
-
         mInputWindowSurface.setPresentationTime(timestampNanos);
         mInputWindowSurface.swapBuffers();
     }
@@ -324,6 +342,14 @@ public class TextureMovieEncoder implements Runnable {
         }
     }
 
+//We need to access the encoderHandler, for instance to capture frames
+    public EncoderHandler getHandler(){
+        return mHandler;
+    }
+
+
+
+
     /**
      * Encoder configuration.
      * <p/>
@@ -352,7 +378,7 @@ public class TextureMovieEncoder implements Runnable {
     /**
      * Handles encoder state change requests.  The handler is created on the encoder thread.
      */
-    private static class EncoderHandler extends Handler {
+    public static class EncoderHandler extends Handler {
         private WeakReference<TextureMovieEncoder> mWeakEncoder;
 
         public EncoderHandler(TextureMovieEncoder encoder) {
@@ -390,6 +416,9 @@ public class TextureMovieEncoder implements Runnable {
                     break;
                 case MSG_QUIT:
                     Looper.myLooper().quit();
+                    break;
+                case MSG_ENCODER_SAVEFRAME:
+                    encoder.saveFrame((ScreenShot) obj);
                     break;
                 default:
                     throw new RuntimeException("Unhandled msg what=" + what);
