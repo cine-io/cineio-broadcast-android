@@ -31,7 +31,7 @@ public class CineIoExampleAppActivity extends Activity implements AdapterView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cine_io_consumer);
-        if (SECRET_KEY == "SECRET_KEY"){
+        if (SECRET_KEY.equals("SECRET_KEY")){
             CharSequence error = "SECRET_KEY must be set to a cine.io project's secret key. Register for one here: https://www.cine.io";
             Toast.makeText(this, error, Toast.LENGTH_LONG).show();
         }
