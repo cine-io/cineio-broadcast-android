@@ -339,6 +339,7 @@ client.deleteStreamRecording(streamId, recordingName, new StreamRecordingRespons
 * Thanks [Google Grafika](https://github.com/google/grafika) for their example application of recording a [SurfaceTexture](http://developer.android.com/reference/android/graphics/SurfaceTexture.html) to a [MediaMuxer](http://developer.android.com/reference/android/media/MediaMuxer.html).
 * Thanks to [Kickflip](https://github.com/Kickflip/kickflip-android-sdk/) for their example of using [AudioRecord](http://developer.android.com/reference/android/media/AudioRecord.html) in a [Thread](http://developer.android.com/reference/java/lang/Thread.html).
 * Thanks to [FFmpeg Muxing example](https://ffmpeg.org/doxygen/trunk/muxing_8c-source.html) for their example of writing individual frames to [ffmpeg](https://ffmpeg.org/).
+* Thanks to [lgorse](https://github.com/lgorse) for various contributions including screenshot saving.
 
 ## Contributing
 
