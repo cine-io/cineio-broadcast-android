@@ -4,6 +4,8 @@
 
 The [android library](http://mvnrepository.com/artifact/io.cine/cineio-broadcast-android-sdk) for [cine.io broadcast](https://www.cine.io/products/broadcast).
 
+> This library is unstable on Android 5.0+ (Lollipop). We apologize for the inconvenience. If you fix it before we do, we love [pull requests](#contributing).
+
 ## Installation
 
 Add the following to your `build.gradle`.
