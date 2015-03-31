@@ -8,10 +8,10 @@
         android:id="@+id/streamingStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/item_padding"
-        android:layout_marginTop="@dimen/item_padding"
+        android:layout_marginLeft="@dimen/cine_item_padding"
+        android:layout_marginTop="@dimen/cine_item_padding"
         android:text="Ready"
-        android:textColor="@color/yellow"
+        android:textColor="@color/cineyellow"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

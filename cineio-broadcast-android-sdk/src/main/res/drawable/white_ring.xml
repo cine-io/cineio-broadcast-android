@@ -2,9 +2,9 @@
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
-    <stroke android:color="@color/white" android:width="@dimen/ring_width"/>
+    <stroke android:color="@color/cinewhite" android:width="@dimen/cine_ring_width"/>
     <size
-    android:height="@dimen/ring_size"
-    android:width="@dimen/ring_size" />
+    android:height="@dimen/cine_ring_size"
+    android:width="@dimen/cine_ring_size" />
 
 </shape>

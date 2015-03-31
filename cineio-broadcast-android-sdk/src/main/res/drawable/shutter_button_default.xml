@@ -4,7 +4,7 @@
     >
     <item android:drawable="@drawable/white_ring"/>
 
-    <item android:left="@dimen/red_circle_padding" android:right="@dimen/red_circle_padding" android:bottom="@dimen/red_circle_padding"
-        android:top="@dimen/red_circle_padding" android:drawable="@drawable/red_circle"/>
+    <item android:left="@dimen/cine_red_circle_padding" android:right="@dimen/cine_red_circle_padding" android:bottom="@dimen/cine_red_circle_padding"
+        android:top="@dimen/cine_red_circle_padding" android:drawable="@drawable/red_circle"/>
 
 </layer-list>

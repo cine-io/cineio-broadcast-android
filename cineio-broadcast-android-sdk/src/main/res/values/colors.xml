@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="white">#fff</color>
-    <color name="red">#f00</color>
-    <color name="yellow">#FFFF00</color>
+    <color name="cinewhite">#fff</color>
+    <color name="cinered">#f00</color>
+    <color name="cineyellow">#FFFF00</color>
 
 </resources>

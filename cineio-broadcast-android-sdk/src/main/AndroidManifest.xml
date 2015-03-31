@@ -27,14 +27,10 @@
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="CineIOBroadcastActivity"
-        android:theme="@style/AppTheme" >
+        android:allowBackup="true" >
 
         <activity
-            android:name=".BroadcastActivity"
-            android:label="CineIOBroadcastActivity" >
+            android:name=".BroadcastActivity" >
         </activity>
     </application>
 
