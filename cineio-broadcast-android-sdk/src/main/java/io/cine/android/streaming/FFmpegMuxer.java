@@ -22,9 +22,12 @@ public class FFmpegMuxer extends Muxer implements Runnable {
     private static final String TAG = "FFmpegMuxer";
     private static final boolean VERBOSE = false;        // Lots of logging
 
+    private static final int INPUTQUEUE_ALLOCLENGTH_PERTRACK = 30;
+
     // MuxerHandler message types
     private static final int MSG_WRITE_FRAME = 1;
     private static final int MSG_ADD_TRACK = 2;
+    private static final int MSG_SHUT_DOWN = 3;
 
     private final Object mReadyFence = new Object();    // Synchronize muxing thread readiness
     private final Object mEncoderReleasedSync = new Object();
@@ -35,6 +38,8 @@ public class FFmpegMuxer extends Muxer implements Runnable {
     private final int profile = 2;              // AAC LC
     // Queue encoded buffers when muxing to stream
     ArrayList<ArrayDeque<ByteBuffer>> mMuxerInputQueue;
+    private ArrayList<Integer> mMuxerInputQueueAllocSize;
+
     private boolean mReady;                             // Is muxing thread ready
     private boolean mRunning;                           // Is muxer thread running
     private FFmpegHandler mHandler;
@@ -68,13 +73,20 @@ public class FFmpegMuxer extends Muxer implements Runnable {
         mH264MetaSize = -1;
         mStarted = false;
         mEncoderReleased = false;
-        mFFmpeg.init(getConfig().getAVOptions());
+        int ret = mFFmpeg.init(getConfig().getAVOptions());
+
+        if(ret>=0)
+        {
+            if(mOnErrorListener!=null)
+                mOnErrorListener.onError(this,ret,0);
+        }
 
         if (formatRequiresADTS())
             mCachedAudioPacket = new byte[1024];
 
         if (formatRequiresBuffering()) {
             mMuxerInputQueue = new ArrayList<ArrayDeque<ByteBuffer>>();
+            mMuxerInputQueueAllocSize = new ArrayList<Integer>();
             startMuxingThread();
         } else {
             getConfig().setMuxerState(EncodingConfig.MUXER_STATE.READY);
@@ -97,8 +109,10 @@ public class FFmpegMuxer extends Muxer implements Runnable {
         if (formatRequiresBuffering()) {
             mHandler.sendMessage(mHandler.obtainMessage(MSG_ADD_TRACK, trackFormat));
             synchronized (mMuxerInputQueue) {
-                while (mMuxerInputQueue.size() < trackIndex + 1)
+                while (mMuxerInputQueue.size() < trackIndex + 1) {
                     mMuxerInputQueue.add(new ArrayDeque<ByteBuffer>());
+                    mMuxerInputQueueAllocSize.add(0);
+                }
             }
         } else {
             handleAddTrack(trackFormat);
@@ -134,23 +148,64 @@ public class FFmpegMuxer extends Muxer implements Runnable {
         release();
         if (formatRequiresBuffering()) {
             Looper.myLooper().quit();
+            mHandler = null;
         }
         getConfig().setMuxerState(EncodingConfig.MUXER_STATE.SHUTDOWN);
     }
 
+    private boolean isNeedWait = true;
     @Override
     public void writeSampleData(MediaCodec encoder, int trackIndex, int bufferIndex, ByteBuffer encodedData, MediaCodec.BufferInfo bufferInfo) {
+
+        Log.i("encodedData.capacity", String.valueOf(encodedData.capacity()));
+
         synchronized (mReadyFence) {
             if (mReady) {
-                ByteBuffer muxerInput;
+                ByteBuffer muxerInput = null;
                 if (formatRequiresBuffering()) {
                     // Copy encodedData into another ByteBuffer, recycling if possible
-                    Log.i("THIS IS THE ENCODED DATA", encodedData.toString());
-                    Log.i("THIS IS THE TRACK INDEX", String.valueOf(trackIndex));
-                    synchronized (mMuxerInputQueue) {
-                        muxerInput = mMuxerInputQueue.get(trackIndex).isEmpty() ?
-                                ByteBuffer.allocateDirect(encodedData.capacity()) : mMuxerInputQueue.get(trackIndex).remove();
+                    Log.i("THE ENCODED DATA", encodedData.toString());
+                    Log.i("THE TRACK INDEX", String.valueOf(trackIndex));
+
+                    while(isNeedWait)
+                    {
+                        synchronized (mMuxerInputQueue) {
+//                        muxerInput = mMuxerInputQueue.get(trackIndex).isEmpty() ?
+//                                ByteBuffer.allocateDirect(encodedData.capacity()) : mMuxerInputQueue.get(trackIndex).remove();
+
+                            if (mMuxerInputQueue.get(trackIndex).isEmpty()) {
+                                Log.i("mMuxerInputQueue", "isEmpty");
+
+                                int size = mMuxerInputQueueAllocSize.get(trackIndex);
+
+                                if (size > INPUTQUEUE_ALLOCLENGTH_PERTRACK) {
+                                    isNeedWait = true;
+
+                                } else {
+                                    muxerInput = ByteBuffer.allocateDirect(encodedData.capacity());
+                                    size++;
+                                    mMuxerInputQueueAllocSize.set(trackIndex, size);
+                                    isNeedWait = false;
+                                }
+
+                            } else {
+                                muxerInput = mMuxerInputQueue.get(trackIndex).remove();
+                                Log.i("mMuxerInputQueue", "remove");
+                                isNeedWait = false;
+                            }
+
+                            if (isNeedWait) {
+                                //wait
+                                try {
+                                    mMuxerInputQueue.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     }
+                    isNeedWait = true;
+
                     muxerInput.put(encodedData);
                     muxerInput.position(0);
                     encoder.releaseOutputBuffer(bufferIndex, false);
@@ -217,7 +272,6 @@ public class FFmpegMuxer extends Muxer implements Runnable {
                 getConfig().setMuxerState(EncodingConfig.MUXER_STATE.STREAMING);
                 Log.d(TAG, "WRITING VIDEO KEYFRAME");
                 packageH264Keyframe(encodedData, bufferInfo);
-
                 mFFmpeg.writePacket(mH264Keyframe, bufferInfo.size + mH264MetaSize, bufferInfo.presentationTimeUs, cBoolean(isVideo), cBoolean(true));
             } else {
                 Log.d(TAG, "WRITING " + (isVideo ? "VIDEO" : "AUDIO") + " DATA");
@@ -242,6 +296,9 @@ public class FFmpegMuxer extends Muxer implements Runnable {
                     encodedData.clear();
                     synchronized (mMuxerInputQueue) {
                         mMuxerInputQueue.get(trackIndex).add(encodedData);
+                        Log.i("mMuxerInputQueue", "add");
+
+                        mMuxerInputQueue.notify();
                     }
                 } else {
                     encoder.releaseOutputBuffer(bufferIndex, false);
@@ -398,6 +455,9 @@ public class FFmpegMuxer extends Muxer implements Runnable {
                             data.mBufferIndex,
                             data.mData,
                             data.getBufferInfo());
+                    break;
+                case MSG_SHUT_DOWN:
+                    muxer.shutdown();
                     break;
                 default:
                     throw new RuntimeException("Unexpected msg what=" + what);

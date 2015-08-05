@@ -1,8 +1,8 @@
 apply plugin: 'android'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
 
     defaultConfig {
         applicationId 'io.cine.example'
@@ -31,6 +31,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:20.0.0'
     compile 'com.android.support:support-v4:20.0.0'
     compile project(':cineio-broadcast-android-sdk')
-//    compile 'io.cine:cineio-broadcast-android-sdk:0.0.9-SNAPSHOT'
-//    compile 'io.cine:cineio-broadcast-android-sdk:0.0.9'
+    //    compile 'io.cine:cineio-broadcast-android-sdk:0.0.9-SNAPSHOT'
+    //    compile 'io.cine:cineio-broadcast-android-sdk:0.0.9'
 }

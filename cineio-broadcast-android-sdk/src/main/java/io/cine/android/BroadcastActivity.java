@@ -128,7 +128,7 @@ import io.cine.android.streaming.TextureMovieEncoder;
  * is managed as a static property of the Activity.
  */
 public class BroadcastActivity extends Activity
-        implements SurfaceTexture.OnFrameAvailableListener, EncodingConfig.EncodingCallback {
+        implements SurfaceTexture.OnFrameAvailableListener, EncodingConfig.EncodingCallback , Muxer.OnErrorListener{
     private static final String TAG = "BroadcastActivity";
     private static final boolean VERBOSE = false;
     // this is static so it survives activity restarts
@@ -151,6 +151,9 @@ public class BroadcastActivity extends Activity
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
         Bundle extras = getIntent().getExtras();
         int layout = extras.getInt("LAYOUT", R.layout.activity_broadcast_capture);
         setContentView(layout);
@@ -163,7 +166,7 @@ public class BroadcastActivity extends Activity
         // http://stackoverflow.com/questions/5975168/android-button-setpressed-after-onclick
         Button toggleRecording = (Button) findViewById(R.id.toggleRecording_button);
 
-        toggleRecording.setOnTouchListener(new View.OnTouchListener() {
+/*        toggleRecording.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // show interest in events resulting from ACTION_DOWN
@@ -172,6 +175,13 @@ public class BroadcastActivity extends Activity
                 if(event.getAction()!=MotionEvent.ACTION_UP) return false;
                 toggleRecordingHandler();
                 return true;
+            }
+        });*/
+
+        toggleRecording.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleRecordingHandler();
             }
         });
 
@@ -204,6 +214,7 @@ public class BroadcastActivity extends Activity
 
     private void initializeMuxer(){
         mMuxer = new FFmpegMuxer();
+        mMuxer.setOnErrorListener(this);
     }
 
     private void initializeAudio() {
@@ -488,7 +499,7 @@ public class BroadcastActivity extends Activity
 
         CameraUtils.choosePreviewSize(parms, mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
 
-        mCamera.setParameters(parms);
+//        mCamera.setParameters(parms);
 
         mGLView.queueEvent(new Runnable() {
             @Override
@@ -648,6 +659,12 @@ public class BroadcastActivity extends Activity
         return mCameraHandler;
     }
 
+    @Override
+    public boolean onError(Muxer mx, int what, int extra) {
+        this.finish();
+        return true;
+    }
+
     /**
      * Handles camera operation requests from other threads.  Necessary because the Camera
      * must only be accessed from one thread.
@@ -688,7 +705,7 @@ public class BroadcastActivity extends Activity
 
             switch (what) {
                 case MSG_SURFACE_CHANGED:
-                    activity.handleSetCameraOrientation();
+//                    activity.handleSetCameraOrientation();
                     break;
                 case MSG_SET_SURFACE_TEXTURE:
                     activity.handleSetSurfaceTexture((SurfaceTexture) inputMessage.obj);

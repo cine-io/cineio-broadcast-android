@@ -29,8 +29,7 @@
     <application
         android:allowBackup="true" >
 
-        <activity
-            android:name=".BroadcastActivity" >
+        <activity android:name=".BroadcastActivity">
         </activity>
     </application>
 

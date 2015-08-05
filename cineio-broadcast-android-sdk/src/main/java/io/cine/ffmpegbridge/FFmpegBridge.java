@@ -32,10 +32,11 @@ import java.nio.ByteBuffer;
 public class FFmpegBridge {
 
     static {
+        System.loadLibrary("ffmpeg");
         System.loadLibrary("ffmpegbridge");
     }
 
-    public native void init(AVOptions jOpts);
+    public native int init(AVOptions jOpts);
 
     public native void setAudioCodecExtraData(byte[] jData, int jSize);
 

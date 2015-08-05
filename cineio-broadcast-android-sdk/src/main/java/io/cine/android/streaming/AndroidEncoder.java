@@ -1,6 +1,7 @@
 // started from https://github.com/google/grafika/blob/f3c8c3dee60153f471312e21acac8b3a3cddd7dc/src/com/android/grafika/VideoEncoderCore.java
 package io.cine.android.streaming;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
@@ -126,6 +127,7 @@ public abstract class AndroidEncoder {
                         }
                         // It is the muxer's responsibility to release encodedData
                         mMuxer.writeSampleData(mEncoder, mTrackIndex, encoderStatus, encodedData, mBufferInfo);
+//                        mEncoder.releaseOutputBuffer(encoderStatus, false);
                         if (VERBOSE) {
                             Log.d(TAG, "sent " + mBufferInfo.size + " bytes to muxer, \t ts=" +
                                     mBufferInfo.presentationTimeUs + "track " + mTrackIndex);

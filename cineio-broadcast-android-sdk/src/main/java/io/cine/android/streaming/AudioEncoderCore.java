@@ -5,6 +5,8 @@ import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 
+import java.io.IOException;
+
 /**
  * @hide
  */
@@ -33,9 +35,11 @@ public class AudioEncoderCore extends AndroidEncoder {
         format.setInteger(MediaFormat.KEY_BIT_RATE, config.getBitrate());
         format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 16384);
 
-        mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
-        mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        mEncoder.start();
+        try {
+            mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
+            mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+            mEncoder.start();
+        } catch (IOException e) {}
 
         mTrackIndex = -1;
     }

@@ -11,17 +11,21 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.Override;
 import java.util.ArrayList;
+import java.util.logging.Handler;
 
 import io.cine.android.CineIoClient;
 import io.cine.android.CineIoConfig;
 import io.cine.android.api.Stream;
 import io.cine.android.api.StreamsResponseHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CineIoExampleAppActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private final static String TAG = "CineIoExampleAppActivity";
-    private final static String SECRET_KEY = "SECRET_KEY";
+    private final static String SECRET_KEY = "hupu";
 
     private CineIoClient mClient;
     private ListView streamListView;
@@ -39,12 +43,38 @@ public class CineIoExampleAppActivity extends Activity implements AdapterView.On
         CineIoConfig config = new CineIoConfig();
         config.setSecretKey(SECRET_KEY);
         mClient = new CineIoClient(config);
-        mClient.getStreams(new StreamsResponseHandler(){
+        /*mClient.getStreams(new StreamsResponseHandler(){
             @Override
             public void onSuccess(ArrayList<Stream> streams) {
                 setStreams(streams);
             }
-        });
+
+            @Override
+            public void onFailure(JSONException e) {
+                e.printStackTrace();
+*/
+                try {
+                    ArrayList<Stream> streams = new ArrayList<Stream>();
+                    JSONObject o = new JSONObject("{\"id\":\"1\",\"name\":\"hupu\",\"publish\":{\"url\":\"rtmp://wspub.live.hupucdn.com/prod\",\"stream\":\"slk1\"},\"play\":{\"hls\":\"http://172.16.28.16/hls/123.m3u8\"}}");
+
+                    streams.add(new Stream(o));
+                    setStreams(streams);
+                } catch (JSONException ex) {}
+            /*}
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                throwable.printStackTrace();
+
+                try {
+                    ArrayList<Stream> streams = new ArrayList<Stream>();
+                    JSONObject o = new JSONObject("{\"id\":\"1\",\"name\":\"hupu\",\"publish\":{\"url\":\"rtmp://172.16.28.16/live\",\"stream\":\"123\"},\"play\":{\"hls\":\"http://172.16.28.16/hls/123.m3u8\"}}");
+
+                    streams.add(new Stream(o));
+                    setStreams(streams);
+                } catch (JSONException ex) {}
+            }
+        });*/
     }
 
     public void setStreams(ArrayList<Stream> streams){

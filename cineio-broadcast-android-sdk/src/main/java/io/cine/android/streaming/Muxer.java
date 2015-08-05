@@ -28,6 +28,15 @@ public abstract class Muxer {
     protected Muxer() {
     }
 
+    public static final int ERROR_IO = 0;
+    public interface OnErrorListener {
+        boolean onError(Muxer mx, int what, int extra);
+    }
+    protected OnErrorListener mOnErrorListener = null;
+    public void setOnErrorListener(OnErrorListener listener) {
+        mOnErrorListener = listener;
+    }
+
     public EncodingConfig getConfig() {
         return mConfig;
     }
