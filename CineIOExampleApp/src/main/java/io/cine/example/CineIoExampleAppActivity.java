@@ -25,7 +25,7 @@ import org.json.JSONObject;
 public class CineIoExampleAppActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private final static String TAG = "CineIoExampleAppActivity";
-    private final static String SECRET_KEY = "hupu";
+    private final static String SECRET_KEY = /*"3195e4b0331f52089cfee868c66de723"*/"SECRET_KEY";
 
     private CineIoClient mClient;
     private ListView streamListView;
@@ -35,46 +35,20 @@ public class CineIoExampleAppActivity extends Activity implements AdapterView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cine_io_consumer);
-        if (SECRET_KEY.equals("SECRET_KEY")){
+/*        if (SECRET_KEY.equals("SECRET_KEY")){
             CharSequence error = "SECRET_KEY must be set to a cine.io project's secret key. Register for one here: https://www.cine.io";
             Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-        }
+        }*/
         streamListView = (ListView) findViewById(R.id.streamBroadcasts);
         CineIoConfig config = new CineIoConfig();
         config.setSecretKey(SECRET_KEY);
         mClient = new CineIoClient(config);
-        /*mClient.getStreams(new StreamsResponseHandler(){
+        mClient.getStreams(new StreamsResponseHandler(){
             @Override
             public void onSuccess(ArrayList<Stream> streams) {
                 setStreams(streams);
             }
-
-            @Override
-            public void onFailure(JSONException e) {
-                e.printStackTrace();
-*/
-                try {
-                    ArrayList<Stream> streams = new ArrayList<Stream>();
-                    JSONObject o = new JSONObject("{\"id\":\"1\",\"name\":\"hupu\",\"publish\":{\"url\":\"rtmp://wspub.live.hupucdn.com/prod\",\"stream\":\"slk1\"},\"play\":{\"hls\":\"http://172.16.28.16/hls/123.m3u8\"}}");
-
-                    streams.add(new Stream(o));
-                    setStreams(streams);
-                } catch (JSONException ex) {}
-            /*}
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                throwable.printStackTrace();
-
-                try {
-                    ArrayList<Stream> streams = new ArrayList<Stream>();
-                    JSONObject o = new JSONObject("{\"id\":\"1\",\"name\":\"hupu\",\"publish\":{\"url\":\"rtmp://172.16.28.16/live\",\"stream\":\"123\"},\"play\":{\"hls\":\"http://172.16.28.16/hls/123.m3u8\"}}");
-
-                    streams.add(new Stream(o));
-                    setStreams(streams);
-                } catch (JSONException ex) {}
-            }
-        });*/
+        });
     }
 
     public void setStreams(ArrayList<Stream> streams){

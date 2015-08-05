@@ -31,7 +31,7 @@ public class CineIoClient {
 
     private final String VERSION = "0.0.15";
     private final static String TAG = "CineIoClient";
-    private final static String BASE_URL = "https://www.cine.io/api/1/-";
+    private final static String BASE_URL = /*"https://www.cine.io/api/1/-"*/"http://api.jrs.tv/broadcast/1/-";
     private final AsyncHttpClient mClient;
     private CineIoConfig mConfig;
 
@@ -65,33 +65,7 @@ public class CineIoClient {
     public void broadcast(String id, final BroadcastConfig config,  final Context context){
         final Intent intent = new Intent(context, BroadcastActivity.class);
 
-        try {
-            JSONObject o = new JSONObject("{\"id\":\"1\",\"name\":\"hupu\",\"publish\":{\"url\":\"rtmp://wspub.live.hupucdn.com/prod\",\"stream\":\"slk1\"},\"play\":{\"hls\":\"http://172.16.28.16/hls/123.m3u8\"}}");
-            Stream stream = new Stream(o);
-
-            // Log.d(TAG, "Starting publish intent: " + stream.getId());
-            intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
-            if(config.getWidth() != -1){
-                intent.putExtra("WIDTH", config.getWidth());
-            }
-            if(config.getHeight() != -1){
-                intent.putExtra("HEIGHT", config.getHeight());
-            }
-            if(config.getLockedOrientation() != null){
-                intent.putExtra("ORIENTATION", config.getLockedOrientation());
-            }
-            if(config.getRequestedCamera() != null){
-                intent.putExtra("CAMERA", config.getRequestedCamera());
-            }
-            if (config.getBroadcastActivityLayout() != -1){
-                intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
-            }
-            context.startActivity(intent);
-
-        } catch (JSONException ex) {}
-
-
-/*        getStream(id, new StreamResponseHandler(){
+        getStream(id, new StreamResponseHandler(){
             public void onSuccess(Stream stream) {
                // Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
@@ -113,7 +87,7 @@ public class CineIoClient {
                 context.startActivity(intent);
             }
 
-        });*/
+        });
     }
 
     //pass in custom values including custom BroadcastActivity

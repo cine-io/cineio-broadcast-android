@@ -152,7 +152,7 @@ public class BroadcastActivity extends Activity
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         Bundle extras = getIntent().getExtras();
         int layout = extras.getInt("LAYOUT", R.layout.activity_broadcast_capture);
@@ -705,7 +705,7 @@ public class BroadcastActivity extends Activity
 
             switch (what) {
                 case MSG_SURFACE_CHANGED:
-//                    activity.handleSetCameraOrientation();
+                    activity.handleSetCameraOrientation();
                     break;
                 case MSG_SET_SURFACE_TEXTURE:
                     activity.handleSetSurfaceTexture((SurfaceTexture) inputMessage.obj);
