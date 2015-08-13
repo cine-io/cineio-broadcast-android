@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
+import io.cine.android.BroadcastActivity;
 import io.cine.ffmpegbridge.FFmpegBridge;
 
 //TODO: Remove hard-coded track indexes
@@ -27,7 +28,6 @@ public class FFmpegMuxer extends Muxer implements Runnable {
     // MuxerHandler message types
     private static final int MSG_WRITE_FRAME = 1;
     private static final int MSG_ADD_TRACK = 2;
-    private static final int MSG_SHUT_DOWN = 3;
 
     private final Object mReadyFence = new Object();    // Synchronize muxing thread readiness
     private final Object mEncoderReleasedSync = new Object();
@@ -57,8 +57,11 @@ public class FFmpegMuxer extends Muxer implements Runnable {
     private byte[] videoConfig;
     private byte[] audioConfig;
 
-    public FFmpegMuxer() {
+
+//    private WeakReference<BroadcastActivity> broadcastActivityWeakReference;
+    public FFmpegMuxer(/*BroadcastActivity broadcastActivity*/) {
         mFFmpeg = new FFmpegBridge();
+//        broadcastActivityWeakReference = new WeakReference<BroadcastActivity>(broadcastActivity);
     }
 
     @Override
@@ -143,7 +146,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
             return;
         }
         Log.i(TAG, "Shutting down");
-        mFFmpeg.finalize();
+        mFFmpeg.releaseResource();
         mStarted = false;
         release();
         if (formatRequiresBuffering()) {
@@ -455,9 +458,6 @@ public class FFmpegMuxer extends Muxer implements Runnable {
                             data.mBufferIndex,
                             data.mData,
                             data.getBufferInfo());
-                    break;
-                case MSG_SHUT_DOWN:
-                    muxer.shutdown();
                     break;
                 default:
                     throw new RuntimeException("Unexpected msg what=" + what);

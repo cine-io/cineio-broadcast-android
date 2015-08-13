@@ -86,6 +86,21 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
             mFullScreen = null;             //  to be destroyed
         }
         mIncomingWidth = mIncomingHeight = -1;
+/*
+        switch (mRecordingStatus) {
+            case RECORDING_ON:
+            case RECORDING_RESUMED:
+                // stop recording
+                Log.d(TAG, "STOP recording");
+                mVideoEncoder.stopRecording();
+                mRecordingStatus = RECORDING_OFF;
+                break;
+            case RECORDING_OFF:
+                // yay
+                break;
+            default:
+                throw new RuntimeException("unknown status " + mRecordingStatus);
+        }*/
     }
 
     /**
@@ -94,6 +109,42 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
     public void changeRecordingState(boolean isRecording) {
         Log.d(TAG, "changeRecordingState: was " + mRecordingEnabled + " now " + isRecording);
         mRecordingEnabled = isRecording;
+
+        if (mRecordingEnabled) {
+            switch (mRecordingStatus) {
+                case RECORDING_OFF:
+                    Log.d(TAG, "START recording");
+                    // start recording
+                    mVideoEncoder.startRecording(new TextureMovieEncoder.EncoderConfig(mMuxer, EGL14.eglGetCurrentContext()));
+                    mRecordingStatus = RECORDING_ON;
+                    break;
+                case RECORDING_RESUMED:
+                    Log.d(TAG, "RESUME recording");
+                    mVideoEncoder.updateSharedContext(EGL14.eglGetCurrentContext());
+                    mRecordingStatus = RECORDING_ON;
+                    break;
+                case RECORDING_ON:
+                    // yay
+                    break;
+                default:
+                    throw new RuntimeException("unknown status " + mRecordingStatus);
+            }
+        } else {
+            switch (mRecordingStatus) {
+                case RECORDING_ON:
+                case RECORDING_RESUMED:
+                    // stop recording
+                    Log.d(TAG, "STOP recording");
+                    mVideoEncoder.stopRecording();
+                    mRecordingStatus = RECORDING_OFF;
+                    break;
+                case RECORDING_OFF:
+                    // yay
+                    break;
+                default:
+                    throw new RuntimeException("unknown status " + mRecordingStatus);
+            }
+        }
     }
 
     /**
@@ -159,7 +210,7 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
         // If the recording state is changing, take care of it here.  Ideally we wouldn't
         // be doing all this in onDrawFrame(), but the EGLContext sharing with GLSurfaceView
         // makes it hard to do elsewhere.
-        if (mRecordingEnabled) {
+ /*       if (mRecordingEnabled) {
             switch (mRecordingStatus) {
                 case RECORDING_OFF:
                     Log.d(TAG, "START recording");
@@ -193,7 +244,7 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
                 default:
                     throw new RuntimeException("unknown status " + mRecordingStatus);
             }
-        }
+        }*/
 
         // Set the video encoder's texture name.  We only need to do this once, but in the
         // current implementation it has to happen after the video encoder is started, so

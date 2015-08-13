@@ -46,7 +46,7 @@ public class FFmpegBridge {
 
     public native void writePacket(ByteBuffer jData, int jSize, long jPts, int jIsVideo, int jIsVideoKeyframe);
 
-    public native void finalize();
+    public native void releaseResource();
 
     /**
      * Used to configure the muxer's options. Note the name of this class's

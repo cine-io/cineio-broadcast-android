@@ -57,7 +57,6 @@ public class CineIoClient {
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
                 context.startActivity(intent);
             }
-
         });
     }
 
@@ -88,6 +87,25 @@ public class CineIoClient {
             }
 
         });
+
+/*        // Log.d(TAG, "Starting publish intent: " + stream.getId());
+        intent.putExtra("PUBLISH_URL", "rtmp://wspub.live.hupucdn.com/prod/slk");
+        if(config.getWidth() != -1){
+            intent.putExtra("WIDTH", config.getWidth());
+        }
+        if(config.getHeight() != -1){
+            intent.putExtra("HEIGHT", config.getHeight());
+        }
+        if(config.getLockedOrientation() != null){
+            intent.putExtra("ORIENTATION", config.getLockedOrientation());
+        }
+        if(config.getRequestedCamera() != null){
+            intent.putExtra("CAMERA", config.getRequestedCamera());
+        }
+        if (config.getBroadcastActivityLayout() != -1){
+            intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
+        }
+        context.startActivity(intent);*/
     }
 
     //pass in custom values including custom BroadcastActivity
@@ -121,7 +139,7 @@ public class CineIoClient {
 
     public void play(String id, final Context context){
 
-        getStream(id, new StreamResponseHandler(){
+        getStream(id, new StreamResponseHandler() {
             public void onSuccess(Stream stream) {
                 Log.d(TAG, "Starting default play intent: " + stream.getId());
 
@@ -134,25 +152,25 @@ public class CineIoClient {
     }
 
     public void playRecording(final String id, final String recordingName, final Context context){
-        getStreamRecordings(id, new StreamRecordingsResponseHandler(){
+        getStreamRecordings(id, new StreamRecordingsResponseHandler() {
             @Override
             public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
                 String recordingUrl = null;
-                for (int i = 0; i < streamRecordings.size(); i++){
+                for (int i = 0; i < streamRecordings.size(); i++) {
                     StreamRecording recording = streamRecordings.get(i);
                     Log.d(TAG, "RECORDING");
                     Log.d(TAG, recordingName);
                     Log.d(TAG, recording.getName());
                     Log.d(TAG, recording.getName().equals(recordingName) ? "EQUAL" : "NOT EQUAL");
-                    if (recording.getName().equals(recordingName)){
+                    if (recording.getName().equals(recordingName)) {
                         recordingUrl = recording.getUrl();
                         break;
                     }
                 }
-                if (recordingUrl == null){
-                    Exception e = new Exception("recordingUrl not found for name: "+ recordingName + " and Stream id: "+ id);
+                if (recordingUrl == null) {
+                    Exception e = new Exception("recordingUrl not found for name: " + recordingName + " and Stream id: " + id);
                     onFailure(e);
-                }else{
+                } else {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.parse(recordingUrl), "video/*");
                     context.startActivity(intent);
@@ -198,7 +216,7 @@ public class CineIoClient {
                 try {
                     ArrayList<Project> projects = new ArrayList<Project>();
                     JSONArray obj = new JSONArray(new String(response));
-                    for(int i = 0; i < obj.length(); i++){
+                    for (int i = 0; i < obj.length(); i++) {
                         Project project = new Project(obj.getJSONObject(i));
                         projects.add(project);
                     }
@@ -230,6 +248,7 @@ public class CineIoClient {
                     handler.onFailure(e);
                 }
             }
+
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 handler.onFailure(throwable);
@@ -303,7 +322,7 @@ public class CineIoClient {
                 try {
                     ArrayList<StreamRecording> streamRecordings = new ArrayList<StreamRecording>();
                     JSONArray obj = new JSONArray(new String(response));
-                    for(int i = 0; i < obj.length(); i++){
+                    for (int i = 0; i < obj.length(); i++) {
                         StreamRecording streamRecording = new StreamRecording(obj.getJSONObject(i));
                         streamRecordings.add(streamRecording);
                     }
@@ -312,6 +331,7 @@ public class CineIoClient {
                     handler.onFailure(e);
                 }
             }
+
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 handler.onFailure(throwable);
@@ -327,12 +347,13 @@ public class CineIoClient {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 try {
-                    StreamRecording streamRecording= new StreamRecording(new JSONObject(new String(response)));
+                    StreamRecording streamRecording = new StreamRecording(new JSONObject(new String(response)));
                     handler.onSuccess(streamRecording);
                 } catch (JSONException e) {
                     handler.onFailure(e);
                 }
             }
+
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 handler.onFailure(throwable);

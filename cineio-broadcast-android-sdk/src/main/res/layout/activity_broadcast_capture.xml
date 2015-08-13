@@ -39,4 +39,6 @@
     <include layout="@layout/status" />
 
     <include layout="@layout/camera_button_holder" />
+
+
 </RelativeLayout>

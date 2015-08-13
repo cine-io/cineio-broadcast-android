@@ -2,6 +2,7 @@ package io.cine.example;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,11 +21,14 @@ import io.cine.android.api.Stream;
 
 public class CineIoStreamViewActivity extends Activity {
 
-    private Stream stream;
+//    private Stream stream;
 
     private final static String TAG = "CineIoStreamViewActivity";
 
     private CineIoClient mClient;
+
+    private String roomId = null;
+    private String password = null;
 
 
     @Override
@@ -35,23 +39,31 @@ public class CineIoStreamViewActivity extends Activity {
         CineIoConfig config = new CineIoConfig();
         config.setSecretKey(extras.getString("SECRET_KEY"));
         mClient = new CineIoClient(config);
-        try {
-            stream = new Stream(new JSONObject(extras.getString("STREAM_DATA")));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            stream = new Stream(new JSONObject(extras.getString("STREAM_DATA")));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+        SharedPreferences sp = getSharedPreferences("USERINFO", MODE_PRIVATE);
+        roomId = sp.getString(SettingActivity.KEY_ROOMID, "");
+        password = sp.getString(SettingActivity.KEY_PASSWORD,"");
+
         initLayout();
     }
 
     private void initLayout() {
         final Activity me = this;
         String labelText;
-        String name = stream.getName();
-        if (name != null) {
-            labelText = stream.getName() + ": " + stream.getId();
-        } else {
-            labelText = stream.getId();
-        }
+//        String name = stream.getName();
+//        if (name != null) {
+//            labelText = stream.getName() + ": " + stream.getId();
+//        } else {
+//            labelText = stream.getId();
+//        }
+
+
+        labelText = "ROOM ID : "+roomId;
         TextView v = (TextView) findViewById(R.id.streamName);
         v.setText(labelText);
 
@@ -60,7 +72,7 @@ public class CineIoStreamViewActivity extends Activity {
         broadcastButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "Starting broadcast for " + stream.getId());
+//                Log.d(TAG, "Starting broadcast for " + stream.getId());
                 BroadcastConfig config = new BroadcastConfig();
                 //TO SET A CUSTOM WIDTH AND HEIGHT
                 //config.setWidth(640);
@@ -68,35 +80,35 @@ public class CineIoStreamViewActivity extends Activity {
                 //TO LOCK AN ORIENTATION
                 //config.lockOrientation("landscape");
                 //TO SELECT A CAMERA
-                //config.selectCamera("back");
+                config.selectCamera("back");
                 //TO CHANGE THE BROADCAST LAYOUT
                 //config.setBroadcastActivityLayout(R.layout.my_activity_broadcast_capture);
-                mClient.broadcast(stream.getId(), config, me);
+                mClient.broadcast(/*stream.getId()*/roomId+":"+password, config, me);
             }
         });
 
-        Button playButton = (Button) findViewById(R.id.playStream);
-        playButton.setText("Start Player");
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Starting player for " + stream.getId());
-                mClient.play(stream.getId(), me);
-            }
-        });
-
-        Button seeRecordingsButton = (Button) findViewById(R.id.showRecordings);
-        seeRecordingsButton.setText("Recordings");
-        seeRecordingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Fetching recordings for " + stream.getId());
-                Intent intent = new Intent(me, CineIoStreamRecordingsListActivity.class);
-                intent.putExtra("STREAM_DATA", stream.dataString());
-                intent.putExtra("SECRET_KEY", mClient.getSecretKey());
-                startActivity(intent);
-            }
-        });
+//        Button playButton = (Button) findViewById(R.id.playStream);
+//        playButton.setText("Start Player");
+//        playButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d(TAG, "Starting player for " + stream.getId());
+//                mClient.play(stream.getId(), me);
+//            }
+//        });
+//
+//        Button seeRecordingsButton = (Button) findViewById(R.id.showRecordings);
+//        seeRecordingsButton.setText("Recordings");
+//        seeRecordingsButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d(TAG, "Fetching recordings for " + stream.getId());
+//                Intent intent = new Intent(me, CineIoStreamRecordingsListActivity.class);
+//                intent.putExtra("STREAM_DATA", stream.dataString());
+//                intent.putExtra("SECRET_KEY", mClient.getSecretKey());
+//                startActivity(intent);
+//            }
+//        });
     }
 
 

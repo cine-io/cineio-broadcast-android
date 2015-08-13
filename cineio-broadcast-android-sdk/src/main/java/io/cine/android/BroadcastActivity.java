@@ -18,6 +18,7 @@
 package io.cine.android;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
@@ -146,13 +147,13 @@ public class BroadcastActivity extends Activity
     private EncodingConfig mEncodingConfig;
     private String requestedCamera;
 
+    private boolean lastRecordingStatus = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+     //   requestWindowFeature(Window.FEATURE_NO_TITLE);
+     //   getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         Bundle extras = getIntent().getExtras();
         int layout = extras.getInt("LAYOUT", R.layout.activity_broadcast_capture);
@@ -166,7 +167,7 @@ public class BroadcastActivity extends Activity
         // http://stackoverflow.com/questions/5975168/android-button-setpressed-after-onclick
         Button toggleRecording = (Button) findViewById(R.id.toggleRecording_button);
 
-/*        toggleRecording.setOnTouchListener(new View.OnTouchListener() {
+        toggleRecording.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // show interest in events resulting from ACTION_DOWN
@@ -176,12 +177,65 @@ public class BroadcastActivity extends Activity
                 toggleRecordingHandler();
                 return true;
             }
-        });*/
+        });
 
-        toggleRecording.setOnClickListener(new View.OnClickListener() {
+/*        toggleRecording.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toggleRecordingHandler();
+            }
+        });*/
+
+        Button switchRecording = (Button) findViewById(R.id.toggleSwitch_button);
+        switchRecording.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                lastRecordingStatus = mRecordingEnabled;
+
+                if (mRecordingEnabled) {
+                    stopRecording();
+                }
+
+                releaseCamera();
+                mGLView.queueEvent(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Tell the renderer that it's about to be paused so it can clean up.
+                        mRenderer.notifyPausing();
+                    }
+                });
+                mGLView.onPause();
+//                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+
+                if(requestedCamera.equals("back"))
+                {
+                    requestedCamera = "front";
+                }else
+                {
+                    requestedCamera = "back";
+                }
+
+                updateControls();
+                openCamera();
+
+                // Set the preview aspect ratio.
+                mFrameLayout = (AspectFrameLayout) findViewById(R.id.cameraPreview_afl);
+
+                mGLView.onResume();
+                mGLView.queueEvent(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
+                    }
+                });
+/*
+                if (lastRecordingStatus)
+                {
+                    startRecording();
+                }*/
+
             }
         });
 
@@ -260,11 +314,21 @@ public class BroadcastActivity extends Activity
         mEncodingConfig.setOutput(outputString);
     }
 
+    private void handleResumeRecording()
+    {
+        if (lastRecordingStatus)
+        {
+            startRecording();
+        }
+    }
+
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume -- acquiring camera");
         super.onResume();
+
 //        initializeEncodingConfig();
+
         updateControls();
         openCamera();
 
@@ -279,15 +343,21 @@ public class BroadcastActivity extends Activity
             }
         });
         Log.d(TAG, "onResume complete: " + this);
+
     }
 
+//    private Object o = new Object();
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause -- releasing camera");
         super.onPause();
+
+        lastRecordingStatus = mRecordingEnabled;
+
         if (mRecordingEnabled) {
             stopRecording();
         }
+
         releaseCamera();
         mGLView.queueEvent(new Runnable() {
             @Override
@@ -297,7 +367,7 @@ public class BroadcastActivity extends Activity
             }
         });
         mGLView.onPause();
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d(TAG, "onPause complete");
     }
 
@@ -499,7 +569,7 @@ public class BroadcastActivity extends Activity
 
         CameraUtils.choosePreviewSize(parms, mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
 
-//        mCamera.setParameters(parms);
+        mCamera.setParameters(parms);
 
         mGLView.queueEvent(new Runnable() {
             @Override
@@ -558,6 +628,7 @@ public class BroadcastActivity extends Activity
     }
 
     private void updateStatusText(final EncodingConfig.MUXER_STATE muxerState){
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -709,6 +780,7 @@ public class BroadcastActivity extends Activity
                     break;
                 case MSG_SET_SURFACE_TEXTURE:
                     activity.handleSetSurfaceTexture((SurfaceTexture) inputMessage.obj);
+                    activity.handleResumeRecording();
                     break;
                 case MSG_CAPTURE_FRAME:
                     activity.handleSaveFrameMessage(inputMessage);
@@ -719,5 +791,9 @@ public class BroadcastActivity extends Activity
         }
     }
 
+    @Override
+    public void setRequestedOrientation(int requestedOrientation){
+        return;
+    }
 }
 

@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -49,6 +50,15 @@ public class CineIoExampleAppActivity extends Activity implements AdapterView.On
                 setStreams(streams);
             }
         });
+
+//        Button settingButton = (Button)findViewById(R.id.setting_button);
+//        settingButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(CineIoExampleAppActivity.this, SettingActivity.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     public void setStreams(ArrayList<Stream> streams){
