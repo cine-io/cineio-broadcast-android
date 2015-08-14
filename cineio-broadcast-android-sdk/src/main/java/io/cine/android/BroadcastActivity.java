@@ -190,7 +190,7 @@ public class BroadcastActivity extends Activity
         switchRecording.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+/*
                 lastRecordingStatus = mRecordingEnabled;
 
                 if (mRecordingEnabled) {
@@ -230,12 +230,32 @@ public class BroadcastActivity extends Activity
                         mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
                     }
                 });
-/*
-                if (lastRecordingStatus)
-                {
-                    startRecording();
-                }*/
+*/
+                releaseCamera();
 
+                if(requestedCamera.equals("back"))
+                {
+                    requestedCamera = "front";
+                }else
+                {
+                    requestedCamera = "back";
+                }
+
+                openCamera();
+
+                if (weakSurfaceTexture!=null)
+                {
+                    SurfaceTexture st = weakSurfaceTexture.get();
+                    st.setOnFrameAvailableListener(BroadcastActivity.this);
+                    try {
+                        mCamera.setPreviewTexture(st);
+                    } catch (IOException ioe) {
+                        throw new RuntimeException(ioe);
+                    }
+                    mCamera.startPreview();
+                }
+
+                handleSetCameraOrientation();
             }
         });
 
@@ -376,6 +396,12 @@ public class BroadcastActivity extends Activity
         Log.d(TAG, "onDestroy");
         super.onDestroy();
         mCameraHandler.invalidateHandler();     // paranoia
+
+        if (weakSurfaceTexture!=null)
+        {
+            weakSurfaceTexture.clear();
+            weakSurfaceTexture = null;
+        }
     }
 
     /**
@@ -493,7 +519,13 @@ public class BroadcastActivity extends Activity
     /**
      * Connects the SurfaceTexture to the Camera preview output, and starts the preview.
      */
+    private WeakReference<SurfaceTexture> weakSurfaceTexture = null;
     private void handleSetSurfaceTexture(SurfaceTexture st) {
+        if (weakSurfaceTexture!=null)
+        {
+            weakSurfaceTexture.clear();
+            weakSurfaceTexture = null;
+        }
         st.setOnFrameAvailableListener(this);
         try {
             mCamera.setPreviewTexture(st);
@@ -501,6 +533,8 @@ public class BroadcastActivity extends Activity
             throw new RuntimeException(ioe);
         }
         mCamera.startPreview();
+
+        weakSurfaceTexture = new WeakReference<SurfaceTexture>(st);
     }
 
 //    private void setButtonHolderLayout() {

@@ -1,4 +1,0 @@
----- notifyPausing Matches (3 in 2 files) ----
-BroadcastActivity.java (cineio-broadcast-android-sdk\src\main\java\io\cine\android):                        mRenderer.notifyPausing();
-BroadcastActivity.java (cineio-broadcast-android-sdk\src\main\java\io\cine\android):                mRenderer.notifyPausing();
-CameraSurfaceRenderer.java (cineio-broadcast-android-sdk\src\main\java\io\cine\android\streaming):    public void notifyPausing() {
