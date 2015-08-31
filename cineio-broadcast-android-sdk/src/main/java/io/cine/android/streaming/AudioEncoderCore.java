@@ -33,13 +33,15 @@ public class AudioEncoderCore extends AndroidEncoder {
         format.setInteger(MediaFormat.KEY_SAMPLE_RATE, config.getSampleRate());
         format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, config.getNumChannels());
         format.setInteger(MediaFormat.KEY_BIT_RATE, config.getBitrate());
-        format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 16384);
+        format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 16384); //16k
 
         try {
             mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
             mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mEncoder.start();
-        } catch (IOException e) {}
+        } catch (IOException e) {
+
+        }
 
         mTrackIndex = -1;
     }

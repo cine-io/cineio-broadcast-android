@@ -603,12 +603,15 @@ public class BroadcastActivity extends Activity
 
         CameraUtils.choosePreviewSize(parms, mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
 
+//        parms.setPreviewSize(1280, 720);
+
         mCamera.setParameters(parms);
 
         mGLView.queueEvent(new Runnable() {
             @Override
             public void run() {
                 mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
+//                mRenderer.setCameraPreviewSize(1280, 720);
             }
         });
 

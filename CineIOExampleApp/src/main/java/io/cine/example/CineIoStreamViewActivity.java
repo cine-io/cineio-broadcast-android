@@ -75,8 +75,8 @@ public class CineIoStreamViewActivity extends Activity {
 //                Log.d(TAG, "Starting broadcast for " + stream.getId());
                 BroadcastConfig config = new BroadcastConfig();
                 //TO SET A CUSTOM WIDTH AND HEIGHT
-                //config.setWidth(640);
-                //config.setHeight(480);
+                config.setWidth(1280);
+                config.setHeight(720);
                 //TO LOCK AN ORIENTATION
                 //config.lockOrientation("landscape");
                 //TO SELECT A CAMERA
