@@ -78,7 +78,8 @@ public class CineIoStreamViewActivity extends Activity {
                 config.setWidth(1280);
                 config.setHeight(720);
                 //TO LOCK AN ORIENTATION
-                //config.lockOrientation("landscape");
+//                config.lockOrientation("landscape");
+                config.lockOrientation("portrait");
                 //TO SELECT A CAMERA
                 config.selectCamera("back");
                 //TO CHANGE THE BROADCAST LAYOUT

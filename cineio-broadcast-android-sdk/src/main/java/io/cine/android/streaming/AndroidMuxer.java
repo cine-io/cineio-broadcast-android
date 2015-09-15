@@ -24,7 +24,7 @@ public class AndroidMuxer extends Muxer {
     }
 
     @Override
-    public void prepare(EncodingConfig config) {
+    public boolean prepare(EncodingConfig config) {
         super.prepare(config);
 
         try {
@@ -39,6 +39,7 @@ public class AndroidMuxer extends Muxer {
             throw new RuntimeException("MediaMuxer creation failed", e);
         }
 
+        return true;
     }
 
     @Override

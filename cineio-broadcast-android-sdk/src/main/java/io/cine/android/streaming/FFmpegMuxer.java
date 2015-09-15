@@ -65,7 +65,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
     }
 
     @Override
-    public void prepare(EncodingConfig config) {
+    public boolean prepare(EncodingConfig config) {
         super.prepare(config);
         getConfig().setMuxerState(EncodingConfig.MUXER_STATE.PREPARING);
         mReady = false;
@@ -78,10 +78,14 @@ public class FFmpegMuxer extends Muxer implements Runnable {
         mEncoderReleased = false;
         int ret = mFFmpeg.init(getConfig().getAVOptions());
 
-        if(ret>=0)
+        if(ret<0)
         {
+            mFFmpeg.releaseResource();
+
             if(mOnErrorListener!=null)
-                mOnErrorListener.onError(this,ret,0);
+                mOnErrorListener.onError(this,OPEN_URL_FAIL,ret);
+
+            return false;
         }
 
         if (formatRequiresADTS())
@@ -95,6 +99,8 @@ public class FFmpegMuxer extends Muxer implements Runnable {
             getConfig().setMuxerState(EncodingConfig.MUXER_STATE.READY);
             mReady = true;
         }
+
+        return true;
     }
 
     @Override
@@ -227,6 +233,7 @@ public class FFmpegMuxer extends Muxer implements Runnable {
         }
     }
 
+    private boolean haveSendWritePacketError = false;
     public void handleWriteSampleData(MediaCodec encoder, int trackIndex, int bufferIndex, ByteBuffer encodedData, MediaCodec.BufferInfo bufferInfo) {
         super.writeSampleData(encoder, trackIndex, bufferIndex, encodedData, bufferInfo);
 
@@ -271,14 +278,23 @@ public class FFmpegMuxer extends Muxer implements Runnable {
         }
         if (!allTracksFinished() && allTracksAdded()) {
             boolean isVideo = trackIndex == mVideoTrackIndex;
+            int ret = 0;
             if (isVideo && ((bufferInfo.flags & MediaCodec.BUFFER_FLAG_SYNC_FRAME) != 0)) {
                 getConfig().setMuxerState(EncodingConfig.MUXER_STATE.STREAMING);
                 Log.d(TAG, "WRITING VIDEO KEYFRAME");
                 packageH264Keyframe(encodedData, bufferInfo);
-                mFFmpeg.writePacket(mH264Keyframe, bufferInfo.size + mH264MetaSize, bufferInfo.presentationTimeUs, cBoolean(isVideo), cBoolean(true));
+                ret = mFFmpeg.writePacket(mH264Keyframe, bufferInfo.size + mH264MetaSize, bufferInfo.presentationTimeUs, cBoolean(isVideo), cBoolean(true));
             } else {
                 Log.d(TAG, "WRITING " + (isVideo ? "VIDEO" : "AUDIO") + " DATA");
-                mFFmpeg.writePacket(encodedData, bufferInfo.size, bufferInfo.presentationTimeUs, cBoolean(isVideo), cBoolean(false));
+                ret = mFFmpeg.writePacket(encodedData, bufferInfo.size, bufferInfo.presentationTimeUs, cBoolean(isVideo), cBoolean(false));
+            }
+
+            if(ret<0 && !haveSendWritePacketError)
+            {
+                if(mOnErrorListener!=null) {
+                    mOnErrorListener.onError(this, WRITE_PACKET_FAIL, ret);
+                    haveSendWritePacketError = true;
+                }
             }
         }
         releaseOutputBufer(encoder, encodedData, bufferIndex, trackIndex);

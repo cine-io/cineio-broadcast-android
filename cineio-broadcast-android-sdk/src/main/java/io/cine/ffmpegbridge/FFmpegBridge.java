@@ -44,7 +44,7 @@ public class FFmpegBridge {
 
     public native void writeHeader();
 
-    public native void writePacket(ByteBuffer jData, int jSize, long jPts, int jIsVideo, int jIsVideoKeyframe);
+    public native int writePacket(ByteBuffer jData, int jSize, long jPts, int jIsVideo, int jIsVideoKeyframe);
 
     public native void releaseResource();
 

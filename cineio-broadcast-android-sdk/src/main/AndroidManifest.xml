@@ -29,8 +29,7 @@
     <application
         android:allowBackup="true" >
         <activity android:name=".BroadcastActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:screenOrientation="landscape">
+            android:theme="@android:style/Theme.NoTitleBar">
         </activity>
     </application>
 

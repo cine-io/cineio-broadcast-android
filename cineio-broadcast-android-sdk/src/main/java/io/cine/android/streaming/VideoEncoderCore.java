@@ -55,7 +55,10 @@ public class VideoEncoderCore extends AndroidEncoder {
         EncodingConfig config = muxer.getConfig();
         mBufferInfo = new MediaCodec.BufferInfo();
 
-        MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, config.getWidth(), config.getHeight());
+        int width = config.getWidth();
+        int height = config.getHeight();
+
+        MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE, width/*config.getWidth()*/, height/*config.getHeight()*/);
 
         // Set some properties.  Failing to specify some of these can cause the MediaCodec
         // configure() call to throw an unhelpful exception.

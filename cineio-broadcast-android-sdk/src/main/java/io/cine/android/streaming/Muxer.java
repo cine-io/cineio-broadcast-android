@@ -28,7 +28,9 @@ public abstract class Muxer {
     protected Muxer() {
     }
 
-    public static final int ERROR_IO = 0;
+    public static final int OPEN_URL_FAIL = 0;
+    public static final int WRITE_PACKET_FAIL = 1;
+
     public interface OnErrorListener {
         boolean onError(Muxer mx, int what, int extra);
     }
@@ -41,7 +43,7 @@ public abstract class Muxer {
         return mConfig;
     }
 
-    public void prepare(EncodingConfig config) {
+    public boolean prepare(EncodingConfig config) {
         mConfig = config;
         mNumTracks = 0;
         mNumTracksFinished = 0;
@@ -51,6 +53,7 @@ public abstract class Muxer {
             mLastPts[i] = 0;
         }
         Log.i(TAG, "Created muxer for output: " + mConfig.getOutputPath());
+        return true;
     }
 
     public void setEventBus(EventBus eventBus) {

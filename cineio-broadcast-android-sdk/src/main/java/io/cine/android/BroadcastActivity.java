@@ -37,6 +37,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -152,12 +154,13 @@ public class BroadcastActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     //   requestWindowFeature(Window.FEATURE_NO_TITLE);
-     //   getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         Bundle extras = getIntent().getExtras();
         int layout = extras.getInt("LAYOUT", R.layout.activity_broadcast_capture);
         setContentView(layout);
+
         initializeEncodingConfig(extras);
         initializeMuxer();
         initializeAudio();
@@ -476,6 +479,8 @@ public class BroadcastActivity extends Activity
      * onClick handler for "record" button.
      */
     public void toggleRecordingHandler() {
+        if(is_reconnect_status) return;
+
         mRecordingEnabled = !mRecordingEnabled;
         if (mRecordingEnabled) {
             startRecording();
@@ -486,9 +491,12 @@ public class BroadcastActivity extends Activity
 
     private void startRecording() {
         mRecordingEnabled = true;
-        mMuxer.prepare(mEncodingConfig);
-        mAudioEncoder.startRecording();
-        toggleRecording();
+        boolean ret = mMuxer.prepare(mEncodingConfig);
+        if (ret)
+        {
+            mAudioEncoder.startRecording();
+            toggleRecording();
+        }
     }
 
     private void stopRecording() {
@@ -639,7 +647,7 @@ public class BroadcastActivity extends Activity
     @Override
     public void muxerStatusUpdate(EncodingConfig.MUXER_STATE muxerState) {
         updateStatusText(muxerState);
-        handleStreamingUpdate(muxerState);
+//        handleStreamingUpdate(muxerState);
     }
 
     private void handleStreamingUpdate(final EncodingConfig.MUXER_STATE muxerState) {
@@ -650,10 +658,10 @@ public class BroadcastActivity extends Activity
                     case CONNECTING:
                         int currentOrientation = getResources().getConfiguration().orientation;
                         if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
                         }
                         else {
-                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+//                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
                         }
                         break;
                     case SHUTDOWN:
@@ -685,6 +693,7 @@ public class BroadcastActivity extends Activity
                 break;
             case STREAMING:
                 statusText = "Streaming";
+                is_reconnect_status = false;
                 break;
             case SHUTDOWN:
                 statusText = "Ready";
@@ -767,10 +776,68 @@ public class BroadcastActivity extends Activity
         return mCameraHandler;
     }
 
+    private volatile boolean is_reconnect_status = false;
     @Override
     public boolean onError(Muxer mx, int what, int extra) {
-        this.finish();
+        if (what==Muxer.OPEN_URL_FAIL && !is_reconnect_status)
+        {
+            Toast.makeText(getApplicationContext(), "打开推流地址失败, 请查看网络连接!",
+                    Toast.LENGTH_LONG).show();
+            this.finish();
+            return true;
+        }
+
+        if (what==Muxer.OPEN_URL_FAIL && is_reconnect_status)
+        {
+            //send message for reconnect
+            mCameraHandler.sendEmptyMessageDelayed(CameraHandler.MSG_RECONNECT,10000);
+            return true;
+        }
+
+        if (what==Muxer.WRITE_PACKET_FAIL)
+        {
+            is_reconnect_status = true;
+
+            //send message for reconnect
+            mCameraHandler.sendEmptyMessageDelayed(CameraHandler.MSG_RECONNECT,10000);
+            return true;
+        }
+
         return true;
+    }
+
+    private void reconnect()
+    {
+        lastRecordingStatus = mRecordingEnabled;
+
+        if (mRecordingEnabled) {
+            stopRecording();
+        }
+
+        releaseCamera();
+        mGLView.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                // Tell the renderer that it's about to be paused so it can clean up.
+                mRenderer.notifyPausing();
+            }
+        });
+        mGLView.onPause();
+//                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        updateControls();
+        openCamera();
+
+        // Set the preview aspect ratio.
+        mFrameLayout = (AspectFrameLayout) findViewById(R.id.cameraPreview_afl);
+
+        mGLView.onResume();
+        mGLView.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
+            }
+        });
     }
 
     /**
@@ -784,6 +851,7 @@ public class BroadcastActivity extends Activity
         public static final int MSG_SET_SURFACE_TEXTURE = 0;
         public static final int MSG_SURFACE_CHANGED = 1;
         public static final int MSG_CAPTURE_FRAME = 2;
+        public static final int MSG_RECONNECT = 3;
 
         // Weak reference to the Activity; only access this from the UI thread.
         private WeakReference<BroadcastActivity> mWeakActivity;
@@ -822,15 +890,21 @@ public class BroadcastActivity extends Activity
                 case MSG_CAPTURE_FRAME:
                     activity.handleSaveFrameMessage(inputMessage);
                     break;
+                case MSG_RECONNECT:
+                    Toast.makeText(activity, "网络连接断开, 正在尝试重连...",
+                            Toast.LENGTH_LONG).show();
+                    activity.reconnect();
+                    break;
                 default:
                     throw new RuntimeException("unknown msg " + what);
             }
         }
     }
 
+    /*
     @Override
     public void setRequestedOrientation(int requestedOrientation){
         return;
-    }
+    }*/
 }
 
