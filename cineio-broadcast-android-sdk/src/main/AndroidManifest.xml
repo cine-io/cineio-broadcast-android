@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.cine.android" >
+    package="com.arenacloud.broadcast.android" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -29,11 +29,11 @@
 
     <application android:allowBackup="true" >
         <activity
-            android:name=".BroadcastActivity"
+            android:name="com.arenacloud.broadcast.android.BroadcastActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name=".PlayActivity"
+            android:name="com.arenacloud.broadcast.android.PlayActivity"
             android:label="@string/title_activity_play" >
         </activity>
     </application>

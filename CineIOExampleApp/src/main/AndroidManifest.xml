@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.cine.example" >
+    package="io.broadcast.example" >
 
     <!-- Required cine.io api and broadcast activity permissions. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -41,7 +41,7 @@
 
         <activity
             android:screenOrientation="portrait"
-            android:name=".CineIoStreamViewActivity"
+            android:name="io.broadcast.example.CineIoStreamViewActivity"
             android:label="@string/title_activity_cine_io_stream_view" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,7 +51,7 @@
 
         <!-- Required for your application to open the BroadcastActivity. -->
         <activity
-            android:name="io.cine.android.BroadcastActivity"
+            android:name="com.arenacloud.broadcast.android.BroadcastActivity"
             android:label="CineIOBroadcastActivity" >
         </activity>
 
