@@ -36,4 +36,9 @@ public class JsonToParams {
         return requestParams;
     }
 
+	public static RequestParams toRequestParamsWithPublicKey(String publicKey){
+		RequestParams requestParams = new RequestParams();
+		requestParams.add("publicKey", publicKey);
+		return requestParams;
+	}
 }

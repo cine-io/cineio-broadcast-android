@@ -31,7 +31,7 @@ public class CineIoClient {
 
     private final String VERSION = "0.0.15";
     private final static String TAG = "CineIoClient";
-    private final static String BASE_URL = /*"https://www.cine.io/api/1/-"*/"http://api.jrs.tv/broadcast/1/-";
+    private final static String BASE_URL = /*"https://www.cine.io/api/1/-"*/"http://apidemo.hupu.com/broadcast/1/-";
     private final AsyncHttpClient mClient;
     private CineIoConfig mConfig;
 
@@ -47,6 +47,10 @@ public class CineIoClient {
         return mConfig.getSecretKey();
     }
 
+    public String getPublicKey() {
+        return mConfig.getPublicKey();
+    }
+
     // Use default config
     public void broadcast(String id, final Context context){
         final Intent intent = new Intent(context, BroadcastActivity.class);
@@ -58,6 +62,54 @@ public class CineIoClient {
                 context.startActivity(intent);
             }
         });
+    }
+
+
+    public void broadcast(String id, String password, final BroadcastConfig config,  final Context context){
+        final Intent intent = new Intent(context, BroadcastActivity.class);
+
+        getStream(id, password , new StreamResponseHandler(){
+            public void onSuccess(Stream stream) {
+                // Log.d(TAG, "Starting publish intent: " + stream.getId());
+                intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
+                if(config.getWidth() != -1){
+                    intent.putExtra("WIDTH", config.getWidth());
+                }
+                if(config.getHeight() != -1){
+                    intent.putExtra("HEIGHT", config.getHeight());
+                }
+                if(config.getLockedOrientation() != null){
+                    intent.putExtra("ORIENTATION", config.getLockedOrientation());
+                }
+                if(config.getRequestedCamera() != null){
+                    intent.putExtra("CAMERA", config.getRequestedCamera());
+                }
+                if (config.getBroadcastActivityLayout() != -1){
+                    intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
+                }
+                context.startActivity(intent);
+            }
+
+        });
+
+/*        // Log.d(TAG, "Starting publish intent: " + stream.getId());
+        intent.putExtra("PUBLISH_URL", "rtmp://wspub.live.hupucdn.com/prod/slk");
+        if(config.getWidth() != -1){
+            intent.putExtra("WIDTH", config.getWidth());
+        }
+        if(config.getHeight() != -1){
+            intent.putExtra("HEIGHT", config.getHeight());
+        }
+        if(config.getLockedOrientation() != null){
+            intent.putExtra("ORIENTATION", config.getLockedOrientation());
+        }
+        if(config.getRequestedCamera() != null){
+            intent.putExtra("CAMERA", config.getRequestedCamera());
+        }
+        if (config.getBroadcastActivityLayout() != -1){
+            intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
+        }
+        context.startActivity(intent);*/
     }
 
     //pass in custom values
@@ -134,6 +186,19 @@ public class CineIoClient {
                 context.startActivity(intent);
             }
 
+        });
+    }
+
+    public void playWithTicket(String id, String ticket, final Context context){
+        final Intent intent = new Intent(context, PlayActivity.class);
+
+        getStreamWithTicket(id, ticket, new StreamResponseHandler() {
+            public void onSuccess(Stream stream) {
+                Log.d(TAG, "Starting default play intent: " + stream.getId());
+
+                intent.putExtra("PLAY_URL", stream.getRtmpUrl());
+                context.startActivity(intent);
+            }
         });
     }
 
@@ -267,8 +332,8 @@ public class CineIoClient {
                 try {
                     ArrayList<Stream> streams = new ArrayList<Stream>();
                     JSONArray obj = new JSONArray(new String(response));
-                    for(int i = 0; i < obj.length(); i++){
-                        Stream stream= new Stream(obj.getJSONObject(i));
+                    for (int i = 0; i < obj.length(); i++) {
+                        Stream stream = new Stream(obj.getJSONObject(i));
                         streams.add(stream);
                     }
                     handler.onSuccess(streams);
@@ -276,6 +341,7 @@ public class CineIoClient {
                     handler.onFailure(e);
                 }
             }
+
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 handler.onFailure(throwable);
@@ -354,6 +420,55 @@ public class CineIoClient {
                 }
             }
 
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
+        });
+    }
+
+    public void getStreamWithTicket(String id, String ticket, final StreamResponseHandler handler){
+        String url = BASE_URL + "/stream";
+        RequestParams rq = JsonToParams.toRequestParamsWithPublicKey(getPublicKey());
+        rq.add("id", id);
+        rq.add("ticket",ticket);
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                try {
+                    Stream stream = new Stream(new JSONObject(new String(response)));
+                    handler.onSuccess(stream);
+                } catch (JSONException e) {
+                    handler.onFailure(e);
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
+        });
+    }
+
+    public void getStream(String id, String password, final StreamResponseHandler handler){
+        String url = BASE_URL + "/stream";
+        RequestParams rq = JsonToParams.toRequestParamsWithPublicKey(getPublicKey());
+        rq.add("id", id);
+        rq.add("password",password);
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                try {
+                    Stream stream= new Stream(new JSONObject(new String(response)));
+                    handler.onSuccess(stream);
+                } catch (JSONException e) {
+                    handler.onFailure(e);
+                }
+            }
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 handler.onFailure(throwable);

@@ -18,26 +18,32 @@ import io.cine.android.BroadcastConfig;
 import io.cine.android.CineIoClient;
 import io.cine.android.CineIoConfig;
 import io.cine.android.api.Stream;
+import io.cine.android.api.StreamResponseHandler;
 
 public class CineIoStreamViewActivity extends Activity {
 
 //    private Stream stream;
 
-    private final static String TAG = "CineIoStreamViewActivity";
+    private final static String TAG = "CIoStreamViewActivity";
 
     private CineIoClient mClient;
 
-    private String roomId = null;
-    private String password = null;
+//    private String roomId = null;
+//    private String password = null;
 
+    private String publicKey = "1c76aec81ad398126f5f5d2eda531c89";
+    private String id = "41667e77ad0cf2d72e100223";
+    private String password = "c399a7a8";
+    private String ticket = "ZT0xNDc1ODM5NTkwJmM9MTIzNDU2Nzg5MCZzPURLQ1Q1SGxyUFR4cnlkem1hcXF2VkMyWjVoczRWcGxVTzVwbXJ2UHk5YUE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cine_io_stream_view);
-        Bundle extras = getIntent().getExtras();
+//        Bundle extras = getIntent().getExtras();
         CineIoConfig config = new CineIoConfig();
-        config.setSecretKey(extras.getString("SECRET_KEY"));
+//        config.setSecretKey(extras.getString("SECRET_KEY"));
+        config.setPublicKey(publicKey);
         mClient = new CineIoClient(config);
 //        try {
 //            stream = new Stream(new JSONObject(extras.getString("STREAM_DATA")));
@@ -45,16 +51,16 @@ public class CineIoStreamViewActivity extends Activity {
 //            e.printStackTrace();
 //        }
 
-        SharedPreferences sp = getSharedPreferences("USERINFO", MODE_PRIVATE);
-        roomId = sp.getString(SettingActivity.KEY_ROOMID, "");
-        password = sp.getString(SettingActivity.KEY_PASSWORD,"");
+//        SharedPreferences sp = getSharedPreferences("USERINFO", MODE_PRIVATE);
+//        roomId = sp.getString(SettingActivity.KEY_ROOMID, "");
+//        password = sp.getString(SettingActivity.KEY_PASSWORD,"");
 
         initLayout();
     }
 
     private void initLayout() {
         final Activity me = this;
-        String labelText;
+//        String labelText;
 //        String name = stream.getName();
 //        if (name != null) {
 //            labelText = stream.getName() + ": " + stream.getId();
@@ -63,9 +69,9 @@ public class CineIoStreamViewActivity extends Activity {
 //        }
 
 
-        labelText = "ROOM ID : "+roomId;
-        TextView v = (TextView) findViewById(R.id.streamName);
-        v.setText(labelText);
+//        labelText = "ROOM ID : "+roomId;
+//        TextView v = (TextView) findViewById(R.id.streamName);
+//        v.setText(labelText);
 
         Button broadcastButton = (Button) findViewById(R.id.broadcastStream);
         broadcastButton.setText("Start Broadcaster");
@@ -84,19 +90,19 @@ public class CineIoStreamViewActivity extends Activity {
                 config.selectCamera("back");
                 //TO CHANGE THE BROADCAST LAYOUT
                 //config.setBroadcastActivityLayout(R.layout.my_activity_broadcast_capture);
-                mClient.broadcast(/*stream.getId()*/roomId+":"+password, config, me);
+                mClient.broadcast(id,password,config, me);
             }
         });
 
-//        Button playButton = (Button) findViewById(R.id.playStream);
-//        playButton.setText("Start Player");
-//        playButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
+        Button playButton = (Button) findViewById(R.id.playStream);
+        playButton.setText("Start Player");
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 //                Log.d(TAG, "Starting player for " + stream.getId());
-//                mClient.play(stream.getId(), me);
-//            }
-//        });
+                mClient.playWithTicket(id, ticket, me);
+            }
+        });
 //
 //        Button seeRecordingsButton = (Button) findViewById(R.id.showRecordings);
 //        seeRecordingsButton.setText("Recordings");

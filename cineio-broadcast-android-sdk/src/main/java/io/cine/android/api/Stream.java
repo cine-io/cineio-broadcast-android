@@ -73,4 +73,15 @@ public class Stream {
         }
 
     }
+
+    public String getRtmpUrl() {
+        try {
+            JSONObject playData = data.getJSONObject("play");
+            return playData.get("rtmp").toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
 }

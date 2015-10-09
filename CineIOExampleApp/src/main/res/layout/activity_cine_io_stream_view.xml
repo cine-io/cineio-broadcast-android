@@ -17,11 +17,11 @@
         android:text="Broadcast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <!--<Button-->
-        <!--android:id="@+id/playStream"-->
-        <!--android:text="Play"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
+    <Button
+        android:id="@+id/playStream"
+        android:text="Play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <!--<Button-->
         <!--android:id="@+id/showRecordings"-->
         <!--android:text="Recordings"-->

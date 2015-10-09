@@ -24,6 +24,9 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.5'
     compile 'com.android.support:appcompat-v7:20.0.0'
     compile 'com.android.support:support-v4:20.0.0'
+    compile files('src/main/jniLibs/gson-2.2.4.jar')
+    compile files('src/main/jniLibs/ijkmediaplayer.jar')
+    compile files('src/main/jniLibs/ijkmediawidget.jar')
 }
 
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
