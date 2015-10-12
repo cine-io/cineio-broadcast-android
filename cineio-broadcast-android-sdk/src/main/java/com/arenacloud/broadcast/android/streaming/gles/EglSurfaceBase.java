@@ -187,18 +187,17 @@ public class EglSurfaceBase {
 
     }
 
-    private static class SaveBitmapRunnable implements Runnable{
+    public static class SaveBitmapRunnable implements Runnable{
         private final ByteBuffer buf;
         private final int width;
         private final int height;
         private final ScreenShot screenShot;
 
-        SaveBitmapRunnable(final ScreenShot screenShot, final ByteBuffer buf, final int width, final int height){
+        public SaveBitmapRunnable(final ScreenShot screenShot, final ByteBuffer buf, final int width, final int height){
             this.width = width;
             this.height = height;
             this.buf = buf;
             this.screenShot = screenShot;
-
         }
 
         @Override

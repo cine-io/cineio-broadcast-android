@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import com.arenacloud.broadcast.android.streaming.AspectFrameLayout;
@@ -52,6 +53,7 @@ import com.arenacloud.broadcast.android.streaming.MicrophoneEncoder;
 import com.arenacloud.broadcast.android.streaming.Muxer;
 import com.arenacloud.broadcast.android.streaming.ScreenShot;
 import com.arenacloud.broadcast.android.streaming.TextureMovieEncoder;
+import com.arenacloud.broadcast.android.streaming.gles.EglSurfaceBase;
 
 /**
  * Shows the camera preview on screen while simultaneously recording it to a .mp4 file.
@@ -146,6 +148,9 @@ public class BroadcastActivity extends Activity
     private EncodingConfig mEncodingConfig;
     private String requestedCamera;
 
+    private ScreenShot mScreenShot;
+    private String mOrientation;
+
     private boolean lastRecordingStatus = false;
 
     @Override
@@ -171,9 +176,9 @@ public class BroadcastActivity extends Activity
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 // show interest in events resulting from ACTION_DOWN
-                if(event.getAction()==MotionEvent.ACTION_DOWN) return true;
+                if (event.getAction() == MotionEvent.ACTION_DOWN) return true;
                 // don't handle event unless its ACTION_UP so "doSomething()" only runs once.
-                if(event.getAction()!=MotionEvent.ACTION_UP) return false;
+                if (event.getAction() != MotionEvent.ACTION_UP) return false;
                 toggleRecordingHandler();
                 return true;
             }
@@ -233,18 +238,15 @@ public class BroadcastActivity extends Activity
 */
                 releaseCamera();
 
-                if(requestedCamera.equals("back"))
-                {
+                if (requestedCamera.equals("back")) {
                     requestedCamera = "front";
-                }else
-                {
+                } else {
                     requestedCamera = "back";
                 }
 
                 openCamera();
 
-                if (weakSurfaceTexture!=null)
-                {
+                if (weakSurfaceTexture != null) {
                     SurfaceTexture st = weakSurfaceTexture.get();
                     st.setOnFrameAvailableListener(BroadcastActivity.this);
                     try {
@@ -259,9 +261,40 @@ public class BroadcastActivity extends Activity
             }
         });
 
+        mScreenShot = new ScreenShot(mCameraHandler);
+
+        Button sceenshotButton = (Button) findViewById(R.id.toggleScreenShot_button);
+        sceenshotButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //ScreenShot
+                if (mCamera!=null)
+                {
+                    mCamera.takePicture(null,rawPictureCallback,null,jpegPictureCallback);
+                }
+            }
+        });
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.d(TAG, "onCreate complete: " + this);
     }
+
+    private Camera.PictureCallback rawPictureCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+        }
+    };
+    private Camera.PictureCallback jpegPictureCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            if (mOrientation.equals("landscape"))
+            {
+                mScreenShot.saveBitmapFromJpegBuffer(data);
+            }else{
+
+            }
+        }
+    };
 
     protected TextureMovieEncoder getsVideoEncoder(){
         return sVideoEncoder;
@@ -283,7 +316,6 @@ public class BroadcastActivity extends Activity
         // thread, so we know the fully-constructed object will be visible.
         mCameraHandler = new CameraHandler(this);
         mRecordingEnabled = sVideoEncoder.isRecording();
-
     }
 
     private void initializeMuxer(){
@@ -314,6 +346,7 @@ public class BroadcastActivity extends Activity
             outputString = Environment.getExternalStorageDirectory().getAbsolutePath() + "/cineio-recording.mp4";
         }
 
+        mOrientation = orientation;
         if(orientation != null && orientation.equals("landscape")){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
@@ -537,6 +570,7 @@ public class BroadcastActivity extends Activity
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
+
         mCamera.startPreview();
 
         weakSurfaceTexture = new WeakReference<SurfaceTexture>(st);
@@ -674,8 +708,6 @@ public class BroadcastActivity extends Activity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
-
         TextView fileText = (TextView) findViewById(R.id.streamingStatus);
         String statusText;
         switch (muxerState){
@@ -762,10 +794,16 @@ public class BroadcastActivity extends Activity
      */
     protected void handleSavedFrame(ScreenShot screenShot) {
         Log.i("I SAVED A FRAME", screenShot.getFilePath());
+
+        Toast.makeText(this, "I SAVED A FRAME",
+                Toast.LENGTH_LONG).show();
     }
 
     protected void handleSavingFrame(String savingString) {
         Log.i("I'M SAVING A FRAME", savingString);
+
+        Toast.makeText(this, "I'M SAVING A FRAME",
+                Toast.LENGTH_SHORT).show();
     }
 
 

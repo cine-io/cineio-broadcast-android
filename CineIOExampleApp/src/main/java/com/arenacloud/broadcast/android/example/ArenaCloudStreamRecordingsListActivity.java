@@ -1,4 +1,4 @@
-package io.broadcast.example;
+package com.arenacloud.broadcast.android.example;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -20,9 +20,9 @@ import com.arenacloud.broadcast.android.api.Stream;
 import com.arenacloud.broadcast.android.api.StreamRecording;
 import com.arenacloud.broadcast.android.api.StreamRecordingsResponseHandler;
 
-public class CineIoStreamRecordingsListActivity extends Activity implements AdapterView.OnItemClickListener {
+public class ArenaCloudStreamRecordingsListActivity extends Activity implements AdapterView.OnItemClickListener {
 
-    private final static String TAG = "CineIoStreamRecordingsListActivity";
+    private final static String TAG = "ArenaCloudStreamRecordingsListActivity";
 
     private ArenaCloudClient mClient;
     private Stream stream;

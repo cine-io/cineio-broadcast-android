@@ -1,4 +1,4 @@
-package io.broadcast.example;
+package com.arenacloud.broadcast.android.example;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,9 +18,9 @@ import com.arenacloud.broadcast.android.ArenaCloudConfig;
 import com.arenacloud.broadcast.android.api.Stream;
 import com.arenacloud.broadcast.android.api.StreamsResponseHandler;
 
-public class CineIoExampleAppActivity extends Activity implements AdapterView.OnItemClickListener {
+public class ArenaCloudExampleAppActivity extends Activity implements AdapterView.OnItemClickListener {
 
-    private final static String TAG = "CineIoExampleAppActivity";
+    private final static String TAG = "ArenaCloudExampleAppActivity";
     private final static String SECRET_KEY = /*"3195e4b0331f52089cfee868c66de723"*/"SECRET_KEY";
 
     private ArenaCloudClient mClient;
@@ -50,7 +50,7 @@ public class CineIoExampleAppActivity extends Activity implements AdapterView.On
 //        settingButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                Intent intent = new Intent(CineIoExampleAppActivity.this, SettingActivity.class);
+//                Intent intent = new Intent(ArenaCloudExampleAppActivity.this, SettingActivity.class);
 //                startActivity(intent);
 //            }
 //        });
@@ -58,7 +58,7 @@ public class CineIoExampleAppActivity extends Activity implements AdapterView.On
 
     public void setStreams(ArrayList<Stream> streams){
         mStreams = streams;
-        final CineIoExampleAppActivity me = this;
+        final ArenaCloudExampleAppActivity me = this;
         // This is the array adapter, it takes the context of the activity as a
         // first parameter, the type of list view as a second parameter and your
         // array as a third parameter.
@@ -90,7 +90,7 @@ public class CineIoExampleAppActivity extends Activity implements AdapterView.On
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         Stream stream = mStreams.get(position);
-        Intent intent = new Intent(this, CineIoStreamViewActivity.class);
+        Intent intent = new Intent(this, ArenaCloudStreamViewActivity.class);
         intent.putExtra("STREAM_DATA", stream.dataString());
         intent.putExtra("SECRET_KEY", mClient.getSecretKey());
         startActivity(intent);

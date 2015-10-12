@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -43,7 +44,7 @@ public class ScreenShot {
     public ScreenShot(BroadcastActivity.CameraHandler mCameraHandler){
         this.scale = 1f;
         this.prefix = "";
-        this.fileFolder =  Environment.getExternalStorageDirectory() + "/cineio/" ;
+        this.fileFolder =  Environment.getExternalStorageDirectory() + "/arenacloud/" ;
         this.mCameraHandler = mCameraHandler;
         initiateDirectory();
     }
@@ -73,8 +74,13 @@ public class ScreenShot {
     }
 
     //Generates the full File. Useful to get the full filepath of the Bitmap
-    public void setScreenShotFile(){
+    public void setScreenShotPNGFile(){
         this.screenShotFile = new File(fileFolder, prefix + System.currentTimeMillis() + ".png");
+        setFilePath(this.screenShotFile.toString());
+    }
+
+    public void setScreenShotJPEGFile(){
+        this.screenShotFile = new File(fileFolder, prefix + System.currentTimeMillis() + ".jpeg");
         setFilePath(this.screenShotFile.toString());
     }
 
@@ -191,7 +197,7 @@ public class ScreenShot {
         try {
             Long startTime = System.currentTimeMillis();
             savingMessage();
-            setScreenShotFile();
+            setScreenShotPNGFile();
             bos = new BufferedOutputStream(new FileOutputStream(getFilePath()));
             Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             bmp.copyPixelsFromBuffer(buf);
@@ -216,5 +222,24 @@ public class ScreenShot {
 
     }
 
+    public void saveBitmapFromJpegBuffer(byte[] buffer)
+    {
+        savingMessage();
+
+        setScreenShotJPEGFile();
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(getFilePath());
+            fos.write(buffer);                                               // Written to the file
+            fos.close();
+
+            savedMessage();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }

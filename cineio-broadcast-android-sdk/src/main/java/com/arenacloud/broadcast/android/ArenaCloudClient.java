@@ -68,12 +68,16 @@ public class ArenaCloudClient {
 
 
     public void broadcast(String id, String password, final BroadcastConfig config,  final Context context){
-        final Intent intent = new Intent(context, BroadcastActivity.class);
+        final Intent intent = new Intent(context, /*BroadcastActivity*/ArenaCloudBroadcastActivity.class);
 
         getStream(id, password , new StreamResponseHandler(){
             public void onSuccess(Stream stream) {
                 // Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
+
+                // for test
+//                intent.putExtra("PUBLISH_URL","rtmp://wspub.live.hupucdn.com/prod/17f21a6c0ac6bd89ad035bc685520ad0");
+
                 if(config.getWidth() != -1){
                     intent.putExtra("WIDTH", config.getWidth());
                 }
@@ -191,17 +195,46 @@ public class ArenaCloudClient {
         });
     }
 
-    public void playWithTicket(String id, String ticket, final Context context){
+    private int ttl = 0;
+    private long lastRequestTimeMs = 0;
+
+    private String rtmpUrl = null;
+    private String hlsUrl = null;
+
+    public void playWithTicket(String id, String ticket, final Context context, final boolean isPlayRtmp){
         final Intent intent = new Intent(context, PlayActivity.class);
 
-        getStreamWithTicket(id, ticket, new StreamResponseHandler() {
-            public void onSuccess(Stream stream) {
-                Log.d(TAG, "Starting default play intent: " + stream.getId());
-
-                intent.putExtra("PLAY_URL", stream.getRtmpUrl());
-                context.startActivity(intent);
+        if (System.currentTimeMillis()-lastRequestTimeMs<ttl*1000)
+        {
+            if (isPlayRtmp)
+            {
+                intent.putExtra("PLAY_URL", rtmpUrl);
+            }else {
+                intent.putExtra("PLAY_URL", hlsUrl);
             }
-        });
+
+            context.startActivity(intent);
+        }else {
+            getStreamWithTicket(id, ticket, new StreamResponseHandler() {
+                public void onSuccess(Stream stream) {
+                    Log.d(TAG, "Starting default play intent: " + stream.getId());
+
+                    rtmpUrl = stream.getRtmpUrl();
+                    hlsUrl = stream.getHLSUrl();
+                    ttl = stream.getPlayTTL();
+
+                    lastRequestTimeMs = System.currentTimeMillis();
+
+                    if (isPlayRtmp)
+                    {
+                        intent.putExtra("PLAY_URL", rtmpUrl);
+                    }else {
+                        intent.putExtra("PLAY_URL", hlsUrl);
+                    }
+                    context.startActivity(intent);
+                }
+            });
+        }
     }
 
     public void play(String id, final Context context){

@@ -82,6 +82,22 @@ public class Stream {
             e.printStackTrace();
             return null;
         }
+    }
 
+    public int getPlayTTL() {
+        try {
+            JSONObject playData = data.getJSONObject("play");
+            String ttlStr = playData.get("ttl").toString();
+            if (ttlStr==null || ttlStr.isEmpty()) return 0;
+            else
+            {
+                int ttl = Integer.parseInt(ttlStr);
+                return ttl;
+            }
+        } catch (JSONException e) {
+            return 0;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

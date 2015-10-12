@@ -1,4 +1,4 @@
-package io.broadcast.quicklauncher;
+package com.arenacloud.broadcast.android.quicklauncher;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 import com.arenacloud.broadcast.android.BroadcastActivity;
 
-public class CineIoQuickBroadcastActivityLauncher extends ActionBarActivity {
+public class ArenaCloudQuickBroadcastActivityLauncher extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

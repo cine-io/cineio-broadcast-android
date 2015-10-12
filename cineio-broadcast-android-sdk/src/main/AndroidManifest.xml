@@ -29,12 +29,16 @@
 
     <application android:allowBackup="true" >
         <activity
-            android:name="com.arenacloud.broadcast.android.BroadcastActivity"
+            android:name=".BroadcastActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
-            android:name="com.arenacloud.broadcast.android.PlayActivity"
+            android:name=".PlayActivity"
             android:label="@string/title_activity_play" >
+        </activity>
+        <activity
+            android:name=".ArenaCloudBroadcastActivity"
+            android:label="@string/title_activity_arena_cloud_broadcast" >
         </activity>
     </application>
 

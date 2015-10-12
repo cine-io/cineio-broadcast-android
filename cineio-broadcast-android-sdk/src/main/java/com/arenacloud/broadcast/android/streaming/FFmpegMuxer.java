@@ -57,10 +57,8 @@ public class FFmpegMuxer extends Muxer implements Runnable {
     private byte[] audioConfig;
 
 
-//    private WeakReference<BroadcastActivity> broadcastActivityWeakReference;
-    public FFmpegMuxer(/*BroadcastActivity broadcastActivity*/) {
+    public FFmpegMuxer() {
         mFFmpeg = new FFmpegBridge();
-//        broadcastActivityWeakReference = new WeakReference<BroadcastActivity>(broadcastActivity);
     }
 
     @Override

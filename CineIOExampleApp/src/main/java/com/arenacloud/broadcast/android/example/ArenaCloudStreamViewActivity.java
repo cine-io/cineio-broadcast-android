@@ -1,4 +1,4 @@
-package io.broadcast.example;
+package com.arenacloud.broadcast.android.example;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import com.arenacloud.broadcast.android.ArenaCloudClient;
 import com.arenacloud.broadcast.android.BroadcastConfig;
 import com.arenacloud.broadcast.android.ArenaCloudConfig;
 
-public class CineIoStreamViewActivity extends Activity {
+public class ArenaCloudStreamViewActivity extends Activity {
 
 //    private Stream stream;
 
@@ -75,8 +75,8 @@ public class CineIoStreamViewActivity extends Activity {
                 config.setWidth(1280);
                 config.setHeight(720);
                 //TO LOCK AN ORIENTATION
-//                config.lockOrientation("landscape");
-                config.lockOrientation("portrait");
+                config.lockOrientation("landscape");
+//                config.lockOrientation("portrait");
                 //TO SELECT A CAMERA
                 config.selectCamera("back");
                 //TO CHANGE THE BROADCAST LAYOUT
@@ -91,7 +91,7 @@ public class CineIoStreamViewActivity extends Activity {
             @Override
             public void onClick(View view) {
 //                Log.d(TAG, "Starting player for " + stream.getId());
-                mClient.playWithTicket(id, ticket, me);
+                mClient.playWithTicket(id, ticket, me, true);
             }
         });
 //
@@ -101,7 +101,7 @@ public class CineIoStreamViewActivity extends Activity {
 //            @Override
 //            public void onClick(View view) {
 //                Log.d(TAG, "Fetching recordings for " + stream.getId());
-//                Intent intent = new Intent(me, CineIoStreamRecordingsListActivity.class);
+//                Intent intent = new Intent(me, ArenaCloudStreamRecordingsListActivity.class);
 //                intent.putExtra("STREAM_DATA", stream.dataString());
 //                intent.putExtra("SECRET_KEY", mClient.getSecretKey());
 //                startActivity(intent);

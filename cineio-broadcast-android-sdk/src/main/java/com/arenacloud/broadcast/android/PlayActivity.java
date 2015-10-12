@@ -44,9 +44,10 @@ public class PlayActivity extends ActionBarActivity {
 //        mVideoView.setDataSourceType(VideoView.LOWDELAY_LIVE_STREAMING_TYPE);
         mVideoView.setDataCache(10000);
 
-        mVideoView.setVideoPath(playUrl);
+//        mVideoView.setVideoPath(playUrl);
 
         // http://v.iask.com/v_play_ipad.php?vid=99264895
+        //for test
         mVideoView.setVideoPath("http://v.iask.com/v_play_ipad.php?vid=99264895");
     }
 

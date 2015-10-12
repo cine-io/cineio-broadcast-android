@@ -1,4 +1,4 @@
-package io.broadcast.example;
+package com.arenacloud.broadcast.android.example;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -49,7 +49,7 @@ public class SettingActivity extends ActionBarActivity {
                 {
                     saveUserInfo(roomId, password);
 
-                    Intent intent = new Intent(SettingActivity.this, CineIoStreamViewActivity.class);
+                    Intent intent = new Intent(SettingActivity.this, ArenaCloudStreamViewActivity.class);
                     intent.putExtra("SECRET_KEY", SECRET_KEY);
                     startActivity(intent);
                 }else{

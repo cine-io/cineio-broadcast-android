@@ -10,7 +10,7 @@ import android.util.Log;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.arenacloud.broadcast.android.BroadcastActivity;
+import com.arenacloud.broadcast.android.BroadcastView;
 import com.arenacloud.broadcast.android.streaming.gles.FullFrameRect;
 import com.arenacloud.broadcast.android.streaming.gles.GlUtil;
 import com.arenacloud.broadcast.android.streaming.gles.Texture2dProgram;
@@ -25,7 +25,7 @@ import java.nio.ByteOrder;
  * Do not call any methods here directly from another thread -- use the
  * GLSurfaceView#queueEvent() call.
  */
-public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
+public class CameraSurfaceRenderer2 implements GLSurfaceView.Renderer {
     private static final String TAG = "CameraSurfaceRenderer";
     private static final boolean VERBOSE = false;
 
@@ -35,7 +35,7 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
 
     private final Muxer mMuxer;
     private final float[] mSTMatrix = new float[16];
-    private BroadcastActivity.CameraHandler mCameraHandler;
+    private BroadcastView.CameraHandler mCameraHandler;
     private TextureMovieEncoder mVideoEncoder;
     private FullFrameRect mFullScreen;
     private int mTextureId;
@@ -59,7 +59,7 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
      * @param movieEncoder  video encoder object
      * @param muxer         output file for encoded video; forwarded to movieEncoder
      */
-    public CameraSurfaceRenderer(BroadcastActivity.CameraHandler cameraHandler,
+    public CameraSurfaceRenderer2(BroadcastView.CameraHandler cameraHandler,
                                  TextureMovieEncoder movieEncoder, Muxer muxer) {
         mCameraHandler = cameraHandler;
         mVideoEncoder = movieEncoder;
@@ -195,14 +195,14 @@ public class CameraSurfaceRenderer implements GLSurfaceView.Renderer {
 
         // Tell the UI thread to enable the camera preview.
         mCameraHandler.sendMessage(mCameraHandler.obtainMessage(
-                BroadcastActivity.CameraHandler.MSG_SET_SURFACE_TEXTURE, mSurfaceTexture));
+                BroadcastView.CameraHandler.MSG_SET_SURFACE_TEXTURE, mSurfaceTexture));
     }
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         Log.d(TAG, "onSurfaceChanged " + width + "x" + height);
         mCameraHandler.sendMessage(mCameraHandler.obtainMessage(
-                BroadcastActivity.CameraHandler.MSG_SURFACE_CHANGED));
+                BroadcastView.CameraHandler.MSG_SURFACE_CHANGED));
     }
 
     @Override
