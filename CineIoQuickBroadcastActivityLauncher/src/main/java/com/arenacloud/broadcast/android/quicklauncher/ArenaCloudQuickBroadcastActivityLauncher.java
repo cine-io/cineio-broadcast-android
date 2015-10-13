@@ -13,7 +13,7 @@ public class ArenaCloudQuickBroadcastActivityLauncher extends ActionBarActivity 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cine_io_quick_broadcast_activity_launcher);
+        setContentView(R.layout.activity_arena_cloud_quick_broadcast_activity_launcher);
         Intent intent = new Intent(this, BroadcastActivity.class);
         startActivity(intent);
     }
@@ -22,7 +22,7 @@ public class ArenaCloudQuickBroadcastActivityLauncher extends ActionBarActivity 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.cine_io_quick_broadcast_activity_launcher, menu);
+        getMenuInflater().inflate(R.menu.arena_cloud_quick_broadcast_activity_launcher, menu);
         return true;
     }
 

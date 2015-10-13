@@ -33,7 +33,7 @@ public class ArenaCloudClient {
 
     private final String VERSION = "0.0.15";
     private final static String TAG = "ArenaCloudClient";
-    private final static String BASE_URL = /*"https://www.cine.io/api/1/-"*/"http://apidemo.hupu.com/broadcast/1/-";
+    private final static String BASE_URL = "http://apidemo.hupu.com/broadcast/1/-";
     private final AsyncHttpClient mClient;
     private ArenaCloudConfig mConfig;
 
@@ -42,7 +42,7 @@ public class ArenaCloudClient {
     public ArenaCloudClient(ArenaCloudConfig config){
         this.mConfig = config;
         this.mClient = new AsyncHttpClient();
-        mClient.setUserAgent("cineio-broadcast-android version-"+VERSION);
+        mClient.setUserAgent("arenacloud-broadcast-android version-"+VERSION);
     }
 
     public String getSecretKey() {
@@ -70,7 +70,7 @@ public class ArenaCloudClient {
     public void broadcast(String id, String password, final BroadcastConfig config,  final Context context){
         final Intent intent = new Intent(context, /*BroadcastActivity*/ArenaCloudBroadcastActivity.class);
 
-        getStream(id, password , new StreamResponseHandler(){
+        getStreamWithPassword(id, password, new StreamResponseHandler() {
             public void onSuccess(Stream stream) {
                 // Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
@@ -78,19 +78,19 @@ public class ArenaCloudClient {
                 // for test
 //                intent.putExtra("PUBLISH_URL","rtmp://wspub.live.hupucdn.com/prod/17f21a6c0ac6bd89ad035bc685520ad0");
 
-                if(config.getWidth() != -1){
+                if (config.getWidth() != -1) {
                     intent.putExtra("WIDTH", config.getWidth());
                 }
-                if(config.getHeight() != -1){
+                if (config.getHeight() != -1) {
                     intent.putExtra("HEIGHT", config.getHeight());
                 }
-                if(config.getLockedOrientation() != null){
+                if (config.getLockedOrientation() != null) {
                     intent.putExtra("ORIENTATION", config.getLockedOrientation());
                 }
-                if(config.getRequestedCamera() != null){
+                if (config.getRequestedCamera() != null) {
                     intent.putExtra("CAMERA", config.getRequestedCamera());
                 }
-                if (config.getBroadcastActivityLayout() != -1){
+                if (config.getBroadcastActivityLayout() != -1) {
                     intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
                 }
                 context.startActivity(intent);
@@ -195,48 +195,22 @@ public class ArenaCloudClient {
         });
     }
 
-    private int ttl = 0;
-    private long lastRequestTimeMs = 0;
-
-    private String rtmpUrl = null;
-    private String hlsUrl = null;
-
-    public void playWithTicket(String id, String ticket, final Context context, final boolean isPlayRtmp){
+    public void play(String id, String ticket, final Context context){
         final Intent intent = new Intent(context, PlayActivity.class);
 
-        if (System.currentTimeMillis()-lastRequestTimeMs<ttl*1000)
-        {
-            if (isPlayRtmp)
-            {
-                intent.putExtra("PLAY_URL", rtmpUrl);
-            }else {
-                intent.putExtra("PLAY_URL", hlsUrl);
+        getStreamWithTicket(id, ticket, new StreamResponseHandler() {
+            public void onSuccess(Stream stream) {
+                Log.d(TAG, "Starting default play intent: " + stream.getId());
+
+                intent.putExtra("PLAY_URL_RTMP", stream.getRtmpUrl());
+                intent.putExtra("PLAY_URL_HLS", stream.getHLSUrl());
+                intent.putExtra("PLAY_TTL", stream.getPlayTTL());
+
+                context.startActivity(intent);
             }
-
-            context.startActivity(intent);
-        }else {
-            getStreamWithTicket(id, ticket, new StreamResponseHandler() {
-                public void onSuccess(Stream stream) {
-                    Log.d(TAG, "Starting default play intent: " + stream.getId());
-
-                    rtmpUrl = stream.getRtmpUrl();
-                    hlsUrl = stream.getHLSUrl();
-                    ttl = stream.getPlayTTL();
-
-                    lastRequestTimeMs = System.currentTimeMillis();
-
-                    if (isPlayRtmp)
-                    {
-                        intent.putExtra("PLAY_URL", rtmpUrl);
-                    }else {
-                        intent.putExtra("PLAY_URL", hlsUrl);
-                    }
-                    context.startActivity(intent);
-                }
-            });
-        }
+        });
     }
-
+/*
     public void play(String id, final Context context){
 
         getStream(id, new StreamResponseHandler() {
@@ -250,7 +224,7 @@ public class ArenaCloudClient {
 
         });
     }
-
+*/
     public void playRecording(final String id, final String recordingName, final Context context){
         getStreamRecordings(id, new StreamRecordingsResponseHandler() {
             @Override
@@ -488,7 +462,7 @@ public class ArenaCloudClient {
         });
     }
 
-    public void getStream(String id, String password, final StreamResponseHandler handler){
+    public void getStreamWithPassword(String id, String password, final StreamResponseHandler handler){
         String url = BASE_URL + "/stream";
         RequestParams rq = JsonToParams.toRequestParamsWithPublicKey(getPublicKey());
         rq.add("id", id);

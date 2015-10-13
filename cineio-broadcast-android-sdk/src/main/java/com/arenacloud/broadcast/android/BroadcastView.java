@@ -126,6 +126,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
             mCamera.takePicture(null,rawPictureCallback,null,jpegPictureCallback);
         }
     }
+
     private Camera.PictureCallback rawPictureCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {

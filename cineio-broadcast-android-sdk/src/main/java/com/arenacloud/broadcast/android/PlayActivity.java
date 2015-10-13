@@ -17,7 +17,9 @@ import tv.danmaku.ijk.media.widget.VideoView;
 
 public class PlayActivity extends ActionBarActivity {
 
-    private String playUrl = "";
+    private String playUrl_rtmp = "";
+    private String playUrl_hls = "";
+    private int playTtl = 0;
 
     private VideoView mVideoView;
 
@@ -31,7 +33,9 @@ public class PlayActivity extends ActionBarActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         Bundle extras = getIntent().getExtras();
-        playUrl = extras.getString("PLAY_URL");
+        playUrl_rtmp = extras.getString("PLAY_URL_RTMP");
+        playUrl_hls = extras.getString("PLAY_URL_HLS");
+        playTtl = extras.getInt("PLAY_TTL");
 
         setContentView(R.layout.activity_play);
 
@@ -44,7 +48,7 @@ public class PlayActivity extends ActionBarActivity {
 //        mVideoView.setDataSourceType(VideoView.LOWDELAY_LIVE_STREAMING_TYPE);
         mVideoView.setDataCache(10000);
 
-//        mVideoView.setVideoPath(playUrl);
+//        mVideoView.setVideoPath(playUrl_rtmp);
 
         // http://v.iask.com/v_play_ipad.php?vid=99264895
         //for test

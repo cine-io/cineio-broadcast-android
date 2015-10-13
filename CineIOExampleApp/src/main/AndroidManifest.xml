@@ -44,7 +44,7 @@
 
         <activity
             android:name=".ArenaCloudStreamViewActivity"
-            android:label="@string/title_activity_cine_io_stream_view"
+            android:label="@string/title_activity_arena_cloud_stream_view"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

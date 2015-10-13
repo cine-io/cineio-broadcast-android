@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".ArenaCloudQuickBroadcastActivityLauncher"
-            android:label="CineIoQuickBroadcastActivityLauncher" >
+            android:label="ArenaCloudQuickBroadcastActivityLauncher" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +29,7 @@
         <!-- Required for your application to open the BroadcastActivity. -->
         <activity
             android:name="com.arenacloud.broadcast.android.BroadcastActivity"
-            android:label="CineIOBroadcastActivity" >
+            android:label="BroadcastActivity" >
         </activity>
 
     </application>

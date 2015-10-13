@@ -30,7 +30,7 @@ public class ArenaCloudExampleAppActivity extends Activity implements AdapterVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cine_io_consumer);
+        setContentView(R.layout.activity_arena_cloud_consumer);
 /*        if (SECRET_KEY.equals("SECRET_KEY")){
             CharSequence error = "SECRET_KEY must be set to a cine.io project's secret key. Register for one here: https://www.cine.io";
             Toast.makeText(this, error, Toast.LENGTH_LONG).show();
@@ -74,7 +74,7 @@ public class ArenaCloudExampleAppActivity extends Activity implements AdapterVie
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.cine_io_consumer, menu);
+        getMenuInflater().inflate(R.menu.arena_cloud_consumer, menu);
         return true;
     }
 

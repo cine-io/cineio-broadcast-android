@@ -32,7 +32,7 @@ public class ArenaCloudStreamRecordingsListActivity extends Activity implements 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cine_io_stream_recordings_list);
+        setContentView(R.layout.activity_arena_cloud_stream_recordings_list);
         Bundle extras = getIntent().getExtras();
         ArenaCloudConfig config = new ArenaCloudConfig();
         config.setSecretKey(extras.getString("SECRET_KEY"));
@@ -73,7 +73,7 @@ public class ArenaCloudStreamRecordingsListActivity extends Activity implements 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.cine_io_stream_recordings_list, menu);
+        getMenuInflater().inflate(R.menu.arena_cloud_stream_recordings_list, menu);
         return true;
     }
 

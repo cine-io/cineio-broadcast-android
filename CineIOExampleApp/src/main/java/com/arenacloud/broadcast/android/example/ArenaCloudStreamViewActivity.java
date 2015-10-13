@@ -15,7 +15,7 @@ public class ArenaCloudStreamViewActivity extends Activity {
 
 //    private Stream stream;
 
-    private final static String TAG = "CIoStreamViewActivity";
+    private final static String TAG = "ArenaCloudStreamViewActivity";
 
     private ArenaCloudClient mClient;
 
@@ -30,7 +30,7 @@ public class ArenaCloudStreamViewActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cine_io_stream_view);
+        setContentView(R.layout.activity_arena_cloud_stream_view);
 //        Bundle extras = getIntent().getExtras();
         ArenaCloudConfig config = new ArenaCloudConfig();
 //        config.setSecretKey(extras.getString("SECRET_KEY"));
@@ -91,7 +91,7 @@ public class ArenaCloudStreamViewActivity extends Activity {
             @Override
             public void onClick(View view) {
 //                Log.d(TAG, "Starting player for " + stream.getId());
-                mClient.playWithTicket(id, ticket, me, true);
+                mClient.play(id, ticket, me);
             }
         });
 //
@@ -113,7 +113,7 @@ public class ArenaCloudStreamViewActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.cine_io_stream_view, menu);
+        getMenuInflater().inflate(R.menu.arena_cloud_stream_view, menu);
         return true;
     }
 
