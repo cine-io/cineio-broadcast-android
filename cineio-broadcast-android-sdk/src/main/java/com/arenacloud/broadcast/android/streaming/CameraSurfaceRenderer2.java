@@ -1,6 +1,8 @@
 // started from: https://github.com/google/grafika/blob/f3c8c3dee60153f471312e21acac8b3a3cddd7dc/src/com/android/grafika/BroadcastActivity.java#L418
 package com.arenacloud.broadcast.android.streaming;
 
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.opengl.EGL14;
 import android.opengl.GLES20;
@@ -11,6 +13,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import com.arenacloud.broadcast.android.BroadcastView;
+import com.arenacloud.broadcast.android.BroadcastView.ScreenShotCallback;
 import com.arenacloud.broadcast.android.streaming.gles.FullFrameRect;
 import com.arenacloud.broadcast.android.streaming.gles.GlUtil;
 import com.arenacloud.broadcast.android.streaming.gles.Texture2dProgram;
@@ -50,6 +53,8 @@ public class CameraSurfaceRenderer2 implements GLSurfaceView.Renderer {
     private int mIncomingWidth;
     private int mIncomingHeight;
 
+    private Matrix m = new Matrix();
+
 
     /**
      * Constructs CameraSurfaceRenderer.
@@ -74,6 +79,9 @@ public class CameraSurfaceRenderer2 implements GLSurfaceView.Renderer {
 
         mIncomingSizeUpdated = false;
         mIncomingWidth = mIncomingHeight = -1;
+
+        m.postRotate(180);
+//        m.preScale(-1f, 1f);
     }
 
     /**
@@ -153,6 +161,10 @@ public class CameraSurfaceRenderer2 implements GLSurfaceView.Renderer {
         }
     }
 
+    private ByteBuffer buf=null;
+    private Bitmap bmp=null;
+    private boolean mIsLandscape = true;
+
     /**
      * Records the size of the incoming camera preview frames.
      * <p/>
@@ -160,11 +172,17 @@ public class CameraSurfaceRenderer2 implements GLSurfaceView.Renderer {
      * so we assume it could go either way.  (Fortunately they both run on the same thread,
      * so we at least know that they won't execute concurrently.)
      */
-    public void setCameraPreviewSize(int width, int height) {
+    public void setCameraPreviewSize(int width, int height, boolean isLandscape) {
         Log.d(TAG, "setCameraPreviewSize");
         mIncomingWidth = width;
         mIncomingHeight = height;
         mIncomingSizeUpdated = true;
+    }
+
+    private volatile boolean mIsDoScreenShot = false;
+    public void takeScreenShot()
+    {
+        mIsDoScreenShot = true;
     }
 
     @Override
@@ -198,12 +216,35 @@ public class CameraSurfaceRenderer2 implements GLSurfaceView.Renderer {
                 BroadcastView.CameraHandler.MSG_SET_SURFACE_TEXTURE, mSurfaceTexture));
     }
 
+    private int mSurfaceWidth = 0;
+    private int mSurfaceHeight = 0;
+
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         Log.d(TAG, "onSurfaceChanged " + width + "x" + height);
         mCameraHandler.sendMessage(mCameraHandler.obtainMessage(
                 BroadcastView.CameraHandler.MSG_SURFACE_CHANGED));
+
+        mSurfaceWidth = width;
+        mSurfaceHeight = height;
+
+        if (buf!=null)
+        {
+            buf.clear();
+            buf=null;
+        }
+
+        buf = ByteBuffer.allocateDirect(mSurfaceWidth * mSurfaceHeight * 4);
+
+        if (bmp!=null)
+        {
+            bmp.recycle();
+            bmp=null;
+        }
+
+        bmp = Bitmap.createBitmap(mSurfaceWidth, mSurfaceHeight, Bitmap.Config.ARGB_8888);
     }
+
 
     @Override
     public void onDrawFrame(GL10 unused) {
@@ -280,5 +321,30 @@ public class CameraSurfaceRenderer2 implements GLSurfaceView.Renderer {
         mSurfaceTexture.getTransformMatrix(mSTMatrix);
         mFullScreen.drawFrame(mTextureId, mSTMatrix);
 
+        if (mIsDoScreenShot)
+        {
+            buf.clear();
+            buf.order(ByteOrder.LITTLE_ENDIAN);
+            GLES20.glReadPixels(0, 0, mSurfaceWidth, mSurfaceHeight,
+                    GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buf);
+            buf.rewind();
+
+            bmp.copyPixelsFromBuffer(buf);
+            bmp = Bitmap.createBitmap(bmp, 0, 0, mSurfaceWidth, mSurfaceHeight, m, false);
+
+            if (screenShotCallback!=null)
+            {
+                screenShotCallback.onScreenShotEvent(bmp);
+            }
+
+            mIsDoScreenShot = false;
+        }
+
+    }
+
+    private ScreenShotCallback screenShotCallback = null;
+    public void setScreenShotCallback(ScreenShotCallback callback)
+    {
+        screenShotCallback = callback;
     }
 }

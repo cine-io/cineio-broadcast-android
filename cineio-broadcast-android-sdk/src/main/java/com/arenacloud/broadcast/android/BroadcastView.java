@@ -123,7 +123,14 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
     {
         if (mCamera!=null)
         {
-            mCamera.takePicture(null,rawPictureCallback,null,jpegPictureCallback);
+//            mCamera.takePicture(null,rawPictureCallback,null,jpegPictureCallback);
+
+            this.queueEvent(new Runnable() {
+                @Override
+                public void run() {
+                    mRenderer.takeScreenShot();
+                }
+            });
         }
     }
 
@@ -157,7 +164,9 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
     private ScreenShotCallback screenShotCallback = null;
     public void setScreenShotCallback(ScreenShotCallback callback)
     {
-        screenShotCallback = callback;
+//        screenShotCallback = callback;
+
+        mRenderer.setScreenShotCallback(callback);
     }
 
     public interface ScreenShotCallback {
@@ -175,7 +184,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
         this.queueEvent(new Runnable() {
             @Override
             public void run() {
-                mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
+                mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight(), mEncodingConfig.isLandscape());
             }
         });
     }
@@ -476,7 +485,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
         this.queueEvent(new Runnable() {
             @Override
             public void run() {
-                mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
+                mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight(), mEncodingConfig.isLandscape());
 //                mRenderer.setCameraPreviewSize(1280, 720);
             }
         });
@@ -600,7 +609,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
         this.queueEvent(new Runnable() {
             @Override
             public void run() {
-                mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight());
+                mRenderer.setCameraPreviewSize(mEncodingConfig.getLandscapeWidth(), mEncodingConfig.getLandscapeHeight(), mEncodingConfig.isLandscape());
             }
         });
     }

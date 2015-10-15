@@ -48,11 +48,11 @@ public class PlayActivity extends ActionBarActivity {
 //        mVideoView.setDataSourceType(VideoView.LOWDELAY_LIVE_STREAMING_TYPE);
         mVideoView.setDataCache(10000);
 
-//        mVideoView.setVideoPath(playUrl_rtmp);
+        mVideoView.setVideoPath(playUrl_rtmp);
 
         // http://v.iask.com/v_play_ipad.php?vid=99264895
         //for test
-        mVideoView.setVideoPath("http://v.iask.com/v_play_ipad.php?vid=99264895");
+//        mVideoView.setVideoPath("http://v.iask.com/v_play_ipad.php?vid=99264895");
     }
 
     private OnPreparedListener mPreparedListener = new OnPreparedListener() {

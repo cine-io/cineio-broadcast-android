@@ -160,28 +160,35 @@ public class ArenaCloudBroadcastActivity extends ActionBarActivity implements Br
         });
     }
 
+    private Bitmap bitmap;
+
     @Override
-    public void onScreenShotEvent(Bitmap bitmap) {
+    public void onScreenShotEvent(final Bitmap bitmap) {
 
-        File file = new File("/sdcard" + "/ArenaCloud/ScreenShot/");
-        if (!file.exists())
-        {
-            file.mkdir();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                File file = new File("/sdcard" + "/ArenaCloud/ScreenShot/");
+                if (!file.exists())
+                {
+                    file.mkdir();
+                }
 
-        String savePath = "/sdcard" + "/ArenaCloud/ScreenShot/" + System.currentTimeMillis()+ ".jpeg";
-        try {
-            FileOutputStream fout = new FileOutputStream(savePath);
-            BufferedOutputStream bos = new BufferedOutputStream(fout);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-            bos.flush();
-            bos.close();
+                String savePath = "/sdcard" + "/ArenaCloud/ScreenShot/" + System.currentTimeMillis()+ ".jpeg";
+                try {
+                    FileOutputStream fout = new FileOutputStream(savePath);
+                    BufferedOutputStream bos = new BufferedOutputStream(fout);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                    bos.flush();
+                    bos.close();
 
-            Toast.makeText(this, "YOU HAVE SAVED A SCREENSHOT",
+                    Toast.makeText(ArenaCloudBroadcastActivity.this, "YOU HAVE SAVED A SCREENSHOT",
                     Toast.LENGTH_LONG).show();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
