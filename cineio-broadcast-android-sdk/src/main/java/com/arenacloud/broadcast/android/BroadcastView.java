@@ -79,6 +79,11 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
         return 0;
     }
 
+    public void setPublishUrl(String publishUrl)
+    {
+        mEncodingConfig.setOutput(publishUrl);
+    }
+
     public void toggleRecording()
     {
         if(is_reconnect_status) return;
@@ -89,6 +94,11 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
         } else {
             stopRecording();
         }
+    }
+
+    public boolean isRecordingEnabled()
+    {
+        return mRecordingEnabled;
     }
 
     public void switchCamera()
@@ -165,7 +175,6 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
     public void setScreenShotCallback(ScreenShotCallback callback)
     {
 //        screenShotCallback = callback;
-
         mRenderer.setScreenShotCallback(callback);
     }
 

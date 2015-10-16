@@ -1,26 +1,21 @@
 package com.arenacloud.broadcast.android.example;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.arenacloud.broadcast.android.ArenaCloudBroadcastActivity;
 import com.arenacloud.broadcast.android.ArenaCloudClient;
 import com.arenacloud.broadcast.android.BroadcastConfig;
 import com.arenacloud.broadcast.android.ArenaCloudConfig;
 
 public class ArenaCloudStreamViewActivity extends Activity {
 
-//    private Stream stream;
-
     private final static String TAG = "ArenaCloudStreamViewActivity";
-
-    private ArenaCloudClient mClient;
-
-//    private String roomId = null;
-//    private String password = null;
 
     private String publicKey = "1c76aec81ad398126f5f5d2eda531c89";
     private String id = "41667e77ad0cf2d72e100223";
@@ -31,39 +26,13 @@ public class ArenaCloudStreamViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_arena_cloud_stream_view);
-//        Bundle extras = getIntent().getExtras();
-        ArenaCloudConfig config = new ArenaCloudConfig();
-//        config.setSecretKey(extras.getString("SECRET_KEY"));
-        config.setPublicKey(publicKey);
-        mClient = new ArenaCloudClient(config);
-//        try {
-//            stream = new Stream(new JSONObject(extras.getString("STREAM_DATA")));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
-//        SharedPreferences sp = getSharedPreferences("USERINFO", MODE_PRIVATE);
-//        roomId = sp.getString(SettingActivity.KEY_ROOMID, "");
-//        password = sp.getString(SettingActivity.KEY_PASSWORD,"");
 
         initLayout();
     }
 
     private void initLayout() {
         final Activity me = this;
-//        String labelText;
-//        String name = stream.getName();
-//        if (name != null) {
-//            labelText = stream.getName() + ": " + stream.getId();
-//        } else {
-//            labelText = stream.getId();
-//        }
-
-
-//        labelText = "ROOM ID : "+roomId;
-//        TextView v = (TextView) findViewById(R.id.streamName);
-//        v.setText(labelText);
-
+        /*
         Button broadcastButton = (Button) findViewById(R.id.broadcastStream);
         broadcastButton.setText("Start Broadcaster");
         broadcastButton.setOnClickListener(new View.OnClickListener() {
@@ -83,14 +52,38 @@ public class ArenaCloudStreamViewActivity extends Activity {
                 //config.setBroadcastActivityLayout(R.layout.my_activity_broadcast_capture);
                 mClient.broadcast(id,password,config, me);
             }
+        });*/
+
+        Button broadcastButton = (Button) findViewById(R.id.broadcastStream);
+        broadcastButton.setText("Start Broadcaster");
+        broadcastButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ArenaCloudStreamViewActivity.this, ArenaCloudBroadcastActivity.class);
+
+                intent.putExtra("WIDTH", 1280);
+                intent.putExtra("HEIGHT", 720);
+                intent.putExtra("ORIENTATION", "portrait");
+                intent.putExtra("CAMERA", "back");
+
+                intent.putExtra("publicKey",publicKey);
+                intent.putExtra("id",id);
+                intent.putExtra("password",password);
+                intent.putExtra("ticket",ticket);
+
+                startActivity(intent);
+            }
         });
+
 
         Button playButton = (Button) findViewById(R.id.playStream);
         playButton.setText("Start Player");
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Log.d(TAG, "Starting player for " + stream.getId());
+                ArenaCloudConfig config = new ArenaCloudConfig();
+                config.setPublicKey(publicKey);
+                ArenaCloudClient mClient = new ArenaCloudClient(config);
                 mClient.play(id, ticket, me);
             }
         });

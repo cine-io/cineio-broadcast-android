@@ -125,8 +125,11 @@ public class EncodingConfig {
     }
 
     public void setOutput(String outputString) {
-        mOutputString = outputString;
-        mFormat = EncodingConfig.calculateFormat(outputString);
+        if (outputString!=null)
+        {
+            mOutputString = outputString;
+            mFormat = EncodingConfig.calculateFormat(outputString);
+        }
     }
 
     private static Muxer.FORMAT calculateFormat(String outputString) {

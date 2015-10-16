@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arenacloud.broadcast.android.api.Stream;
+import com.arenacloud.broadcast.android.api.StreamResponseHandler;
 import com.arenacloud.broadcast.android.streaming.AspectFrameLayout;
 
 import java.io.BufferedOutputStream;
@@ -24,11 +26,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.arenacloud.broadcast.android.ArenaCloudClient;
+
 
 public class ArenaCloudBroadcastActivity extends ActionBarActivity implements BroadcastView.BroadcastStatusCallback, BroadcastView.ScreenShotCallback{
 
     private AspectFrameLayout mFrameLayout;
     private BroadcastView mBroadcastView;
+
+    private ArenaCloudClient mClient;
+
+    private String publicKey;
+    private String id;
+    private String password;
+    private String ticket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +67,17 @@ public class ArenaCloudBroadcastActivity extends ActionBarActivity implements Br
 
         Button toggleRecording = (Button) findViewById(R.id.toggleRecording_button);
 
+        publicKey = extras.getString("publicKey");
+        id = extras.getString("id");
+        password = extras.getString("password");
+        ticket = extras.getString("ticket");
+
+        ArenaCloudConfig config = new ArenaCloudConfig();
+        config.setPublicKey(publicKey);
+        mClient = new ArenaCloudClient(config);
+
+
+
         toggleRecording.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -64,8 +86,17 @@ public class ArenaCloudBroadcastActivity extends ActionBarActivity implements Br
                 // don't handle event unless its ACTION_UP so "doSomething()" only runs once.
                 if (event.getAction() != MotionEvent.ACTION_UP) return false;
 
-                mBroadcastView.toggleRecording();
-
+                if (mBroadcastView.isRecordingEnabled())
+                {
+                    mBroadcastView.toggleRecording();
+                }else{
+                    mClient.getStreamWithPassword(id, password, new StreamResponseHandler() {
+                        public void onSuccess(Stream stream) {
+                            mBroadcastView.setPublishUrl(stream.getPublishUrl());
+                            mBroadcastView.toggleRecording();
+                        }
+                    });
+                }
                 return true;
             }
         });
