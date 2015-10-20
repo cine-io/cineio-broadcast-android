@@ -127,8 +127,6 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
         handleSetCameraOrientation();
     }
 
-
-
     public void takeScreenShot()
     {
         if (mCamera!=null)
@@ -290,12 +288,77 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
 
         // leave the frame rate set to default
         mCamera.setParameters(parms);
+
+
+        //add auto focus function
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tryAutoFocus(); // so we get the autofocus when starting up - we do this on a delay, as calling it immediately means the autofocus doesn't seem to work properly sometimes (at least on Galaxy Nexus)
+            }
+        }, 500);
+    }
+
+    private void tryAutoFocus()
+    {
+        if (mCamera==null) return;
+
+        // it's only worth doing autofocus when autofocus has an effect (i.e., auto or macro mode)
+        Camera.Parameters parameters = mCamera.getParameters();
+        String focus_mode = parameters.getFocusMode();
+        if(focus_mode != null && focus_mode.equals(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            String old_flash = parameters.getFlashMode();
+            set_flash_after_autofocus = "";
+            // getFlashMode() may return null if flash not supported!
+            if(old_flash != null && old_flash != Camera.Parameters.FLASH_MODE_OFF ) {
+                set_flash_after_autofocus = old_flash;
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                mCamera.setParameters(parameters);
+            }
+            Camera.AutoFocusCallback autoFocusCallback = new Camera.AutoFocusCallback() {
+                @Override
+                public void onAutoFocus(boolean success, Camera camera) {
+                    autoFocusCompleted();
+                }
+            };
+
+            try {
+                mCamera.autoFocus(autoFocusCallback);
+            }
+            catch(RuntimeException e) {
+                // just in case? We got a RuntimeException report here from 1 user on Google Play
+                autoFocusCallback.onAutoFocus(false, mCamera);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void cancelAutoFocus() {
+        if( mCamera != null ) {
+            mCamera.cancelAutoFocus();
+            autoFocusCompleted();
+        }
+    }
+
+    private String set_flash_after_autofocus = "";
+    private void autoFocusCompleted()
+    {
+        if( set_flash_after_autofocus.length() > 0 && mCamera!=null) {
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFlashMode(set_flash_after_autofocus);
+            set_flash_after_autofocus = "";
+            mCamera.setParameters(parameters);
+        }
     }
 
     /**
      * Stops camera preview, and releases the camera to the system.
      */
     private void releaseCamera() {
+        //cancel auto focus function
+        cancelAutoFocus();
+
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.release();
