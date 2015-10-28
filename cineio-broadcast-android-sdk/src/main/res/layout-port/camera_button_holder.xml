@@ -32,8 +32,22 @@
         android:text="@string/SwitchCamera"
 
         android:layout_marginBottom="@dimen/cine_item_padding"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
+        />
+
+    <Button
+        android:id="@+id/toggleScreenShot_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="false"
+        android:scaleType="center"
+        android:text="@string/ScreenShot"
+
+        android:layout_marginRight="@dimen/cine_item_padding"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         />
 
 </RelativeLayout>

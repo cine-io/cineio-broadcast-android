@@ -3,8 +3,8 @@
 
     <string name="app_name">JRSLive</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_cine_io_stream_view">CineIoStreamViewActivity</string>
-    <string name="title_activity_cine_io_stream_recordings_list">CineIoStreamRecordingsListActivity</string>
+    <string name="title_activity_arena_cloud_stream_view">ArenaCloudStreamViewActivity</string>
+    <string name="title_activity_arena_cloud_stream_recordings_list">ArenaCloudStreamRecordingsListActivity</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="hello_world">Hello world!</string>
@@ -14,5 +14,6 @@
     <string name="login_label_signin">SAVE</string>
     <string name="title_activity_setting">SettingActivity</string>
     <string name="setting_label">OK</string>
+    <string name="title_activity_arena_cloud_broadcast">ArenaCloudBroadcastActivity</string>
 
 </resources>

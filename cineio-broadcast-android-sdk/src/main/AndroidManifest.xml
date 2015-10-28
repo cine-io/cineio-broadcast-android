@@ -14,9 +14,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.cine.android">
+    package="com.arenacloud.broadcast.android" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -24,12 +23,22 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
-    <application
-        android:allowBackup="true" >
-        <activity android:name=".BroadcastActivity"
-            android:theme="@android:style/Theme.NoTitleBar">
+    <application android:allowBackup="true" >
+        <activity
+            android:name=".BroadcastActivity"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".PlayActivity"
+            android:label="@string/title_activity_play" >
+        </activity>
+        <activity
+            android:name=".ArenaCloudBroadcastActivity"
+            android:label="@string/title_activity_arena_cloud_broadcast" >
         </activity>
     </application>
 

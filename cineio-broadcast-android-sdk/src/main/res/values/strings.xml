@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="SwitchCamera">Switch</string>
+    <string name="title_activity_play">PlayActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="ScreenShot">ScreenShot</string>
+    <string name="title_activity_arena_cloud_broadcast">ArenaCloudBroadcastActivity</string>
 </resources>

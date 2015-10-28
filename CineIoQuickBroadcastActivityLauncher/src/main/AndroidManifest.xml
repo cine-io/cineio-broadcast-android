@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.cine.quicklauncher" >
+    package="com.arenacloud.broadcast.android.quicklauncher" >
 
     <!-- Required cine.io api and broadcast activity permissions. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,8 +17,8 @@
         android:icon="@drawable/ic_launcher"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".CineIoQuickBroadcastActivityLauncher"
-            android:label="CineIoQuickBroadcastActivityLauncher" >
+            android:name=".ArenaCloudQuickBroadcastActivityLauncher"
+            android:label="ArenaCloudQuickBroadcastActivityLauncher" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,8 +28,8 @@
 
         <!-- Required for your application to open the BroadcastActivity. -->
         <activity
-            android:name="io.cine.android.BroadcastActivity"
-            android:label="CineIOBroadcastActivity" >
+            android:name="com.arenacloud.broadcast.android.BroadcastActivity"
+            android:label="BroadcastActivity" >
         </activity>
 
     </application>
