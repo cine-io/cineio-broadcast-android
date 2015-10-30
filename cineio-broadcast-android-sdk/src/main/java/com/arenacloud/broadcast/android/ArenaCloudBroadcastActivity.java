@@ -195,7 +195,6 @@ public class ArenaCloudBroadcastActivity extends ActionBarActivity implements Br
 
     @Override
     public void onScreenShotEvent(final Bitmap bitmap) {
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -212,6 +211,8 @@ public class ArenaCloudBroadcastActivity extends ActionBarActivity implements Br
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                     bos.flush();
                     bos.close();
+
+                    bitmap.recycle();
 
                     Toast.makeText(ArenaCloudBroadcastActivity.this, "YOU HAVE SAVED A SCREENSHOT",
                     Toast.LENGTH_LONG).show();

@@ -46,7 +46,7 @@ public class PlayActivity extends ActionBarActivity {
         mVideoView.setOnCompletionListener(mCompletionListener);
 
 //        mVideoView.setDataSourceType(VideoView.LOWDELAY_LIVE_STREAMING_TYPE);
-        mVideoView.setDataCache(10000);
+        mVideoView.setDataCache(6000);
 
         mVideoView.setVideoPath(playUrl_rtmp);
 

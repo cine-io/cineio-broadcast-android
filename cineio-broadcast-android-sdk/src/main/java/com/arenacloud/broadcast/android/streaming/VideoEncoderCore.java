@@ -42,7 +42,7 @@ public class VideoEncoderCore extends AndroidEncoder {
     // TODO: these ought to be configurable as well
     private static final String MIME_TYPE = "video/avc";    // H.264 Advanced Video Coding
     private static final int FRAME_RATE = 15;               // 15fps
-    private static final int IFRAME_INTERVAL = 3;           // 3 seconds between I-frames
+    private static final int IFRAME_INTERVAL = 4;           // 3 seconds between I-frames
 
     private Surface mInputSurface;
 

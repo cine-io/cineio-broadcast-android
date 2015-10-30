@@ -330,11 +330,11 @@ public class CameraSurfaceRenderer2 implements GLSurfaceView.Renderer {
             buf.rewind();
 
             bmp.copyPixelsFromBuffer(buf);
-            bmp = Bitmap.createBitmap(bmp, 0, 0, mSurfaceWidth, mSurfaceHeight, m, false);
+            Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, mSurfaceWidth, mSurfaceHeight, m, false);
 
             if (screenShotCallback!=null)
             {
-                screenShotCallback.onScreenShotEvent(bmp);
+                screenShotCallback.onScreenShotEvent(bitmap);
             }
 
             mIsDoScreenShot = false;

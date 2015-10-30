@@ -552,7 +552,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
 
 //        parms.setPreviewSize(1280, 720);
 
-        mCamera.setParameters(parms);
+//        mCamera.setParameters(parms);
 
         this.queueEvent(new Runnable() {
             @Override

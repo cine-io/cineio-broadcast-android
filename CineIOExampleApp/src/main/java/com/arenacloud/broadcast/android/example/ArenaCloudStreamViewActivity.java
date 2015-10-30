@@ -20,7 +20,7 @@ public class ArenaCloudStreamViewActivity extends Activity {
     private String publicKey = "1c76aec81ad398126f5f5d2eda531c89";
     private String id = "7f25edf7ad0cf251611000dd";
     private String password = "cd30b0dd";
-    private String ticket = "ZT0xNDc1ODM5NTkwJmM9MTIzNDU2Nzg5MCZzPURLQ1Q1SGxyUFR4cnlkem1hcXF2VkMyWjVoczRWcGxVTzVwbXJ2UHk5YUE";
+    private String ticket = "ZT0xNDc3NTU4NTQ4JmM9MTIzNDU2Nzg5MCZzPXczYWFnQi1Jc1ZqQzhGQzFpR194QUFHYzB4eFU5NDE4U1BGQ094cEcwUzQ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
