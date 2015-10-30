@@ -55,6 +55,8 @@ import com.arenacloud.broadcast.android.streaming.ScreenShot;
 import com.arenacloud.broadcast.android.streaming.TextureMovieEncoder;
 import com.arenacloud.broadcast.android.streaming.gles.EglSurfaceBase;
 
+import android.widget.VideoView;
+
 /**
  * Shows the camera preview on screen while simultaneously recording it to a .mp4 file.
  * <p/>

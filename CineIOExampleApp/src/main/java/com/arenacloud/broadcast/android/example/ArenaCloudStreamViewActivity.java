@@ -18,8 +18,8 @@ public class ArenaCloudStreamViewActivity extends Activity {
     private final static String TAG = "ArenaCloudStreamViewActivity";
 
     private String publicKey = "1c76aec81ad398126f5f5d2eda531c89";
-    private String id = "41667e77ad0cf2d72e100223";
-    private String password = "c399a7a8";
+    private String id = "7f25edf7ad0cf251611000dd";
+    private String password = "cd30b0dd";
     private String ticket = "ZT0xNDc1ODM5NTkwJmM9MTIzNDU2Nzg5MCZzPURLQ1Q1SGxyUFR4cnlkem1hcXF2VkMyWjVoczRWcGxVTzVwbXJ2UHk5YUE";
 
     @Override
