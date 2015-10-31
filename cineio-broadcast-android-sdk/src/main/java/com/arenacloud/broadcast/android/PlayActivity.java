@@ -21,6 +21,8 @@ public class PlayActivity extends ActionBarActivity {
     private String playUrl_hls = "";
     private int playTtl = 0;
 
+    private String snapShot = "";
+
     private VideoView mVideoView;
 
     @Override
@@ -36,6 +38,8 @@ public class PlayActivity extends ActionBarActivity {
         playUrl_rtmp = extras.getString("PLAY_URL_RTMP");
         playUrl_hls = extras.getString("PLAY_URL_HLS");
         playTtl = extras.getInt("PLAY_TTL");
+
+        snapShot = extras.getString("SNAPSHOT");
 
         setContentView(R.layout.activity_play);
 

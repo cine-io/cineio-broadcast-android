@@ -100,4 +100,12 @@ public class Stream {
             return 0;
         }
     }
+
+    public String getSnapShotUrl() {
+        try {
+            return data.getString("snapshot");
+        } catch (JSONException e) {
+            return null;
+        }
+    }
 }

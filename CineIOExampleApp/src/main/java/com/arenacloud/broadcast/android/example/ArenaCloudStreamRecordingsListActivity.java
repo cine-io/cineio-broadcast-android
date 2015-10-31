@@ -29,29 +29,58 @@ public class ArenaCloudStreamRecordingsListActivity extends Activity implements 
     private ArrayList<StreamRecording> mStreamRecordings;
     private ListView recordingListView;
 
+    private String publicKey = null;
+    private String id = null;
+    private String password = null;
+    private String ticket = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_arena_cloud_stream_recordings_list);
         Bundle extras = getIntent().getExtras();
+
+        publicKey = extras.getString("publicKey");
+        id = extras.getString("id");
+        password = extras.getString("password");
+        ticket = extras.getString("ticket");
+
         ArenaCloudConfig config = new ArenaCloudConfig();
-        config.setSecretKey(extras.getString("SECRET_KEY"));
+//        config.setSecretKey(extras.getString("SECRET_KEY"));
+        config.setPublicKey(publicKey);
         mClient = new ArenaCloudClient(config);
-        try {
-            stream = new Stream(new JSONObject(extras.getString("STREAM_DATA")));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            stream = new Stream(new JSONObject(extras.getString("STREAM_DATA")));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         recordingListView = (ListView) findViewById(R.id.streamRecordings);
 
-        mClient.getStreamRecordings(stream.getId(), new StreamRecordingsResponseHandler() {
-            @Override
-            public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
-                setStreamRecordings(streamRecordings);
-            }
-        });
+//        mClient.getStreamRecordings(stream.getId(), new StreamRecordingsResponseHandler() {
+//            @Override
+//            public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
+//                setStreamRecordings(streamRecordings);
+//            }
+//        });
 
+        if (password != null && ticket == null) {
+            mClient.getStreamRecordingsWithPassword(id, password, new StreamRecordingsResponseHandler() {
+                @Override
+                public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
+                    setStreamRecordings(streamRecordings);
+                }
+            });
+        }
 
+        if (password == null && ticket != null)
+        {
+            mClient.getStreamRecordingsWithTicket(id, ticket, new StreamRecordingsResponseHandler() {
+                @Override
+                public void onSuccess(ArrayList<StreamRecording> streamRecordings) {
+                    setStreamRecordings(streamRecordings);
+                }
+            });
+        }
     }
 
     private void setStreamRecordings(ArrayList<StreamRecording> streamRecordings) {

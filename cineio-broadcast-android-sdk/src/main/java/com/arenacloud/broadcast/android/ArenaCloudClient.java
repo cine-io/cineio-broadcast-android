@@ -33,7 +33,7 @@ public class ArenaCloudClient {
 
     private final String VERSION = "0.0.15";
     private final static String TAG = "ArenaCloudClient";
-    private final static String BASE_URL = "http://apidemo.hupu.com/broadcast/1/-";
+    private final static String BASE_URL = "http://api.arenacloud.com/broadcast/1/-";
     private final AsyncHttpClient mClient;
     private ArenaCloudConfig mConfig;
 
@@ -122,23 +122,23 @@ public class ArenaCloudClient {
     public void broadcast(String id, final BroadcastConfig config,  final Context context){
         final Intent intent = new Intent(context, BroadcastActivity.class);
 
-        getStream(id, new StreamResponseHandler(){
+        getStream(id, new StreamResponseHandler() {
             public void onSuccess(Stream stream) {
-               // Log.d(TAG, "Starting publish intent: " + stream.getId());
+                // Log.d(TAG, "Starting publish intent: " + stream.getId());
                 intent.putExtra("PUBLISH_URL", stream.getPublishUrl());
-                if(config.getWidth() != -1){
+                if (config.getWidth() != -1) {
                     intent.putExtra("WIDTH", config.getWidth());
                 }
-                if(config.getHeight() != -1){
+                if (config.getHeight() != -1) {
                     intent.putExtra("HEIGHT", config.getHeight());
                 }
-                if(config.getLockedOrientation() != null){
+                if (config.getLockedOrientation() != null) {
                     intent.putExtra("ORIENTATION", config.getLockedOrientation());
                 }
-                if(config.getRequestedCamera() != null){
+                if (config.getRequestedCamera() != null) {
                     intent.putExtra("CAMERA", config.getRequestedCamera());
                 }
-                if (config.getBroadcastActivityLayout() != -1){
+                if (config.getBroadcastActivityLayout() != -1) {
                     intent.putExtra("LAYOUT", config.getBroadcastActivityLayout());
                 }
                 context.startActivity(intent);
@@ -205,6 +205,7 @@ public class ArenaCloudClient {
                 intent.putExtra("PLAY_URL_RTMP", stream.getRtmpUrl());
                 intent.putExtra("PLAY_URL_HLS", stream.getHLSUrl());
                 intent.putExtra("PLAY_TTL", stream.getPlayTTL());
+                intent.putExtra("SNAPSHOT", stream.getSnapShotUrl());
 
                 context.startActivity(intent);
             }
@@ -252,9 +253,18 @@ public class ArenaCloudClient {
             }
         });
     }
+    /*
     public void playRecording(StreamRecording recording, Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(recording.getUrl()), "video/*");
+        context.startActivity(intent);
+    }*/
+
+    public void playRecording(StreamRecording recording, Context context) {
+        Intent intent = new Intent(context, PlayActivity.class);
+
+        intent.putExtra("PLAY_URL_RTMP", recording.getUrl());
+
         context.startActivity(intent);
     }
 
@@ -378,6 +388,67 @@ public class ArenaCloudClient {
                     handler.onFailure(e);
                 }
             }
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
+        });
+    }
+
+    public void getStreamRecordingsWithPassword(String id, String password, final StreamRecordingsResponseHandler handler){
+        String url = BASE_URL + "/stream/recordings";
+        RequestParams rq = JsonToParams.toRequestParamsWithPublicKey(getPublicKey());
+        rq.add("id", id);
+        rq.add("password", password);
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                try {
+                    ArrayList<StreamRecording> streamRecordings = new ArrayList<StreamRecording>();
+                    JSONArray obj = new JSONArray(new String(response));
+                    for (int i = 0; i < obj.length(); i++) {
+                        StreamRecording streamRecording = new StreamRecording(obj.getJSONObject(i));
+                        streamRecordings.add(streamRecording);
+                    }
+                    handler.onSuccess(streamRecordings);
+                } catch (JSONException e) {
+                    handler.onFailure(e);
+                }
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                handler.onFailure(throwable);
+            }
+
+        });
+    }
+
+    public void getStreamRecordingsWithTicket(String id, String ticket, final StreamRecordingsResponseHandler handler)
+    {
+        String url = BASE_URL + "/stream/recordings";
+        RequestParams rq = JsonToParams.toRequestParamsWithPublicKey(getPublicKey());
+        rq.add("id", id);
+        rq.add("ticket", ticket);
+        mClient.get(url, rq, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                try {
+                    ArrayList<StreamRecording> streamRecordings = new ArrayList<StreamRecording>();
+                    JSONArray obj = new JSONArray(new String(response));
+                    for (int i = 0; i < obj.length(); i++) {
+                        StreamRecording streamRecording = new StreamRecording(obj.getJSONObject(i));
+                        streamRecordings.add(streamRecording);
+                    }
+                    handler.onSuccess(streamRecordings);
+                } catch (JSONException e) {
+                    handler.onFailure(e);
+                }
+            }
+
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                 handler.onFailure(throwable);

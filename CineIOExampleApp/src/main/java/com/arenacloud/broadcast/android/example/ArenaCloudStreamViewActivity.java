@@ -87,19 +87,40 @@ public class ArenaCloudStreamViewActivity extends Activity {
                 mClient.play(id, ticket, me);
             }
         });
-//
-//        Button seeRecordingsButton = (Button) findViewById(R.id.showRecordings);
-//        seeRecordingsButton.setText("Recordings");
-//        seeRecordingsButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.d(TAG, "Fetching recordings for " + stream.getId());
-//                Intent intent = new Intent(me, ArenaCloudStreamRecordingsListActivity.class);
-//                intent.putExtra("STREAM_DATA", stream.dataString());
-//                intent.putExtra("SECRET_KEY", mClient.getSecretKey());
-//                startActivity(intent);
-//            }
-//        });
+
+        Button seeRecordingsButtonForAnchor = (Button) findViewById(R.id.showRecordingsForAnchor);
+        seeRecordingsButtonForAnchor.setText("RecordingsForAnchor");
+        seeRecordingsButtonForAnchor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(me, ArenaCloudStreamRecordingsListActivity.class);
+                //intent.putExtra("STREAM_DATA", stream.dataString());
+                //intent.putExtra("SECRET_KEY", mClient.getSecretKey());
+
+                intent.putExtra("publicKey",publicKey);
+                intent.putExtra("id",id);
+                intent.putExtra("password",password);
+
+                startActivity(intent);
+            }
+        });
+
+        Button seeRecordingsButtonForViewer = (Button) findViewById(R.id.showRecordingsForViewer);
+        seeRecordingsButtonForViewer.setText("RecordingsForViewer");
+        seeRecordingsButtonForViewer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(me, ArenaCloudStreamRecordingsListActivity.class);
+                //intent.putExtra("STREAM_DATA", stream.dataString());
+                //intent.putExtra("SECRET_KEY", mClient.getSecretKey());
+
+                intent.putExtra("publicKey",publicKey);
+                intent.putExtra("id",id);
+                intent.putExtra("ticket",ticket);
+
+                startActivity(intent);
+            }
+        });
     }
 
 
