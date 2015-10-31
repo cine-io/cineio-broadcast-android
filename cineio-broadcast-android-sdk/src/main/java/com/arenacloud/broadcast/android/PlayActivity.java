@@ -39,7 +39,7 @@ public class PlayActivity extends ActionBarActivity {
         playUrl_hls = extras.getString("PLAY_URL_HLS");
         playTtl = extras.getInt("PLAY_TTL");
 
-        snapShot = extras.getString("SNAP_SHOT");
+        snapShot = extras.getString("SNAPSHOT");
 
         setContentView(R.layout.activity_play);
 

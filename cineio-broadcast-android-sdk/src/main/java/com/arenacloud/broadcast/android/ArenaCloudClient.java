@@ -205,7 +205,7 @@ public class ArenaCloudClient {
                 intent.putExtra("PLAY_URL_RTMP", stream.getRtmpUrl());
                 intent.putExtra("PLAY_URL_HLS", stream.getHLSUrl());
                 intent.putExtra("PLAY_TTL", stream.getPlayTTL());
-                intent.putExtra("SNAP_SHOT", stream.getSnapShotUrl());
+                intent.putExtra("SNAPSHOT", stream.getSnapShotUrl());
 
                 context.startActivity(intent);
             }
