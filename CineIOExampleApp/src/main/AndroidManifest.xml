@@ -63,10 +63,9 @@
             android:name="com.arenacloud.broadcast.android.ArenaCloudBroadcastActivity" >
         </activity>
 
-        <!-- <activity -->
-        <!-- android:name=".ArenaCloudStreamRecordingsListActivity" -->
-        <!-- android:label="@string/title_activity_cine_io_stream_recordings_list" > -->
-        <!-- </activity> -->
+         <activity
+         android:name=".ArenaCloudStreamRecordingsListActivity" >
+         </activity>
     </application>
 
 </manifest>
