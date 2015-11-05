@@ -510,6 +510,11 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
                 return;
             }
 
+            if(view.mCamera == null) {
+                Log.w(TAG, "CameraHandler.handleMessage: view mCamera is null");
+                return;
+            }
+
             switch (what) {
                 case MSG_SURFACE_CHANGED:
                     view.handleSetCameraOrientation();
