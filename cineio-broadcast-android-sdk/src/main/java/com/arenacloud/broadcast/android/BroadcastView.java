@@ -287,9 +287,13 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
         parms.setPreviewFormat(ImageFormat.NV21);
 
         // leave the frame rate set to default
+        if (parms.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO))
+        {
+            parms.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        }
+        mCamera.cancelAutoFocus();
         mCamera.setParameters(parms);
-
-
+/*
         //add auto focus function
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -297,7 +301,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
             public void run() {
                 tryAutoFocus(); // so we get the autofocus when starting up - we do this on a delay, as calling it immediately means the autofocus doesn't seem to work properly sometimes (at least on Galaxy Nexus)
             }
-        }, 500);
+        }, 500);*/
     }
 
     private void tryAutoFocus()
@@ -357,7 +361,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
      */
     private void releaseCamera() {
         //cancel auto focus function
-        cancelAutoFocus();
+//        cancelAutoFocus();
 
         if (mCamera != null) {
             mCamera.stopPreview();
