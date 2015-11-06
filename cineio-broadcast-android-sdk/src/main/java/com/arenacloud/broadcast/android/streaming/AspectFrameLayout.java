@@ -81,7 +81,7 @@ public class AspectFrameLayout extends FrameLayout {
                 Log.d(TAG, "aspect ratio is good (target=" + mTargetAspect +
                         ", view=" + initialWidth + "x" + initialHeight + ")");
             } else {
-                if (aspectDiff > 0) {
+                if (aspectDiff < 0) {
                     // limited by narrow width; restrict height
                     initialHeight = (int) (initialWidth / mTargetAspect);
                 } else {
