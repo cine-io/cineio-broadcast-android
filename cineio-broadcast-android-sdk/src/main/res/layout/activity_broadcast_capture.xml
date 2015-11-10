@@ -19,24 +19,25 @@
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.cine.android.BroadcastActivity" >
+    tools:context="com.arenacloud.broadcast.android.BroadcastActivity" >
 
-    <io.cine.android.streaming.AspectFrameLayout
+    <com.arenacloud.broadcast.android.streaming.AspectFrameLayout
         android:id="@+id/cameraPreview_afl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_centerInParent="true" >
 
         <android.opengl.GLSurfaceView
             android:id="@+id/cameraPreview_surfaceView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center" />
-    </io.cine.android.streaming.AspectFrameLayout>
+    </com.arenacloud.broadcast.android.streaming.AspectFrameLayout>
 
     <include layout="@layout/status" />
 
     <include layout="@layout/camera_button_holder" />
+
+
 </RelativeLayout>

@@ -9,5 +9,8 @@
     <dimen name="cine_square_corner_radius">8dip</dimen>
     <dimen name="cine_red_circle_padding">8dip</dimen>
     <dimen name="cine_red_square_padding">16dip</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 
 </resources>
