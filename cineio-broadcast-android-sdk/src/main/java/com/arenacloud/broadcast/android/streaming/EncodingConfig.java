@@ -30,7 +30,7 @@ public class EncodingConfig {
     private static final int LANDSCAPE_CAMERA_WIDTH = 1280;
     private int customHeight;
     private static final int LANDSCAPE_CAMERA_HEIGHT = 720;
-    private static int DEFAULT_BIT_RATE = 2000000/*1500000*//*750000*/;
+    private static int DEFAULT_BIT_RATE = 700000/*1500000*//*750000*/;
     public static int DEFAULT_HUMAN_FPS = 15;
     private EncodingCallback mEncodingCallback;
     private MUXER_STATE mMuxerState;

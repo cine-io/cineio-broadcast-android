@@ -121,7 +121,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe);
             }
-            mCamera.startPreview();
+            //mCamera.startPreview();
         }
 
         handleSetCameraOrientation();
@@ -525,7 +525,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
                     break;
                 case MSG_SET_SURFACE_TEXTURE:
                     view.handleSetSurfaceTexture((SurfaceTexture) inputMessage.obj);
-                    view.handleResumeRecording();
+                    //view.handleResumeRecording();
                     break;
                 case MSG_CAPTURE_FRAME:
                     view.handleSaveFrameMessage(inputMessage);
@@ -561,7 +561,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
 
 //        parms.setPreviewSize(1280, 720);
 
-//        mCamera.setParameters(parms);
+        mCamera.setParameters(parms);
 
         this.queueEvent(new Runnable() {
             @Override
@@ -572,6 +572,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
         });
 
         mCamera.setDisplayOrientation(result);
+        mCamera.startPreview();
     }
 
     private void setEncoderOrientation() {
@@ -629,7 +630,7 @@ public class BroadcastView extends GLSurfaceView implements SurfaceTexture.OnFra
             throw new RuntimeException(ioe);
         }
 
-        mCamera.startPreview();
+        //mCamera.startPreview();
 
         weakSurfaceTexture = new WeakReference<SurfaceTexture>(st);
     }
